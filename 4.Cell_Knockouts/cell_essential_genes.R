@@ -1,5 +1,3 @@
-library("VennDiagram")
-
 #get wang, blomen, hart genes and essentialomes
 #read wang genes and which are essential in different cell lines
 wang <- read.xlsx("Gene_lists/Cell_KOs/wang_essentials.xlsx",startRow = 1, colNames = TRUE, rowNames = FALSE)
@@ -19,20 +17,6 @@ hart$Gene<- checkGeneSymbols(hart$Gene, unmapped.as.na=FALSE)[[3]]
 hart<- hart[-which(duplicated(hart$Gene)=="TRUE"),] 
 hart_essentialome <- unique(hart$Gene[which(hart$essentialome=="essential")])
 
-# 3. venn diagram showing overlap of wang, blomen + hart essentialomes
-# venn diagram wang blomen hart overall
-overrideTriple<- "ye"
-
-# which are reproducibly in essentialome? (of genes common to 3 papers)
-common_genes <- intersect(intersect(wang$Gene,blomen$Gene),hart$Gene)
-wang_essentialomec <- intersect(common_genes,wang_essentialome)
-blomen_essentialomec <- intersect(common_genes,blomen_essentialome)
-hart_essentialomec <- intersect(common_genes,hart_essentialome)
-#jpeg('overlaps_essentialome_common_BWH.jpg')
-draw.triple.venn(area1 = length(wang_essentialomec), area2 = length(blomen_essentialomec), area3 = length(hart_essentialomec), n12 = length(intersect(wang_essentialomec,blomen_essentialomec)), n23 = length(intersect(blomen_essentialomec,hart_essentialomec)), n13 = length(intersect(wang_essentialomec,hart_essentialomec)), 
-                 n123 = length(intersect(intersect(wang_essentialomec,blomen_essentialomec),hart_essentialomec)), category = c("Wang", "Blomen", "Hart"), lty = "blank", 
-                 fill = c("dodgerblue3","brown3","slategray"), euler.d = TRUE, scaled = TRUE)
-#dev.off()
 
 #Seeing essentiality of each gene accross all cell lines in the three papers
 cell_KOs <- data.frame(common_genes,ifelse(vlookup(common_genes,blomen,result_column = "hap1",lookup_column="Gene")=="essential",1,0),
@@ -46,13 +30,4 @@ cell_KOs$no_hits <- cell_KOs$blomen_hap1+cell_KOs$blomen_kbm7+cell_KOs$wang_kbm7
                         cell_KOs$wang_hct+cell_KOs$wang_hela+cell_KOs$wang_hct+cell_KOs$wang_hela+cell_KOs$wang_gbm+cell_KOs$wang_rpe1+cell_KOs$wang_dld1
 
 
-#seeing the proportion of genes in each set that are essential at different no-cell-lines-cutoffs
-cell_line_cutoff_levels <- seq(0, 13, by=1)
-cutoffs <- c()
-for (i in 1:length(cell_line_cutoff_levels)) {cutoffs[i]= length(which(cell_KOs$no_hits>=cell_line_cutoff_levels[i]))}
-cutoffs_perc <- c()
-for (j in 1:length(cell_line_cutoff_levels)) {cutoffs_perc[j]=cutoffs[j]/length(cell_KOs$no_hits)*100}
-
-plot(cell_line_cutoff_levels,cutoffs)
-rm(i,j,blomen,hart,wang,common_genes,cutoffs,cutoffs_perc,overrideTriple)
-
+rm(blomen,hart,wang)

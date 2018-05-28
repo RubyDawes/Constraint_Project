@@ -1,4 +1,4 @@
-#a script to parse MGI_PhenoGenoMP to extract all genes with lethal phenotypes
+#a script to parse MGI_PhenoGenoMP to extract all genes with lethal phenotypes, write to xlsx
 #load in all genes and phenotypes
 
 mgi <- read.xlsx("Gene_lists/MGI_MPs/MGI_PhenoGenoMP.xlsx")
@@ -36,6 +36,8 @@ mgi$human_symbol <- checkGeneSymbols(mgi$human_symbol,unmapped.as.na=FALSE)[[3]]
 
 mgi$human_symbol <- vlookup(mgi$MGI_ID,mgi_names,result_column="Human.Marker.Symbol",lookup_column = "MGI.Marker.Accession.ID")
 mgi$human_symbol <- checkGeneSymbols(mgi$human_symbol,unmapped.as.na=FALSE)[[3]]
-genes_with_phenotypes <- mgi$human_symbol[which(mgi$MGI_ID%in%genes_with_phenotypes)]
-  
+
+mgi <- mgi[-which(is.na(mgi$mouse_symbol)),]  
+
 rm(a,mgi_names,lethal_genes,rows,p)
+write.xlsx(mgi,"output/spreadsheets/MGI_genes_with_phenotypes.xlsx")
