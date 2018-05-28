@@ -2,9 +2,12 @@
 #load in all genes and phenotypes
 
 mgi <- read.xlsx("Gene_lists/MGI_MPs/MGI_PhenoGenoMP.xlsx")
-mgi <- mgi[,c(6,4)]
+mgi <- mgi[,c(1,2,6,4)]
 mgi<- mgi[which(!grepl(pattern = "\\,", x = mgi$MGI_ID, ignore.case = FALSE)),]
 
+allele <- read.xlsx("Gene_lists/MGI_MPs/MGI_PhenotypicAllele.xlsx")
+mgi$allele_info <- vlookup(mgi$`Allele.Symbol(s)`,allele,result_column="Allele.Attribute",lookup_column="Allele.Symbol")
+mgi <- mgi[which(grepl(pattern="Null/knockout",x=mgi$allele_info,ignore.case=FALSE)),]
 
 #which genes have a lethal phenotype
 mgi_lethalphens <- read.xlsx("Gene_lists/MGI_MPs/MGI_lethal_phenotypes.xlsx")
