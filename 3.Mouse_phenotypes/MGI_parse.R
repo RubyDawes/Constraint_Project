@@ -35,10 +35,10 @@ mgi_names <- read.xlsx("Gene_lists/MGI_MPs/HMD_HumanPhenotype.xlsx")
 mgi_names$MGI.Marker.Accession.ID <- gsub(" ", "", mgi_names$MGI.Marker.Accession.ID, fixed = TRUE)
 mgi$mouse_symbol <- vlookup(mgi$MGI_ID,mgi_names,result_column="Mouse.Marker.Symbol",lookup_column = "MGI.Marker.Accession.ID")
 mgi$human_symbol <- vlookup(mgi$MGI_ID,mgi_names,result_column="Human.Marker.Symbol",lookup_column = "MGI.Marker.Accession.ID")
-mgi$human_symbol <- checkGeneSymbols(mgi$human_symbol,unmapped.as.na=FALSE)[[3]]
+mgi$human_symbol <- checkGeneSymbols(mgi$human_symbol,unmapped.as.na=FALSE,hgnc.table=hgnc.table)[[3]]
 
 mgi$human_symbol <- vlookup(mgi$MGI_ID,mgi_names,result_column="Human.Marker.Symbol",lookup_column = "MGI.Marker.Accession.ID")
-mgi$human_symbol <- checkGeneSymbols(mgi$human_symbol,unmapped.as.na=FALSE)[[3]]
+mgi$human_symbol <- checkGeneSymbols(mgi$human_symbol,unmapped.as.na=FALSE,hgnc.table=hgnc.table)[[3]]
 
 mgi <- mgi[-which(is.na(mgi$mouse_symbol)),]  
 

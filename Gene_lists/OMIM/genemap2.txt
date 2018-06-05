@@ -6074,7 +6074,7 @@ chr7	25134696	25180747	7p15.3	7p15.3	616071	C7orf31	Chromosome 7 open reading fr
 chr7	25224569	25228485	7p15.3	7p15.3	616984	"NPVF, RFRP, C7orf9"	Neuropeptide VF precursor	NPVF	64111	ENSG00000105954			Npvf (MGI:1926488)		
 chr7	25949918	25949985	7p15.2	7p15.2	613786	"MIR148A, MIRN148A"	Micro RNA 148A	MIR148A	406940	ENSG00000199085					
 chr7	26152226	26187136	7p15-p14	7p15.2	604135	"NFE2L3, NRF3"	Nuclear factor erythroid 2-like 3	NFE2L3	9603	ENSG00000050344			Nfe2l3 (MGI:1339958)		
-chr7	26189926	26200792	7p15	7p15.2	600124	"HNRPA2B1, IBMPFD2"	Heterogeneous nuclear ribonucleoprotein A2/B1	HNRPA2B1	3181	ENSG00000122566	mutation identified in 1 family	"?Inclusion body myopathy with early-onset Paget disease with or without frontotemporal dementia 2, 615422 (3)"	Hnrnpa2b1 (MGI:104819)		
+chr7	26189926	26200792	7p15	7p15.2	600124	"HNRPA2B1, IBMPFD2"	Heterogeneous nuclear ribonucleoprotein A2/B1	HNRNPA2B1	3181	ENSG00000122566	mutation identified in 1 family	"?Inclusion body myopathy with early-onset Paget disease with or without frontotemporal dementia 2, 615422 (3)"	Hnrnpa2b1 (MGI:104819)		
 chr7	26201210	26213606	7p15.2	7p15.2	604477	CBX3	Chromobox homolog 3	CBX3	11335	ENSG00000122565			Cbx3 (MGI:108515)		
 chr7	26291894	26374329	7p15.2	7p15.2	614780	"SNX10, OPTB8"	Sorting nexin 10	SNX10	29887	ENSG00000086300		"Osteopetrosis, autosomal recessive 8, 615085 (3), Autosomal recessive"	Snx10 (MGI:1919232)		
 chr7	26654771	26864742	7p15.2	7p15.2	605215	"SKAP2, SCAP2, SKAP55R"	src kinase associated phosphoprotein 2	SKAP2	8935	ENSG00000005020			Skap2 (MGI:1889206)		
@@ -7218,7 +7218,7 @@ chr8	124474766	124488617	8q24.1	8q24.13	603046	"RNF139, TRC8, RCA1"	RING finger 
 chr8	124539101	124549985	8q13.3	8q24.13	601445	"NDUFB9, UQOR22"	"NADH dehydrogenase (ubiquinone) 1 beta subcomplex, 9 (22kD, B22)"	NDUFB9	4715	ENSG00000147684	mutation identified in 1 family	"?Mitochondrial complex I deficiency, 252010 (3), Autosomal recessive, X-linked dominant, Mitochondrial"	Ndufb9 (MGI:1913468)		
 chr8	124550769	124728506	8q24.1	8q24.13	608486	"MTSS1, MIM, KIAA0429"	Metastasis suppressor 1	MTSS1	9788	ENSG00000170873			Mtss1 (MGI:2384818)		
 chr8	124998477	125022282	8q24.1	8q24.13	602019	SQLE	Squalene epoxidase	SQLE	6713	ENSG00000104549			Sqle (MGI:109296)		
-chr8	125024259	125091818	8q24.13	8q24.13	610657	"WSHC5, KIAA0196, SPG8, RTSC1"	"WASH complex, subunit 5"	WSHC5	9897	ENSG00000164961		"Ritscher-Schinzel syndrome 1, 220210 (3), Autosomal recessive; Spastic paraplegia 8, autosomal dominant, 603563 (3), Autosomal dominant"	Washc5 (MGI:2146110)		
+chr8	125024259	125091818	8q24.13	8q24.13	610657	"WASHC5, KIAA0196, SPG8, RTSC1"	"WASH complex, subunit 5"	WASHC5	9897	ENSG00000164961		"Ritscher-Schinzel syndrome 1, 220210 (3), Autosomal recessive; Spastic paraplegia 8, autosomal dominant, 603563 (3), Autosomal dominant"	Washc5 (MGI:2146110)		
 chr8	125091817	125367124	8q24.13	8q24.13	617246	"NSMCE2, NSE2, MMS21"	"Non-SMC element 2, S. cerevisiae, homolog of"	NSMCE2	286053	ENSG00000156831		"Seckel syndrome 10, 617253 (3), Autosomal recessive"	Nsmce2 (MGI:1915751)		
 chr8	125430099	125438404	8q24.13	8q24.13	609461	"TRIB1, TRB1, SKIP1, C8FW"	"Tribbles, Drosophila, homolog of, 1"	TRIB1	10221	ENSG00000173334			Trib1 (MGI:2443397)		
 chr8	126300000	130400000	8q24.21		613032	GLM7	Glioma susceptibility 7	GLM7	101409265		associated with rs55705857	"{Glioma susceptibility 7}, 613032 (2)"			
@@ -10082,7 +10082,7 @@ chr12	62643981	62935134	12q14.1-q14.2	12q14.1-q14.2	616016	"PPM1H, KIAA1157"	"Pr
 chr12	62700000	64700000	12q14.2		610908	AUTS13	"Autism, susceptibility to, 13"	AUTS13	100188317		linkage with rs1445442	"{Autism susceptibility 13}, 610908 (2)"			
 chr12	63142758	63152809	12q14-q15	12q14.2	600821	AVPR1A	Arginine vasopressin receptor-1A	AVPR1A	552	ENSG00000166148			Avpr1a (MGI:1859216)		
 chr12	63558912	63669200	12q14.2	12q14.2	613893	"DPY19L2, SPGF9"	DPY19-like 2	DPY19L2	283417	ENSG00000177990	pseudogene on 7p14.3	"Spermatogenic failure 9, 613958 (3), Autosomal recessive"	Dpy19l2 (MGI:2444662)		
-chr12	63779802	63809557	12q14.2	12q14.2	605862	"RXYLT1, TMEM5, MDDGA10"	Ribitol xylosyltransferase 1	RXYLT1	10329	ENSG00000118600		"Muscular dystrophy-dystroglycanopathy (congenital with brain and eye anomalies), type A, 10, 615041 (3), Autosomal recessive"	Tmem5 (MGI:2384919)		
+chr12	63779802	63809557	12q14.2	12q14.2	605862	"RXYLT1, TMEM5, MDDGA10"	Ribitol xylosyltransferase 1	TMEM5	10329	ENSG00000118600		"Muscular dystrophy-dystroglycanopathy (congenital with brain and eye anomalies), type A, 10, 615041 (3), Autosomal recessive"	Tmem5 (MGI:2384919)		
 chr12	63844371	64147862	12q14.2	12q14.2	606523	"SRGAP1, KIAA1304, NMTC2"	"Slit-robo GTPase-activating protein, rho, 1"	SRGAP1	57522	ENSG00000196935		"{Thyroid cancer, nonmedullary, 2}, 188470 (3), Autosomal dominant"	Srgap1 (MGI:2152936)		
 chr12	64186311	64222295	12q14.2	12q14.2	617420	C12orf66	Chromosome 12 open reading frame 66	C12orf66	144577	ENSG00000174206			BC048403 (MGI:2670984)		
 chr12	64452059	64502118	12q14.2	12q14.2	604834	"TBK1, NAK, FTDALS4"	TANK-binding kinase 1	TBK1	29110	ENSG00000183735		"Frontotemporal dementia and/or amyotrophic lateral sclerosis 4, 616439 (3), Autosomal dominant"	Tbk1 (MGI:1929658)		
@@ -12221,7 +12221,7 @@ chr16	58707130	58734356	16q21	16q21	138150	GOT2	"Glutamic-oxaloacetic transamina
 chr16	61640434	62036834	16q21-q22.1	16q21	603008	CDH8	Cadherin-8	CDH8	1006	ENSG00000150394			Cdh8 (MGI:107434)		
 chr16	64943752	65126111	16q21-q22.1	16q21	600023	"CDH11, CAD11"	"Cadherin-11 (OB-cadherin, osteoblast)"	CDH11	1009	ENSG00000140937			Cdh11 (MGI:99217)		
 chr16	66366606	66404785	16q22.1	16q21	601120	CDH5	Cadherin-5	CDH5	1003	ENSG00000179776			Cdh5 (MGI:105057)		
-chr16	66427296	66495287	16q21	16q21	612051	"BEAN, SCA31"	"Brain-expressed, associated with NEDD4"	BEAN	146227	ENSG00000166546		"Spinocerebellar ataxia 31, 117210 (3), Autosomal dominant"	Bean1 (MGI:1929597)		
+chr16	66427296	66495287	16q21	16q21	612051	"BEAN, SCA31"	"Brain-expressed, associated with NEDD4"	BEAN1	146227	ENSG00000166546		"Spinocerebellar ataxia 31, 117210 (3), Autosomal dominant"	Bean1 (MGI:1929597)		
 chr16	66508002	66550411	16q22	16q21	188250	"TK2, MTDPS2, PEOB3"	"Thymidine kinase, mitochondrial"	TK2	7084	ENSG00000166548	mutation identified in 1 PEOB3 family	"Mitochondrial DNA depletion syndrome 2 (myopathic type), 609560 (3), Autosomal recessive; ?Progressive external ophthalmoplegia with mitochondrial DNA deletions, autosomal recessive 3, 617069 (3), Autosomal recessive"	Tk2 (MGI:1913266)		
 chr16	66552562	66566286	16q23	16q21	616074	"CKLF, HSPC224"	Chemokine-like factor	CKLF	51192	ENSG00000217555			Cklf (MGI:1922708)		
 chr16	66566390	66579134	16q22	16q21	607884	"CMTM1, CKLFSF1"	CKLF-like marvel transmembrane domain-containing 1	CMTM1	113540	ENSG00000089505					
@@ -12424,7 +12424,7 @@ chr16	88874854	88977197	16q24	16q24.3	603870	"CBFA2T3, MTGR2, MTG16"	"Core-bindi
 chr16	89093808	89160555	16q24.3	16q24.3	614245	ACSF3	Acyl-CoA synthetase family member 3	ACSF3	197322	ENSG00000176715		"Combined malonic and methylmalonic aciduria, 614265 (3)"	Acsf3 (MGI:2182591)		
 chr16	89171754	89195491	16q24.3	16q24.3	114019	"CDH15, CDH14, CDH3, MRD3"	"Cadherin-15, M-cadherin (myotubule)"	CDH15	1013	ENSG00000129910	tightly linked to Aprt in mouse	"Mental retardation, autosomal dominant 3, 612580 (3)"	Cdh15 (MGI:106672)		
 chr16	89267618	89490560	16q24.3	16q24.3	611192	"ANKRD11, ANCO1, KBGS"	Ankyrin repeat domain-containing protein 11	ANKRD11	29123	ENSG00000167522		"KBG syndrome, 148050 (3), Autosomal dominant"	Ankrd11 (MGI:1924337)		
-chr16	89508378	89557767	16q24.3	16q24.3	602783	"PGN, SPG7, CMAR, CAR"	Paraplegin	PGN	6687	ENSG00000197912		"Spastic paraplegia 7, autosomal recessive, 607259 (3), Autosomal recessive, Autosomal dominant"	Spg7 (MGI:2385906)		
+chr16	89508378	89557767	16q24.3	16q24.3	602783	"PGN, SPG7, CMAR, CAR"	Paraplegin	SPG7	6687	ENSG00000197912		"Spastic paraplegia 7, autosomal recessive, 607259 (3), Autosomal recessive, Autosomal dominant"	Spg7 (MGI:2385906)		
 chr16	89560656	89566828	16q24.3	16q24.3	113703	"RPL13, BBC1, D16S44E"	Ribosomal protein L13	RPL13	6137	ENSG00000167526			"Rpl13-ps6,Rpl13 (MGI:3642685,MGI:105922)"		
 chr16	89575767	89597245	16q24.3	16q24.3	605689	CPNE7	Copine VII	CPNE7	27132	ENSG00000178773			Cpne7 (MGI:2142747)		
 chr16	89613307	89641539	16q24.3	16q24.3	179780	"DPEP1, RDP, MDP, MBD1"	Dipeptidase 1	DPEP1	1800	ENSG00000015413			Dpep1 (MGI:94917)		
@@ -13896,7 +13896,7 @@ chr19	10270840	10286614	19p13.3-p13.2	19p13.2	147840	ICAM1	Intercellular adhesio
 chr19	10286966	10288583	19p13.3	19p13.2	614088	"ICAM4, CD242, LW"	Intracellular adhesion molecule 4	ICAM4	3386	ENSG00000105371	"close to C3, LU"	"[Blood group, Landsteiner-Wiener], 111250 (3)"	Icam4 (MGI:1925619)		
 chr19	10289351	10296777	19p13.2	19p13.2	601852	"ICAM5, TLCN, TLN"	Intercellular adhesion molecule 5 (telencephalin)	ICAM5	7087	ENSG00000105376			Icam5 (MGI:109430)		
 chr19	10304802	10309556	19p13.2	19p13.2	611639	"ZGLP1, GLP1"	Zinc finger GATA-like protein 1	ZGLP1	100125288	ENSG00000220201			Zglp1 (MGI:3696042)		
-chr19	10310210	10316014	19p13.2	19p13.2	614585	"FDX1L, FDX2"	Ferredoxin 1-like protein	FDX1L	112812	ENSG00000267673			Fdx1l (MGI:1915415)		
+chr19	10310210	10316014	19p13.2	19p13.2	614585	"FDX1L, FDX2"	Ferredoxin 1-like protein	FDX2	112812	ENSG00000267673			Fdx1l (MGI:1915415)		
 chr19	10316211	10333637	19p13.2	19p13.2	609950	"RAVER1, KIAA1978"	"Raver1, mouse, homolog of"	RAVER1	125950	ENSG00000161847			Raver1 (MGI:1919016)		
 chr19	10333775	10339833	19p13.3-p13.2	19p13.2	146631	"ICAM3, CDW50"	Intercellular adhesion molecule-3	ICAM3	3385	ENSG00000076662					
 chr19	10350527	10380571	19p13.2	19p13.2	176941	"TYK2, IMD35"	Tyrosine kinase 2	TYK2	7297	ENSG00000105397		"Immunodeficiency 35, 611521 (3), Autosomal recessive"	Tyk2 (MGI:1929470)		
