@@ -69,6 +69,48 @@ e
 dev.off()
 
 ##############Figure 3
--- universe
+load("universe_df.rda")
+boy <- data.frame(group=c("disease genes with no mouse phenotype","disease genes with non-lethal mouse phenotype"
+                          ,"disease genes with lethal mouse phenotype","nondisease genes with lethal mouse phenotype"
+                          ,"nondisease genes with non-lethal mouse phenotype","nondisease genes with no mouse phenotype"),
+                  value=c(length(which(universe_df$omim=="Y"&is.na(universe_df$mouse_ko))),length(which(universe_df$omim=="Y"&universe_df$mouse_ko=="Y"&universe_df$lethal_mouse=="N"))
+                          ,length(which(universe_df$omim=="Y"&universe_df$mouse_ko=="Y"&universe_df$lethal_mouse=="Y")),length(which(is.na(universe_df$omim)&universe_df$mouse_ko=="Y"&universe_df$lethal_mouse=="Y"))
+                          ,length(which(is.na(universe_df$omim)&universe_df$mouse_ko=="Y"&universe_df$lethal_mouse=="N")),length(which(is.na(universe_df$omim)&is.na(universe_df$mouse_ko)))))
 
+boy$group <- factor(boy$group, levels = boy$group)
+
+b <- ggplot(boy, aes(x="", y=value, fill=group))
+b<- b+geom_bar(width = 1, stat = "identity")+blank_theme()+coord_polar(theta="y",direction=-1)
+b<- b+scale_fill_manual(values=alpha(c("brown3","brown2","brown1","dodgerblue1","dodgerblue2","dodgerblue3"),0.7))#+theme(legend.position="none")
+b<- b+geom_text(aes(y = value,label = value),size=4,position = position_stack(vjust = 0.5))
+
+ 
+
+##############Figure 4
+universe_df$constrained <- ifelse(universe_df$mis_z>=3.09|universe_df$pLI>=0.9,"Y","N")
+#constrained genes that are in omim and lethal in a mouse
+length(which(universe_df$constrained=="Y"&universe_df$omim=="Y"&universe_df$lethal_mouse=="Y"))
+#constrained genes that are in omim and non-lethal in mouse or no phenotype
+length(which(universe_df$constrained=="Y"&universe_df$omim=="Y"&universe_df$lethal_mouse=="N"))
+length(which(universe_df$constrained=="Y"&universe_df$omim=="Y"&is.na(universe_df$mouse_ko)))
+#constrained genes that aren't in omim and lethal in a mouse
+length(which(universe_df$constrained=="Y"&is.na(universe_df$omim)&universe_df$lethal_mouse=="Y"))
+#constrained genes that aren't in omim and non-lethal in mouse or no phenotype
+length(which(universe_df$constrained=="Y"&is.na(universe_df$omim)&universe_df$lethal_mouse=="N"))
+length(which(universe_df$constrained=="Y"&is.na(universe_df$omim)&is.na(universe_df$mouse_ko)))
+
+papoose <- data.frame(group=c("constrained genes that are in omim and non-lethal in mouse or no phenotype","constrained genes that are in omim and lethal in a mouse"
+                              ,"constrained genes that aren't in omim and lethal in a mouse","constrained genes that aren't in omim and non-lethal in mouse or no phenotype"),
+                      value=c(length(which(universe_df$constrained=="Y"&universe_df$omim=="Y"&universe_df$lethal_mouse=="N"))+length(which(universe_df$constrained=="Y"&universe_df$omim=="Y"&is.na(universe_df$mouse_ko))),length(which(universe_df$constrained=="Y"&universe_df$omim=="Y"&universe_df$lethal_mouse=="Y"))
+                              ,length(which(universe_df$constrained=="Y"&is.na(universe_df$omim)&universe_df$lethal_mouse=="N"))+length(which(universe_df$constrained=="Y"&is.na(universe_df$omim)&is.na(universe_df$mouse_ko))),length(which(universe_df$constrained=="Y"&is.na(universe_df$omim)&universe_df$lethal_mouse=="Y"))))
+papoose$group <- factor(papoose$group, levels = papoose$group)
+
+c <- ggplot(papoose, aes(x="", y=value, fill=group))
+c<- c+geom_bar(width = 1, stat = "identity")+blank_theme()+coord_polar(theta="y",direction=-1)
+c<- c+scale_fill_manual(values=alpha(c("brown3","brown1","dodgerblue1","dodgerblue3"),0.7))#+theme(legend.position="none")
+c<- c+geom_text(aes(y = value,label = value),size=4,position = position_stack(vjust = 0.5))
+
+png("Sandra_Figures/Figs/fig4.png",width=1500,height=1000,type="quartz",res=150,bg = "transparent")
+c
+dev.off()
 
