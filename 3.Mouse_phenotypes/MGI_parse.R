@@ -7,7 +7,8 @@ mgi<- mgi[which(!grepl(pattern = "\\,", x = mgi$MGI_ID, ignore.case = FALSE)),]
 
 allele <- read.xlsx("Gene_lists/MGI_MPs/MGI_PhenotypicAllele.xlsx")
 mgi$allele_info <- vlookup(mgi$`Allele.Symbol(s)`,allele,result_column="Allele.Attribute",lookup_column="Allele.Symbol")
-mgi <- mgi[which(grepl(pattern="Null/knockout",x=mgi$allele_info,ignore.case=FALSE)),]
+#mgi <- mgi[which(grepl(pattern="Null/knockout",x=mgi$allele_info,ignore.case=FALSE)),]
+mgi <- mgi[which(grepl(pattern="Null/knockout",x=mgi$allele_info,ignore.case=FALSE)|grepl(pattern="Hypomorph",x=mgi$allele_info,ignore.case=TRUE)),]
 
 #which genes have a lethal phenotype
 mgi_lethalphens <- read.xlsx("Gene_lists/MGI_MPs/MGI_lethal_phenotypes.xlsx")
@@ -34,9 +35,6 @@ mgi<- mgi[-which(duplicated(mgi$MGI_ID)),]
 mgi_names <- read.xlsx("Gene_lists/MGI_MPs/HMD_HumanPhenotype.xlsx")
 mgi_names$MGI.Marker.Accession.ID <- gsub(" ", "", mgi_names$MGI.Marker.Accession.ID, fixed = TRUE)
 mgi$mouse_symbol <- vlookup(mgi$MGI_ID,mgi_names,result_column="Mouse.Marker.Symbol",lookup_column = "MGI.Marker.Accession.ID")
-mgi$human_symbol <- vlookup(mgi$MGI_ID,mgi_names,result_column="Human.Marker.Symbol",lookup_column = "MGI.Marker.Accession.ID")
-mgi$human_symbol <- checkGeneSymbols(mgi$human_symbol,unmapped.as.na=FALSE,hgnc.table=hgnc.table)[[3]]
-
 mgi$human_symbol <- vlookup(mgi$MGI_ID,mgi_names,result_column="Human.Marker.Symbol",lookup_column = "MGI.Marker.Accession.ID")
 mgi$human_symbol <- checkGeneSymbols(mgi$human_symbol,unmapped.as.na=FALSE,hgnc.table=hgnc.table)[[3]]
 
