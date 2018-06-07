@@ -26,5 +26,5 @@ colnames(cell_KOs) <- c("Gene","blomen_hap1","blomen_kbm7","wang_kbm7","wang_k56
 cell_KOs$no_hits <- cell_KOs$blomen_hap1+cell_KOs$blomen_kbm7+cell_KOs$wang_kbm7+cell_KOs$wang_k562+cell_KOs$wang_jiyoye+cell_KOs$wang_raji+
                         cell_KOs$wang_hct+cell_KOs$wang_hela+cell_KOs$wang_hct+cell_KOs$wang_hela+cell_KOs$wang_gbm+cell_KOs$wang_rpe1+cell_KOs$wang_dld1
 
-save(cell_KOs, file="output/Data/cell_KOs.rda", compress="bzip2")
+
 rm(blomen,hart,wang,common_genes)
