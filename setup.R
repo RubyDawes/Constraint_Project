@@ -14,7 +14,7 @@ library(kableExtra)
 library(reshape2)
 library(data.table)
 
-load("hgnc.table.rda")
+load("output/Data/hgnc.table.rda")
 
 hgnc<- read.csv("Gene_lists/Universe/gene_with_protein_product.txt",sep = "\t", comment.char = "#",stringsAsFactors = FALSE)
 hgnc$symbol<- checkGeneSymbols(hgnc$symbol,hgnc.table=hgnc.table)[[3]]
