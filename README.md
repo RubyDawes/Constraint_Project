@@ -7,11 +7,13 @@ mim2gene.txt downloaded from [OMIM Data Downloads page](https://www.omim.org/dow
 genemap2.txt downloaded with license on 2018-03-10
 - file location: Gene_lists/OMIM/...
 
+
 ### 2. ExAC
 from [Lek et al., Analysis of protein-coding genetic variation in 60,706 humans, 2016](https://www.nature.com/articles/nature19057)
 
 ExAC scores downloaded from [ExAC Downloads page](http://exac.broadinstitute.org/downloads) 
 - file location: Gene_lists/ExAC/fordist_cleaned_exac_r03_march16_z_pli_rec_null_data.txt
+
 
 ### 3. Mouse knockouts
 HMD_HumanPhenotype, MGI_PhenoGenoMP, MGI_PhenotypicAllele downloaded from [MGI Data and Statistical Reports page](http://www.informatics.jax.org/downloads/reports/index.html) and converted to xlsx for ease of reading in R/excel
