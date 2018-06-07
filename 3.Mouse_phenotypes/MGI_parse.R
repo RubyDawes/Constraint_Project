@@ -1,35 +1,30 @@
 #a script to parse MGI_PhenoGenoMP to extract all genes with lethal phenotypes, write to xlsx
 #load in all genes and phenotypes
 
-mgi <- read.xlsx("Gene_lists/MGI_MPs/MGI_PhenoGenoMP.xlsx")
-mgi <- mgi[,c(1,2,6,4)]
-mgi<- mgi[which(!grepl(pattern = "\\,", x = mgi$MGI_ID, ignore.case = FALSE)),]
+mgi_df <- read.xlsx("Gene_lists/MGI_MPs/MGI_PhenoGenoMP.xlsx")
+mgi_df <- mgi_df[,c(1,2,6,4)]
+mgi_df<- mgi_df[which(!grepl(pattern = "\\,", x = mgi_df$MGI_ID, ignore.case = FALSE)),]
 
 allele <- read.xlsx("Gene_lists/MGI_MPs/MGI_PhenotypicAllele.xlsx")
-mgi$allele_info <- vlookup(mgi$`Allele.Symbol(s)`,allele,result_column="Allele.Attribute",lookup_column="Allele.Symbol")
-#mgi <- mgi[which(grepl(pattern="Null/knockout",x=mgi$allele_info,ignore.case=FALSE)),]
-mgi <- mgi[which(grepl(pattern="Null/knockout",x=mgi$allele_info,ignore.case=FALSE)|grepl(pattern="Hypomorph",x=mgi$allele_info,ignore.case=TRUE)),]
+mgi_df$allele_info <- vlookup(mgi_df$`Allele.Symbol(s)`,allele,result_column="Allele.Attribute",lookup_column="Allele.Symbol")
+mgi_df <- mgi_df[which(grepl(pattern="Null/knockout",x=mgi_df$allele_info,ignore.case=FALSE)|grepl(pattern="Hypomorph",x=mgi_df$allele_info,ignore.case=TRUE)),]
+
+MGI_ID <- unique(mgi_df$MGI_ID)
+mgi <- data.frame(MGI_ID)
 
 #which genes have a lethal phenotype
 mgi_lethalphens <- read.xlsx("Gene_lists/MGI_MPs/MGI_lethal_phenotypes.xlsx")
-mgi$is_lethal <- ifelse(mgi$MP_ID%in%mgi_lethalphens$MP.id,"Y","N")
-mgi$MP_ID[which(mgi$is_lethal=="N")]<- NA
-#concatenating lethal phenotypes so they're all in one row
-lethal_genes <- unique(mgi$MGI_ID[which(mgi$is_lethal=="Y")])
+mgi_df$is_lethal <- ifelse(mgi_df$MP_ID%in%mgi_lethalphens$MP.id,"Y","N")
 
-for (p in 1:length(lethal_genes)) {
-  rows <- which(mgi$MGI_ID==lethal_genes[p])
-  a<- unique(mgi$MP_ID[rows])
-  mgi$MP_ID[rows[1]] <- paste(a[which(!is.na(a))],collapse=", ")
-  if (length(rows)>1) {  
-    mgi <- mgi[-rows[-1],]
-  }
-  print(p)
-}
+#mp ids
+mgi$MP_ID <- lapply(mgi$MGI_ID, function(x) unique(mgi_df$MP_ID[which(mgi_df$MGI_ID==x&mgi_df$is_lethal=="Y")]))
+mgi$MP_phen <- lapply(mgi$MP_ID, function(x) mgi_lethalphens$phenotype[which(mgi_lethalphens$MP.id%in%x)])
 
-#get rid of non-lethal gene duplicate rows
-mgi$is_lethal[which(!is.na(mgi$MP_ID))]<-"Y"
-mgi<- mgi[-which(duplicated(mgi$MGI_ID)),]
+#allele info
+mgi$allele_info <- lapply(mgi$MGI_ID, function(x) unique(mgi_df$allele_info[which(mgi_df$MGI_ID==x&mgi_df$is_lethal=="Y")]))
+
+#is_lethal
+mgi$is_lethal <- ifelse(lapply(mgi$MP_ID,length)==0,"N","Y")
 
 # add on gene names and human ortholog names
 mgi_names <- read.xlsx("Gene_lists/MGI_MPs/HMD_HumanPhenotype.xlsx")
@@ -40,5 +35,5 @@ mgi$human_symbol <- checkGeneSymbols(mgi$human_symbol,unmapped.as.na=FALSE,hgnc.
 
 mgi <- mgi[-which(is.na(mgi$mouse_symbol)),]  
 
-rm(a,mgi_names,lethal_genes,rows,p)
+rm(allele,mgi_names,mgi_df,mgi_lethalphens,MGI_ID)
 write.xlsx(mgi,"output/spreadsheets/MGI_genes_with_phenotypes.xlsx")
