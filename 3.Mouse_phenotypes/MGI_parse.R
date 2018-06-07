@@ -36,4 +36,5 @@ mgi$human_symbol <- checkGeneSymbols(mgi$human_symbol,unmapped.as.na=FALSE,hgnc.
 mgi <- mgi[-which(is.na(mgi$mouse_symbol)),]  
 
 rm(allele,mgi_names,mgi_df,mgi_lethalphens,MGI_ID)
+save(mgi, file="output/Data/mgi.rda", compress="bzip2")
 write.xlsx(mgi,"output/spreadsheets/MGI_genes_with_phenotypes.xlsx")

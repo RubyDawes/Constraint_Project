@@ -14,8 +14,6 @@ omim$Phenotypes <- levels(omim$Phenotypes)[omim$Phenotypes]
 omim$Approved.Symbol <- levels(omim$Approved.Symbol)[omim$Approved.Symbol]
 omim$Mouse.Gene.Symbol.ID <- levels(omim$Mouse.Gene.Symbol.ID)[omim$Mouse.Gene.Symbol.ID]
 
-
-
 # keep only rows containing phenotype mapping key (3) "molecular basis is known"
 omim <- omim[which(grepl(pattern="\\(3)",x=omim$Phenotypes,ignore.case=FALSE)==TRUE),]
 
@@ -34,8 +32,6 @@ symbols <- symbols[which(grepl(pattern="gene",symbols$MIM.Entry.Type..see.FAQ.1.
 omim$Gene <- vlookup(omim$Mim.Number,symbols,result_column="Approved.Gene.Symbol..HGNC.",lookup_column="MIM.Number")
 omim$Gene <- ifelse(omim$Gene=="",ifelse(omim$Mim.Number%in%symbols$MIM.Number,omim$Approved.Symbol,NA),omim$Gene)
 omim<- omim[-which(is.na(omim$Gene)),]
-
-
 
 #updating gene names
 omim$Gene <- checkGeneSymbols(omim$Gene,unmapped.as.na=TRUE,hgnc.table=hgnc.table)[[3]]
