@@ -1,5 +1,4 @@
 # Constraint_Project
-<<<<<<< HEAD
 Integration of available data from OMIM (mendelian disease), ExAC (genetic constraint), MGI (lethal mouse knockouts), CRISPR screens (cell essentiality) for analysis
 
 ## Data Sources
@@ -39,5 +38,3 @@ list of all protein-coding genes downloaded from [HGNC statistics & Downloads pa
 'Master.R' describes each script and guides you through the order in which to run scripts, and whether to load from rda to avoid slow scripts
 
 
-=======
->>>>>>> parent of a89afc8... updated readme
