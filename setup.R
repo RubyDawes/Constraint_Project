@@ -13,8 +13,6 @@ library(VennDiagram)
 library(kableExtra)
 library(reshape2)
 library(data.table)
-library(ontologyIndex)
-library(rio)
 
 load("output/Data/hgnc.table.rda")
 

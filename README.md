@@ -17,7 +17,7 @@ ExAC scores downloaded from [ExAC Downloads page](http://exac.broadinstitute.org
 
 ### 3. Mouse knockouts
 HMD_HumanPhenotype, MGI_PhenoGenoMP, MGI_PhenotypicAllele downloaded from [MGI Data and Statistical Reports page](http://www.informatics.jax.org/downloads/reports/index.html) and converted to xlsx for ease of reading in R/excel
-- file location: Gene_lists/MGI_MPs/...
+- filt location: Gene_lists/MGI_MPs/...
 
 Gene_lists/MGI_MPs/MGI_lethal_phenotypes is a result of manual curation of MP terms to find lethal MP terms
 

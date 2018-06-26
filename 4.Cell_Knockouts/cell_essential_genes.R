@@ -22,9 +22,9 @@ cell_KOs <- data.frame(common_genes,ifelse(vlookup(common_genes,blomen,result_co
                        ifelse(vlookup(common_genes,wang,result_column = "raji",lookup_column="Gene")=="essential",1,0),ifelse(vlookup(common_genes,hart,result_column = "hct",lookup_column="Gene")=="essential",1,0),
                        ifelse(vlookup(common_genes,hart,result_column = "hela",lookup_column="Gene")=="essential",1,0),ifelse(vlookup(common_genes,hart,result_column = "gbm",lookup_column="Gene")=="essential",1,0),
                        ifelse(vlookup(common_genes,hart,result_column = "rpe1",lookup_column="Gene")=="essential",1,0),ifelse(vlookup(common_genes,hart,result_column = "dld1",lookup_column="Gene")=="essential",1,0))
-colnames(cell_KOs) <- c("Gene","blomen_hap1","blomen_kbm7","wang_kbm7","wang_k562","wang_jiyoye","wang_raji","hart_hct","hart_hela","hart_gbm","hart_rpe1","hart_dld1")
+colnames(cell_KOs) <- c("Gene","blomen_hap1","blomen_kbm7","wang_kbm7","wang_k562","wang_jiyoye","wang_raji","wang_hct","wang_hela","wang_gbm","wang_rpe1","wang_dld1")
 cell_KOs$no_hits <- cell_KOs$blomen_hap1+cell_KOs$blomen_kbm7+cell_KOs$wang_kbm7+cell_KOs$wang_k562+cell_KOs$wang_jiyoye+cell_KOs$wang_raji+
-                        cell_KOs$hart_hct+cell_KOs$hart_hela+cell_KOs$hart_gbm+cell_KOs$hart_rpe1+cell_KOs$hart_dld1
+                        cell_KOs$wang_hct+cell_KOs$wang_hela+cell_KOs$wang_hct+cell_KOs$wang_hela+cell_KOs$wang_gbm+cell_KOs$wang_rpe1+cell_KOs$wang_dld1
 
 save(cell_KOs, file="output/Data/cell_KOs.rda", compress="bzip2")
 rm(blomen,hart,wang,common_genes)

@@ -28,29 +28,17 @@ a
 dev.off()
 
 ###############Figure 2
-#omim_AR <- exac[which(exac$gene%in%omim$Gene[which(omim$Inheritance_pattern=="AR")]),]
-#omim_ARAD <- exac[which(exac$gene%in%omim$Gene[which(omim$Inheritance_pattern=="AR,AD")]),]
-#omim_AD <- exac[which(exac$gene%in%omim$Gene[which(omim$Inheritance_pattern=="AD")]),]
-#omim_XL <-exac[which(exac$gene%in%omim$Gene[which(grepl(pattern="XL",omim$Inheritance_pattern,ignore.case=FALSE)&!grepl(pattern="MT",omim$Inheritance_pattern,ignore.case=FALSE))]),]
-#omim_MT <- exac[which(exac$gene%in%omim$Gene[which(grepl(pattern="MT",omim$Inheritance_pattern,ignore.case=FALSE))]),]
+omim_AR <- exac[which(exac$gene%in%omim$Gene[which(omim$Inheritance_pattern=="AR")]),]
+omim_ARAD <- exac[which(exac$gene%in%omim$Gene[which(omim$Inheritance_pattern=="AR,AD")]),]
+omim_AD <- exac[which(exac$gene%in%omim$Gene[which(omim$Inheritance_pattern=="AD")]),]
+omim_XL <-exac[which(exac$gene%in%omim$Gene[which(grepl(pattern="XL",omim$Inheritance_pattern,ignore.case=FALSE)&!grepl(pattern="MT",omim$Inheritance_pattern,ignore.case=FALSE))]),]
+omim_MT <- exac[which(exac$gene%in%omim$Gene[which(grepl(pattern="MT",omim$Inheritance_pattern,ignore.case=FALSE))]),]
 
-#inh_mis <- data.frame(MT=c(length(which(omim_MT$mis_z>=3.09))/length(omim_MT$gene),length(which(omim_MT$mis_z<3.09))/length(omim_MT$gene)),
-#                      AR=c(length(which(omim_AR$mis_z>=3.09))/length(omim_AR$gene),length(which(omim_AR$mis_z<3.09))/length(omim_AR$gene)),
-#                      ARAD=c(length(which(omim_ARAD$mis_z>=3.09))/length(omim_ARAD$gene),length(which(omim_ARAD$mis_z<3.09))/length(omim_ARAD$gene)),
-#                      AD=c(length(which(omim_AD$mis_z>=3.09))/length(omim_AD$gene),length(which(omim_AD$mis_z<3.09))/length(omim_AD$gene)),
-#                      XL=c(length(which(omim_XL$mis_z>=3.09))/length(omim_XL$gene),length(which(omim_XL$mis_z<3.09))/length(omim_XL$gene)))
-
-inh_mis <- data.frame(MT=c(length(which(grepl(pattern="MT",universe_df$Inheritance_pattern)&universe_df$mis_z>=3.09))/length(which(grepl(pattern="MT",universe_df$Inheritance_pattern)&!is.na(universe_df$exac))),
-                           length(which(grepl(pattern="MT",universe_df$Inheritance_pattern)&universe_df$mis_z<3.09))/length(which(grepl(pattern="MT",universe_df$Inheritance_pattern)&!is.na(universe_df$exac)))),
-                      AR=c(length(which(universe_df$Inheritance_pattern=="AR"&universe_df$mis_z>=3.09))/length(which(universe_df$Inheritance_pattern=="AR"&!is.na(universe_df$exac))),
-                           length(which(universe_df$Inheritance_pattern=="AR"&universe_df$mis_z<3.09))/length(which(universe_df$Inheritance_pattern=="AR"&!is.na(universe_df$exac)))),
-                      "AR,AD"=c(length(which(universe_df$Inheritance_pattern=="AR,AD"&universe_df$mis_z>=3.09))/length(which(universe_df$Inheritance_pattern=="AR,AD"&!is.na(universe_df$exac))),
-                                length(which(universe_df$Inheritance_pattern=="AR,AD"&universe_df$mis_z<3.09))/length(which(universe_df$Inheritance_pattern=="AR,AD"&!is.na(universe_df$exac)))),
-                      AD=c(length(which(universe_df$Inheritance_pattern=="AD"&universe_df$mis_z>=3.09))/length(which(universe_df$Inheritance_pattern=="AD"&!is.na(universe_df$exac))),
-                           length(which(universe_df$Inheritance_pattern=="AD"&universe_df$mis_z<3.09))/length(which(universe_df$Inheritance_pattern=="AD"&!is.na(universe_df$exac)))),
-                      XL=c(length(which(grepl("XL",universe_df$Inheritance_pattern)&!grepl("MT",universe_df$Inheritance_pattern)&universe_df$mis_z>=3.09))/length(which(grepl("XL",universe_df$Inheritance_pattern)&!grepl("MT",universe_df$Inheritance_pattern)&!is.na(universe_df$exac))),
-                           length(which(grepl("XL",universe_df$Inheritance_pattern)&!grepl("MT",universe_df$Inheritance_pattern)&universe_df$mis_z<3.09))/length(which(grepl("XL",universe_df$Inheritance_pattern)&!grepl("MT",universe_df$Inheritance_pattern)&!is.na(universe_df$exac)))))
-
+inh_mis <- data.frame(MT=c(length(which(omim_MT$mis_z>=3.09))/length(omim_MT$gene),length(which(omim_MT$mis_z<3.09))/length(omim_MT$gene)),
+                      AR=c(length(which(omim_AR$mis_z>=3.09))/length(omim_AR$gene),length(which(omim_AR$mis_z<3.09))/length(omim_AR$gene)),
+                      ARAD=c(length(which(omim_ARAD$mis_z>=3.09))/length(omim_ARAD$gene),length(which(omim_ARAD$mis_z<3.09))/length(omim_ARAD$gene)),
+                      AD=c(length(which(omim_AD$mis_z>=3.09))/length(omim_AD$gene),length(which(omim_AD$mis_z<3.09))/length(omim_AD$gene)),
+                      XL=c(length(which(omim_XL$mis_z>=3.09))/length(omim_XL$gene),length(which(omim_XL$mis_z<3.09))/length(omim_XL$gene)))
 inh_mism <- melt(inh_mis)
 inh_mism$mis_constraint <- rep(c("missense constraint", "no missense constraint"), 5)
 
@@ -63,23 +51,11 @@ png("Sandra_Figures/Figs/fig2a.png",width=1000,height=1000,type="quartz",res=150
 d
 dev.off()
 
-#inh_lof <- data.frame(MT=c(length(which(omim_MT$pLI>=0.9))/length(omim_MT$gene),length(which(omim_MT$pLI<0.9))/length(omim_MT$gene)),
-#                      AR=c(length(which(omim_AR$pLI>=0.9))/length(omim_AR$gene),length(which(omim_AR$pLI<0.9))/length(omim_AR$gene)),
-#                      ARAD=c(length(which(omim_ARAD$pLI>=0.9))/length(omim_ARAD$gene),length(which(omim_ARAD$pLI<0.9))/length(omim_ARAD$gene)),
-#                      AD=c(length(which(omim_AD$pLI>=0.9))/length(omim_AD$gene),length(which(omim_AD$pLI<0.9))/length(omim_AD$gene)),
-#                      XL=c(length(which(omim_XL$pLI>=0.9))/length(omim_XL$gene),length(which(omim_XL$pLI<0.9))/length(omim_XL$gene)))
-inh_lof <- data.frame(MT=c(length(which(grepl(pattern="MT",universe_df$Inheritance_pattern)&universe_df$pLI>=0.9))/length(which(grepl(pattern="MT",universe_df$Inheritance_pattern)&!is.na(universe_df$exac))),
-                           length(which(grepl(pattern="MT",universe_df$Inheritance_pattern)&universe_df$pLI<0.9))/length(which(grepl(pattern="MT",universe_df$Inheritance_pattern)&!is.na(universe_df$exac)))),
-                      AR=c(length(which(universe_df$Inheritance_pattern=="AR"&universe_df$pLI>=0.9))/length(which(universe_df$Inheritance_pattern=="AR"&!is.na(universe_df$exac))),
-                           length(which(universe_df$Inheritance_pattern=="AR"&universe_df$pLI<0.9))/length(which(universe_df$Inheritance_pattern=="AR"&!is.na(universe_df$exac)))),
-                      "AR,AD"=c(length(which(universe_df$Inheritance_pattern=="AR,AD"&universe_df$pLI>=0.9))/length(which(universe_df$Inheritance_pattern=="AR,AD"&!is.na(universe_df$exac))),
-                                length(which(universe_df$Inheritance_pattern=="AR,AD"&universe_df$pLI<0.9))/length(which(universe_df$Inheritance_pattern=="AR,AD"&!is.na(universe_df$exac)))),
-                      AD=c(length(which(universe_df$Inheritance_pattern=="AD"&universe_df$pLI>=0.9))/length(which(universe_df$Inheritance_pattern=="AD"&!is.na(universe_df$exac))),
-                           length(which(universe_df$Inheritance_pattern=="AD"&universe_df$pLI<0.9))/length(which(universe_df$Inheritance_pattern=="AD"&!is.na(universe_df$exac)))),
-                      XL=c(length(which(grepl("XL",universe_df$Inheritance_pattern)&!grepl("MT",universe_df$Inheritance_pattern)&universe_df$pLI>=0.9))/length(which(grepl("XL",universe_df$Inheritance_pattern)&!grepl("MT",universe_df$Inheritance_pattern)&!is.na(universe_df$exac))),
-                           length(which(grepl("XL",universe_df$Inheritance_pattern)&!grepl("MT",universe_df$Inheritance_pattern)&universe_df$pLI<0.9))/length(which(grepl("XL",universe_df$Inheritance_pattern)&!grepl("MT",universe_df$Inheritance_pattern)&!is.na(universe_df$exac)))))
-
-
+inh_lof <- data.frame(MT=c(length(which(omim_MT$pLI>=0.9))/length(omim_MT$gene),length(which(omim_MT$pLI<0.9))/length(omim_MT$gene)),
+                      AR=c(length(which(omim_AR$pLI>=0.9))/length(omim_AR$gene),length(which(omim_AR$pLI<0.9))/length(omim_AR$gene)),
+                      ARAD=c(length(which(omim_ARAD$pLI>=0.9))/length(omim_ARAD$gene),length(which(omim_ARAD$pLI<0.9))/length(omim_ARAD$gene)),
+                      AD=c(length(which(omim_AD$pLI>=0.9))/length(omim_AD$gene),length(which(omim_AD$pLI<0.9))/length(omim_AD$gene)),
+                      XL=c(length(which(omim_XL$pLI>=0.9))/length(omim_XL$gene),length(which(omim_XL$pLI<0.9))/length(omim_XL$gene)))
 inh_lofm <- melt(inh_lof)
 inh_lofm$lof_constraint <- rep(c("LoF constraint", "no LoF constraint"), 5)
 
