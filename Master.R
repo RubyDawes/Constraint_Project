@@ -30,7 +30,6 @@ load("output/Data/cell_KOs.rda")
 
 #puts all info on disease status, phenotype, exac scores, mouse phenotypes and cell knockouts for each protein-coding gene in HGNC into one 
 ##dataframe 'universe'
-source("5.Universe/making_universe_df.R")
+source("Universe/making_universe_df.R")
 load("output/Data/universe_df.rda")
-
 
