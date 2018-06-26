@@ -16,15 +16,28 @@ mgi <- data.frame(MGI_ID)
 mgi_lethalphens <- read.xlsx("Gene_lists/MGI_MPs/MGI_lethal_phenotypes.xlsx")
 mgi_df$is_lethal <- ifelse(mgi_df$MP_ID%in%mgi_lethalphens$MP.id,"Y","N")
 
+#getting all other phens
+mgi_allphens <- read.xlsx("Gene_lists/MGI_MPs/VOC_MammalianPhenotype.xlsx",startRow=1,colNames=FALSE)
+names(mgi_allphens)<- c("MP.id","phenotype","definition")
+
+#high level phens
+mgi_highphens <- read.xlsx("Gene_lists/MGI_MPs/HMD_HumanPhenotype.xlsx")
+mgi_highphens <- mgi_highphens[,c(6,7)]
+names(mgi_highphens) <- c("MGI.id","phenotype")
 #mp ids
-mgi$MP_ID <- lapply(mgi$MGI_ID, function(x) unique(mgi_df$MP_ID[which(mgi_df$MGI_ID==x&mgi_df$is_lethal=="Y")]))
-mgi$MP_phen <- lapply(mgi$MP_ID, function(x) mgi_lethalphens$phenotype[which(mgi_lethalphens$MP.id%in%x)])
+mgi$all_MP_ID <- lapply(mgi$MGI_ID, function(x) unique(mgi_df$MP_ID[which(mgi_df$MGI_ID==x)]))
+mgi$lethal_MP_ID <- lapply(mgi$MGI_ID, function(x) unique(mgi_df$MP_ID[which(mgi_df$MGI_ID==x&mgi_df$is_lethal=="Y")]))
+mgi$all_MP_phen <- lapply(mgi$all_MP_ID, function(x) mgi_allphens$phenotype[which(mgi_allphens$MP.id%in%x)])
+mgi$lethal_MP_phen <- lapply(mgi$lethal_MP_ID, function(x) mgi_lethalphens$phenotype[which(mgi_lethalphens$MP.id%in%x)])
+
+mgi$high_MP_ID <- strsplit(vlookup(mgi$MGI_ID,mgi_highphens,result_column="phenotype",lookup_column="MGI.id"),split=" ")
+mgi$high_MP_phen <- lapply(mgi$high_MP_ID,function(x) unique(mgi_allphens$phenotype[which(mgi_allphens$MP.id%in%x)]))
 
 #allele info
 mgi$allele_info <- lapply(mgi$MGI_ID, function(x) unique(mgi_df$allele_info[which(mgi_df$MGI_ID==x&mgi_df$is_lethal=="Y")]))
 
 #is_lethal
-mgi$is_lethal <- ifelse(lapply(mgi$MP_ID,length)==0,"N","Y")
+mgi$is_lethal <- ifelse(lapply(mgi$lethal_MP_ID,length)==0,"N","Y")
 
 # add on gene names and human ortholog names
 mgi_names <- read.xlsx("Gene_lists/MGI_MPs/HMD_HumanPhenotype.xlsx")
