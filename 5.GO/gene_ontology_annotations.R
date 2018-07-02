@@ -1,6 +1,6 @@
 goa <- read.table("Gene_lists/Gene_Ontology/goa_human.gaf",header=FALSE,sep="\t",comment.char="!",fill=TRUE)
 goa <- goa[-which(grepl("NOT",goa$V4)),]
-goa$V7 <- checkGeneSymbols(goa$V7,hgnc.table=hgnc.table,unmapped.as.na = FALSE)[[3]]
+goa$V3 <- checkGeneSymbols(goa$V3,hgnc.table=hgnc.table,unmapped.as.na = FALSE)[[3]]
 universe_df$go_terms <- lapply(universe_df$gene, function(x) as.character(unique(goa$V5[which(goa$V3%in%x)])))
 universe_df$go_terms[which(lengths(universe_df$go_terms)==0)] <- list(NULL)
 rm(goa)
