@@ -23,6 +23,15 @@ bar_twosided_theme <- function() {
       legend.position="none"
     )
 }
+scatter_theme <- function() {
+  theme_bw(base_size=20,base_family="Avenir") %+replace%
+    theme(
+      panel.grid=element_blank(),
+      panel.border = element_blank(),
+      axis.line = element_line(),
+      plot.title=element_text(size=20, face="bold")
+    )
+}
 bar_blank_theme <- function() {
   theme_bw(base_size=40,base_family="Avenir") %+replace%
     theme(
