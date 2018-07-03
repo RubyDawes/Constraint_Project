@@ -23,6 +23,9 @@ source("plot_functions.R")
 #mgi <- read.xlsx("output/spreadsheets/MGI_genes_with_phenotypes.xlsx)
 #load("output/Data/mgi.rda")
 
+#IMPC data
+#source("3.Mouse_phenotypes/IMPC_phenotypes.R")
+
 #df of genes tested in wang, blomen and hart CRISPR knockout papers and whether they were lethal or not in each of the 11 cell lines
 ##tested throughout the three papers
 #source("4.Cell_Knockouts/cell_essential_genes.R")

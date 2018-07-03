@@ -17,9 +17,8 @@ universe_df$constrained <- ifelse(universe_df$mis_z>=3.09|universe_df$pLI>=0.9,"
 rm(exac)
 
 #MGI mouse knockouts- lethal or non-lethal in a mouse
-universe_df$mouse_ko <- ifelse(universe_df$gene%in%mgi$human_symbol,"Y",NA)
 universe_df$MGI_ID <- vlookup(universe_df$gene,mgi,result_column="MGI_ID",lookup_column="human_symbol")
-universe_df$lethal_mouse <- vlookup(universe_df$gene,mgi,result_column="is_lethal",lookup_column="human_symbol")
+universe_df$lethal_MGI <- vlookup(universe_df$gene,mgi,result_column="is_lethal",lookup_column="human_symbol")
 universe_df$lethal_MP_ID <- vlookup(universe_df$gene,mgi,result_column="lethal_MP_ID",lookup_column="human_symbol")
 universe_df$lethal_MP_phen <- vlookup(universe_df$gene,mgi,result_column="lethal_MP_phen",lookup_column="human_symbol")
 universe_df$all_MP_ID <- vlookup(universe_df$gene,mgi,result_column="all_MP_ID",lookup_column="human_symbol")
@@ -28,7 +27,13 @@ universe_df$high_MP_ID <- vlookup(universe_df$gene,mgi,result_column="high_MP_ID
 universe_df$high_MP_phen <- vlookup(universe_df$gene,mgi,result_column="high_MP_phen",lookup_column="human_symbol")
 universe_df$allele_info <- vlookup(universe_df$gene,mgi,result_column="allele_info",lookup_column="human_symbol")
 universe_df$mouse_symbol <- vlookup(universe_df$gene,mgi,result_column="mouse_symbol",lookup_column="human_symbol")
-rm(mgi)
+
+#IMPC phenotype data
+universe_df$IMPC_phen <- vlookup(universe_df$gene,impc,result_column="IMPC",lookup_column="Gene_symbol")
+
+universe_df$mouse_ko <- ifelse(!is.na(universe_df$MGI_ID),"Y",ifelse(!is.na(universe_df$IMPC_phen),"Y",NA))
+universe_df$lethal_mouse <- ifelse(universe_df$lethal_MGI=="Y","Y",ifelse(universe_df$iMPC_phen=="Lethal","Y","N"))
+rm(mgi,impc)
 
 #cell knockouts
 #source("4.Cell_Knockouts/cell_essential_genes.R")
@@ -56,7 +61,5 @@ rm(hpo_annotations)
 
 
 save(universe_df, file="output/Data/universe_df.rda", compress="bzip2")
-write.xlsx(universe_df[,c(1:30)],"output/spreadsheets/universe_all_info.xlsx",append=TRUE)
-
-
+write.xlsx(universe_df[,c(1:31)],"output/spreadsheets/universe_all_info.xlsx",append=TRUE)
 
