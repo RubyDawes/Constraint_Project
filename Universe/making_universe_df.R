@@ -32,7 +32,7 @@ universe_df$mouse_symbol <- vlookup(universe_df$gene,mgi,result_column="mouse_sy
 universe_df$IMPC_phen <- vlookup(universe_df$gene,impc,result_column="IMPC",lookup_column="Gene_symbol")
 
 universe_df$mouse_ko <- ifelse(!is.na(universe_df$MGI_ID),"Y",ifelse(!is.na(universe_df$IMPC_phen),"Y",NA))
-universe_df$lethal_mouse <- ifelse(universe_df$lethal_MGI=="Y","Y",ifelse(universe_df$iMPC_phen=="Lethal","Y","N"))
+universe_df$lethal_mouse <- ifelse(grepl(pattern="Y|Lethal",paste(universe_df$lethal_MGI,universe_df$IMPC_phen)),"Y",ifelse(!is.na(universe_df$mouse_ko),"N",NA))
 rm(mgi,impc)
 
 #cell knockouts
