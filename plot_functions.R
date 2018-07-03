@@ -1,7 +1,7 @@
 #theme for pie charts
 
 blank_theme <- function() {
-  theme_minimal(base_size=12,base_family="Avenir") %+replace%
+  theme_minimal(base_size=12,base_family="Helvetica") %+replace%
     theme(
       axis.title.x = element_blank(),
       axis.title.y = element_blank(),
@@ -14,7 +14,7 @@ blank_theme <- function() {
     )
 }
 bar_twosided_theme <- function() {
-  theme_bw(base_size=20,base_family="Avenir") %+replace%
+  theme_bw(base_size=20,base_family="Helvetica") %+replace%
     theme(
       panel.grid=element_blank(),
       panel.border = element_blank(),
@@ -24,7 +24,7 @@ bar_twosided_theme <- function() {
     )
 }
 scatter_theme <- function() {
-  theme_bw(base_size=20,base_family="Avenir") %+replace%
+  theme_bw(base_size=20,base_family="Helvetica") %+replace%
     theme(
       panel.grid=element_blank(),
       panel.border = element_blank(),
@@ -33,7 +33,7 @@ scatter_theme <- function() {
     )
 }
 bar_blank_theme <- function() {
-  theme_bw(base_size=40,base_family="Avenir") %+replace%
+  theme_bw(base_size=40,base_family="Helvetica") %+replace%
     theme(
       axis.title.x = element_blank(),
       axis.title.y = element_blank(),
@@ -47,7 +47,7 @@ bar_blank_theme <- function() {
     )
 }
 bar_theme <- function() {
-  theme_bw(base_size=20,base_family="Avenir") %+replace%
+  theme_bw(base_size=20,base_family="Helvetica") %+replace%
     theme(
       axis.title.x = element_blank(),
       panel.grid=element_blank(),
@@ -59,7 +59,7 @@ bar_theme <- function() {
 }
 
 density_theme <- function() {
-  theme_bw(base_size=12,base_family="Avenir") %+replace%
+  theme_bw(base_size=12,base_family="Helvetica") %+replace%
     theme(
       axis.title.y = element_blank(),
       panel.border = element_blank(),

@@ -11,16 +11,15 @@ omim_ko_pie <- ggplot(omim_ko, aes(x="", y=value, fill=group))
 omim_ko_pie<- omim_ko_pie+geom_bar(width = 1, stat = "identity")+blank_theme()+coord_polar(theta="y",direction=-1)
 omim_ko_pie<- omim_ko_pie+scale_fill_manual(values=c("slategray1","slategray"))+theme(legend.position="none")
 omim_ko_pie<- omim_ko_pie+geom_text(aes(y = value,label = percent(value/sum(value))),size=6,position = position_stack(vjust = 0.5))
-omim_ko_pie<- omim_ko_pie+ggtitle(paste("OMIM genes \n n=",length(which(universe_df$omim=="Y"))))+theme(plot.title = element_text(size = 20, face = "bold"))
+omim_ko_pie<- omim_ko_pie+ggtitle(paste("OMIM genes \n n=",length(which(universe_df$omim=="Y"))))+theme(plot.title = element_text(size = 20, face = "bold"),legend.text=element_text(size=12))
 
 nonomim_ko_pie <- ggplot(nonomim_ko, aes(x="", y=value, fill=group))
 nonomim_ko_pie<- nonomim_ko_pie+geom_bar(width = 1, stat = "identity")+blank_theme()+coord_polar(theta="y",direction=-1)
 nonomim_ko_pie<- nonomim_ko_pie+scale_fill_manual(values=c("slategray1","slategray"))+theme(legend.position="none")
 nonomim_ko_pie<- nonomim_ko_pie+geom_text(aes(y = value,label = percent(value/sum(value))),size=6,position = position_stack(vjust = 0.5))
-nonomim_ko_pie<- nonomim_ko_pie+ggtitle(paste("non-OMIM genes \n n=",length(which(is.na(universe_df$omim)))))+theme(plot.title = element_text(size = 20, face = "bold"))
+nonomim_ko_pie<- nonomim_ko_pie+ggtitle(paste("Non-OMIM genes \n n=",length(which(is.na(universe_df$omim)))))+theme(plot.title = element_text(size = 20, face = "bold"),legend.text=element_text(size=12))
 
 
-png("Sandra_Figures/Figs/fig2a-KOpies.png",width=1000,height=500,type="quartz",res=150,bg = "transparent")
 ggarrange(omim_ko_pie,nonomim_ko_pie,common.legend=TRUE,legend="bottom")
+  ggsave("Sandra_Figures/Figs/fig2a-KOpies.pdf",height=5, width=10, units='in')
   dev.off()
-  
