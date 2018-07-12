@@ -15,6 +15,8 @@ library(reshape2)
 library(data.table)
 library(ontologyIndex)
 library(rio)
+library(ggpubr)
+library(XML)
 
 load("output/Data/hgnc.table.rda")
 

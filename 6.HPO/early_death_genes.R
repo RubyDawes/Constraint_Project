@@ -24,8 +24,28 @@ png("output/figures/lethal_proportions_phens.png",width=1500,height=1000,type="q
 d
 dev.off()
 
+a<-length(which(grepl("Stillbirth",universe_df$hpo_names)&universe_df$lethal_mouse=="Y"))
+b<-length(which(grepl("Stillbirth",universe_df$hpo_names)&!is.na(universe_df$lethal_mouse)))
+binom.confint(x=a,n=b,conf.level=0.95,method='wilson')
+a<-length(which(grepl("Neonatal death",universe_df$hpo_names)&universe_df$lethal_mouse=="Y"))
+b<-length(which(grepl("Neonatal death",universe_df$hpo_names)&!is.na(universe_df$lethal_mouse)))
+binom.confint(x=a,n=b,conf.level=0.95,method='wilson')
+a<-length(which(grepl("Death in infancy",universe_df$hpo_names)&universe_df$lethal_mouse=="Y"))
+b<-length(which(grepl("Death in infancy",universe_df$hpo_names)&!is.na(universe_df$lethal_mouse)))
+binom.confint(x=a,n=b,conf.level=0.95,method='wilson')
+a<-length(which(grepl("Death in childhood",universe_df$hpo_names)&universe_df$lethal_mouse=="Y"))
+b<-length(which(grepl("Death in childhood",universe_df$hpo_names)&!is.na(universe_df$lethal_mouse)))
+binom.confint(x=a,n=b,conf.level=0.95,method='wilson')
+a<-length(which(grepl("Sudden death",universe_df$hpo_names)&universe_df$lethal_mouse=="Y"))
+b<-length(which(grepl("Sudden death",universe_df$hpo_names)&!is.na(universe_df$lethal_mouse)))
+binom.confint(x=a,n=b,conf.level=0.95,method='wilson')
+a<-length(which(grepl("Death in early adulthood",universe_df$hpo_names)&universe_df$lethal_mouse=="Y"))
+b<-length(which(grepl("Death in early adulthood",universe_df$hpo_names)&!is.na(universe_df$lethal_mouse)))
+binom.confint(x=a,n=b,conf.level=0.95,method='wilson')
+
 length(which(grepl("Stillbirth",universe_df$hpo_names)&universe_df$constrained=="Y"))
 length(which(grepl("Stillbirth",universe_df$hpo_names)&universe_df$constrained=="N"))
+
 length(which(grepl("Neonatal death",universe_df$hpo_names)&universe_df$constrained=="Y"))
 length(which(grepl("Neonatal death",universe_df$hpo_names)&universe_df$constrained=="N"))
 length(which(grepl("Death in infancy",universe_df$hpo_names)&universe_df$constrained=="Y"))
