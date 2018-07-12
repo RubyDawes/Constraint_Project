@@ -38,7 +38,6 @@ retrieve_variants <- function(omim_id){
   names(search_results)<- c("phenotypes","mutations","missense_mutations","lof_mutations","text")
   return(search_results)
 }
-retrieve_variants_clinvar
 ###POOL1 AD genes have LoF constraint but no missense constraint- pool 1
 #fix later
 universe_df$mim_number[which(universe_df$Inheritance_pattern=="AD"&universe_df$pLI>=0.9&universe_df$mis_z<3.09)][99]<-"600049"
@@ -130,4 +129,34 @@ general_cats <- c("HP:0000707","HP:0000478","HP:0000152","HP:0000119","HP:000092
 general_cats_names <- get.shortened.names(hp,general_cats)
 
 cell_ess_hpo_anc <- lapply(cell_ess_hpo,function(x) get.ancestors(hp,x))
+library(httr)
 
+clinvar_txt <- read.csv("Gene_lists/ClinVar/variant_summary.txt",sep="\t",stringsAsFactors = FALSE)
+  
+retrieve_variants_clinvar<- function(omim_id){
+  my_mim   <- paste('mimNumber=', omim_id, sep='')
+  my_link  <- 'http://api.omim.org/api/entry?'
+  my_query <- paste(my_link, my_mim, "&include=allelicVariantList&include=existFlags&",my_key,sep='')
+  xml<-xmlTreeParse(my_query, useInternalNodes=TRUE)
+  clinvar <- unlist(xpathApply(xml, "/omim/entryList/entry/allelicVariantList/allelicVariant/clinvarAccessions",xmlValue))
+  clinvar<-unlist(strsplit(clinvar,";;;"))
+  clinvar_query<-unlist(lapply(1:length(clinvar),function(x) paste("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=clinvar&rettype=clinvarset&id=",clinvar[x],sep="")))
+  clinvar_xml <- unlist(lapply(1:length(clinvar_query),function(x) xmlTreeParse(rawToChar(GET(clinvar_query[x])$content),useInternalNodes=TRUE)))
+  clinvar_consequence<-lapply(1:length(clinvar_xml),function(x) xpathApply(clinvar_xml[[x]],"/ClinVarResult-Set/ClinVarSet/ReferenceClinVarAssertion/MeasureSet[@Type='Variant']/Measure/AttributeSet/Attribute[@Type='MolecularConsequence']"))
+  clinvar_consequence<-lapply(1:length(clinvar_consequence),function(x) unlist(lapply(clinvar_consequence[[x]],xmlValue),recursive = FALSE))
+
+  mim_phen_id <- unlist(lapply(1:length(clinvar),function(x) vlookup(clinvar[x],clinvar_txt,result_column="PhenotypeIDS",lookup_column="RCVaccession")))
+  mim_phen <- unlist(lapply(1:length(clinvar),function(x) vlookup(clinvar[x],clinvar_txt,result_column="PhenotypeList",lookup_column="RCVaccession")))
+  results<- data.frame(clinvar,clinvar_consequence,mim_phen_id,mim_phen)
+  names(results)<- c("clinvar","clinvar_consequence","mim_phen_id","mim_phen")
+  return(results)
+}
+xpathApply(clinvar_xml[[1]],'/ClinVarResult-Set/ClinVarSet/ReferenceClinVarAssertion/TraitSet[@Type="Disease"]/Trait/Name/ElementValue[@Type="Preferred"]',xmlValue)
+#clinvar stuff
+pool1_clinvar <- unlist(lapply(pool1$mim_ids,retrieve_variants_clinvar))
+for (i in 1:length(pool1$mim_ids)){
+  retrieve_variants_clinvar(pool1$mim_ids[i])
+}
+
+
+  
