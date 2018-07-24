@@ -17,6 +17,8 @@ library(ontologyIndex)
 library(rio)
 library(ggpubr)
 library(XML)
+library(plyr)
+library("hpoPlot")
 
 load("output/Data/hgnc.table.rda")
 
