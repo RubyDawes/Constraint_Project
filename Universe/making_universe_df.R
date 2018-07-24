@@ -55,11 +55,18 @@ rm(go_annotations)
 #this is slow- just load
 #source("5.HPO/getting_HPO_terms.R")
 load("output/Data/HPO_annotations.rda")
-universe_df$hpo_terms <- as.character(hpo_annotations$universe_df.HPO_id)
+universe_df$hpo_terms <- hpo_annotations$universe_df.HPO_id
 universe_df$hpo_names <- hpo_annotations$universe_df.HPO_name
-rm(hpo_annotations)
+hp <- get.ontology("Gene_lists/HPO/hp.obo",qualifier="HP")
+universe_df$hpo_ancestors <- lapply(universe_df$hpo_terms,function(x) get.ancestors(hp,x))
+general_cats <- c("HP:0000707","HP:0000478","HP:0000152","HP:0000119","HP:0000924","HP:0001939","HP:0003011",
+                  "HP:0001871","HP:0001626","HP:0002664","HP:0002715","HP:0001574","HP:0040064","HP:0025031",
+                  "HP:0000598","HP:0000818","HP:0002086","HP:0001197","HP:0003549","HP:0000769","HP:0001507","HP:0045027")
+general_cats_names <- get.shortened.names(hp,general_cats)
+universe_df$hpo_slim <- lapply(universe_df$hpo_ancestors,function(x) general_cats_names[which(general_cats%in%x)])
+rm(hpo_annotations,hp,general_cats,general_cats_names)
 
 
 save(universe_df, file="output/Data/universe_df.rda", compress="bzip2")
-write.xlsx(universe_df[,c(1:31)],"output/spreadsheets/universe_all_info.xlsx",append=TRUE)
+write.xlsx(universe_df,"output/spreadsheets/universe_all_info.xlsx",append=TRUE)
 
