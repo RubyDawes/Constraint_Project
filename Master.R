@@ -16,6 +16,9 @@ source("plot_functions.R")
 #get exac scores for protein coding genes
 #source("Universe_Data/2.ExAC_constraint/exac_constraint.R")
 
+#regional constraint
+#source("Universe_Data/Regional_constraint.R")
+
 #take all genes with mouse knockout/hypomorph phenotypes from MGI, see which ones are lethal and what the lethal phenotypes are
 ##for list of lethal phenotypes see Gene_lists/MGI_MPs/MGI_lethal_phenotypes.xlsx
 ###warning: pretty time consuming (takes about ~1.5 mins to run) recommend loading from output spreadsheet or rda
@@ -30,6 +33,7 @@ source("plot_functions.R")
 ##tested throughout the three papers
 #source("Universe_Data/4.Cell_Knockouts/cell_essential_genes.R")
 #load("output/Data/cell_KOs.rda")
+
 
 #puts all info on disease status, phenotype, exac scores, mouse phenotypes and cell knockouts for each protein-coding gene in HGNC into one 
 ##dataframe 'universe'

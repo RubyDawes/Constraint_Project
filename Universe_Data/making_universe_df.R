@@ -16,6 +16,23 @@ universe_df$pLI <- vlookup(universe_df$gene,exac,result_column="pLI",lookup_colu
 universe_df$constrained <- ifelse(universe_df$mis_z>=3.09|universe_df$pLI>=0.9,"Y","N")
 rm(exac)
 
+#regional constraint
+universe_df$highest_ccr<-vlookup(universe_df$gene,highest_ccr,lookup_column = "gene",result_column = "ccr")
+universe_df$ccr99<-ifelse(universe_df$gene%in%ccr99_genes$gene,"Y","N")
+universe_df$ccr99_n<-vlookup(universe_df$gene,ccr99_genes,lookup_column = "gene",result_column = "n")
+rm(ccr99_genes,highest_ccr)
+
+universe_df$regional_missense_constraint <- ifelse(universe_df$gene%in%genes_w_var$gene,"Y","N")
+universe_df$regional_missense_gamma<-vlookup(universe_df$gene,genes_w_var,lookup_column = "gene",result_column = "lowest_gamma")
+rm(genes_w_var)
+
+universe_df$nmd_min <-ifelse(universe_df$gene%in%nmd_min$gene,"Y","N")
+universe_df$nmd_min_rank <- vlookup(universe_df$gene,nmd_min,lookup_column = "gene",result_column = "min.rank")
+universe_df$nmd_min_rank<-universe_df$nmd_min_rank/0.01
+rm(nmd_min)
+
+universe_df$any_constraint <- ifelse(universe_df$mis_z>=3.09|universe_df$pLI>=0.9|universe_df$ccr99=="Y"|universe_df$regional_missense_constraint=="Y"|universe_df$nmd_min=="Y","Y","N")
+
 #MGI mouse knockouts- lethal or non-lethal in a mouse
 universe_df$MGI_ID <- vlookup(universe_df$gene,mgi,result_column="MGI_ID",lookup_column="human_symbol")
 universe_df$lethal_MGI <- vlookup(universe_df$gene,mgi,result_column="is_lethal",lookup_column="human_symbol")
@@ -69,8 +86,8 @@ rm(hpo_annotations,hp,general_cats,general_cats_names)
 #human lethal genes- are the genes in my OMIM API search for genes causing lethality in humans
 load("output/Data/human_lethal_genes.rda")
 universe_df$human_lethal <- ifelse(is.na(vlookup(universe_df$gene,lethal_genes)),"N","Y")
-
+rm(lethal_genes)
 
 save(universe_df, file="output/Data/universe_df.rda", compress="bzip2")
-write.xlsx(universe_df,"output/spreadsheets/universe_all_info.xlsx",append=TRUE)
+write.xlsx(universe_df[,c(1:39,44:46)],"output/spreadsheets/universe_all_info.xlsx",append=TRUE)
 
