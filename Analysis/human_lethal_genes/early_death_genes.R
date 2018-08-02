@@ -20,6 +20,7 @@ d <- ggplot(dat=death_phens_mousem, aes(x=variable, y=value, fill=lethality))
 d<- d+geom_bar(width = 0.8, stat = "identity",color="slategray",position=position_fill(reverse = TRUE))+scale_y_continuous(expand = c(0, 0)) +bar_theme()
 d<- d+labs(x = "HPO term")+scale_fill_manual(values=c("black","steelblue3"))+theme(legend.position="bottom")+coord_flip()
 d<- d+scale_y_continuous(breaks = pretty(death_phens_mousem$value, n = 5))
+
 png("output/figures/lethal_proportions_phens.png",width=1500,height=1000,type="quartz",res=150,bg = "transparent")
 d
 dev.off()
