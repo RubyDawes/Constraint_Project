@@ -1,80 +1,119 @@
+#3a: inheritance stacked bar charts NMD and human lethal
+inh_mis_nmd <- data.frame(MT=c(length(which(grepl(pattern="MT",universe_df$Inheritance_pattern)&universe_df$nmd=="Y"&universe_df$mis_z>=3.09))/length(which(grepl(pattern="MT",universe_df$Inheritance_pattern)&universe_df$nmd=="Y"&!is.na(universe_df$exac))),
+                               length(which(grepl(pattern="MT",universe_df$Inheritance_pattern)&universe_df$nmd=="Y"&universe_df$mis_z<3.09))/length(which(grepl(pattern="MT",universe_df$Inheritance_pattern)&universe_df$nmd=="Y"&!is.na(universe_df$exac)))),
+                          AR=c(length(which(universe_df$Inheritance_pattern=="AR"&universe_df$nmd=="Y"&universe_df$mis_z>=3.09))/length(which(universe_df$Inheritance_pattern=="AR"&universe_df$nmd=="Y"&!is.na(universe_df$exac))),
+                               length(which(universe_df$Inheritance_pattern=="AR"&universe_df$nmd=="Y"&universe_df$mis_z<3.09))/length(which(universe_df$Inheritance_pattern=="AR"&universe_df$nmd=="Y"&!is.na(universe_df$exac)))),
+                          "ARAD"=c(length(which(universe_df$Inheritance_pattern=="AR,AD"&universe_df$nmd=="Y"&universe_df$mis_z>=3.09))/length(which(universe_df$Inheritance_pattern=="AR,AD"&universe_df$nmd=="Y"&!is.na(universe_df$exac))),
+                                   length(which(universe_df$Inheritance_pattern=="AR,AD"&universe_df$nmd=="Y"&universe_df$mis_z<3.09))/length(which(universe_df$Inheritance_pattern=="AR,AD"&universe_df$nmd=="Y"&!is.na(universe_df$exac)))),
+                          AD=c(length(which(universe_df$Inheritance_pattern=="AD"&universe_df$nmd=="Y"&universe_df$mis_z>=3.09))/length(which(universe_df$Inheritance_pattern=="AD"&universe_df$nmd=="Y"&!is.na(universe_df$exac))),
+                               length(which(universe_df$Inheritance_pattern=="AD"&universe_df$nmd=="Y"&universe_df$mis_z<3.09))/length(which(universe_df$Inheritance_pattern=="AD"&universe_df$nmd=="Y"&!is.na(universe_df$exac)))),
+                          XL=c(length(which(grepl("XL",universe_df$Inheritance_pattern)&!grepl("MT",universe_df$Inheritance_pattern)&universe_df$nmd=="Y"&universe_df$mis_z>=3.09))/length(which(grepl("XL",universe_df$Inheritance_pattern)&!grepl("MT",universe_df$Inheritance_pattern)&universe_df$nmd=="Y"&!is.na(universe_df$exac))),
+                               length(which(grepl("XL",universe_df$Inheritance_pattern)&!grepl("MT",universe_df$Inheritance_pattern)&universe_df$nmd=="Y"&universe_df$mis_z<3.09))/length(which(grepl("XL",universe_df$Inheritance_pattern)&!grepl("MT",universe_df$Inheritance_pattern)&universe_df$nmd=="Y"&!is.na(universe_df$exac)))))
 
-###3a
-#get wang, blomen, hart genes and essentialomes
-#read wang genes and which are essential in different cell lines
-wang <- read.xlsx("Gene_lists/Cell_KOs/wang_essentials.xlsx",startRow = 1, colNames = TRUE, rowNames = FALSE)
-wang$Gene<- checkGeneSymbols(wang$Gene, unmapped.as.na=FALSE,hgnc.table=hgnc.table)[[3]]
-wang<- wang[-which(duplicated(wang$Gene)=="TRUE"),] 
+inh_mis_nmdm <- melt(inh_mis_nmd)
+inh_mis_nmdm$mis_constraint <- rep(c("Missense constraint     ", "No missense constraint     "), 5)
 
-#read blomen genes and which are essential in different cell lines
-blomen <- read.xlsx("Gene_lists/Cell_KOs/blomen_essentials.xlsx",startRow = 1, colNames = TRUE, rowNames = FALSE)
-blomen$Gene<- checkGeneSymbols(blomen$Gene, unmapped.as.na=FALSE,hgnc.table=hgnc.table)[[3]]
-blomen<- blomen[-which(duplicated(blomen$Gene)=="TRUE"),] 
+f <- ggplot(dat=inh_mis_nmdm, aes(x=variable, y=value, fill=mis_constraint))
+f<- f+geom_bar(width = 0.8, stat = "identity",color="slategray",position=position_fill(reverse = TRUE))+scale_y_continuous(expand = c(0, 0)) +bar_theme()
+f<- f+labs(y = "Proportion")+scale_fill_manual(values=c("lightsalmon2","steelblue3"))+theme(legend.position="bottom")
+ggsave("Analysis/Sandra_Figures/Figs/fig3ai.pdf",height=7, width=7, units='cm')
+rm(inh_mis_nmd,inh_mis_nmdm,f)
+inh_mis_human_lethal <- data.frame(MT=c(length(which(grepl(pattern="MT",universe_df$Inheritance_pattern)&universe_df$human_lethal=="Y"&universe_df$mis_z>=3.09))/length(which(grepl(pattern="MT",universe_df$Inheritance_pattern)&universe_df$human_lethal=="Y"&!is.na(universe_df$exac))),
+                                        length(which(grepl(pattern="MT",universe_df$Inheritance_pattern)&universe_df$human_lethal=="Y"&universe_df$mis_z<3.09))/length(which(grepl(pattern="MT",universe_df$Inheritance_pattern)&universe_df$human_lethal=="Y"&!is.na(universe_df$exac)))),
+                                   AR=c(length(which(universe_df$Inheritance_pattern=="AR"&universe_df$human_lethal=="Y"&universe_df$mis_z>=3.09))/length(which(universe_df$Inheritance_pattern=="AR"&universe_df$human_lethal=="Y"&!is.na(universe_df$exac))),
+                                        length(which(universe_df$Inheritance_pattern=="AR"&universe_df$human_lethal=="Y"&universe_df$mis_z<3.09))/length(which(universe_df$Inheritance_pattern=="AR"&universe_df$human_lethal=="Y"&!is.na(universe_df$exac)))),
+                                   "ARAD"=c(length(which(universe_df$Inheritance_pattern=="AR,AD"&universe_df$human_lethal=="Y"&universe_df$mis_z>=3.09))/length(which(universe_df$Inheritance_pattern=="AR,AD"&universe_df$human_lethal=="Y"&!is.na(universe_df$exac))),
+                                            length(which(universe_df$Inheritance_pattern=="AR,AD"&universe_df$human_lethal=="Y"&universe_df$mis_z<3.09))/length(which(universe_df$Inheritance_pattern=="AR,AD"&universe_df$human_lethal=="Y"&!is.na(universe_df$exac)))),
+                                   AD=c(length(which(universe_df$Inheritance_pattern=="AD"&universe_df$human_lethal=="Y"&universe_df$mis_z>=3.09))/length(which(universe_df$Inheritance_pattern=="AD"&universe_df$human_lethal=="Y"&!is.na(universe_df$exac))),
+                                        length(which(universe_df$Inheritance_pattern=="AD"&universe_df$human_lethal=="Y"&universe_df$mis_z<3.09))/length(which(universe_df$Inheritance_pattern=="AD"&universe_df$human_lethal=="Y"&!is.na(universe_df$exac)))),
+                                   XL=c(length(which(grepl("XL",universe_df$Inheritance_pattern)&!grepl("MT",universe_df$Inheritance_pattern)&universe_df$human_lethal=="Y"&universe_df$mis_z>=3.09))/length(which(grepl("XL",universe_df$Inheritance_pattern)&!grepl("MT",universe_df$Inheritance_pattern)&universe_df$human_lethal=="Y"&!is.na(universe_df$exac))),
+                                        length(which(grepl("XL",universe_df$Inheritance_pattern)&!grepl("MT",universe_df$Inheritance_pattern)&universe_df$human_lethal=="Y"&universe_df$mis_z<3.09))/length(which(grepl("XL",universe_df$Inheritance_pattern)&!grepl("MT",universe_df$Inheritance_pattern)&universe_df$human_lethal=="Y"&!is.na(universe_df$exac)))))
+inh_mis_human_lethalm <- melt(inh_mis_human_lethal)
+inh_mis_human_lethalm$mis_constraint <- rep(c("Missense constraint     ", "No missense constraint     "), 5)
 
-#read hart genes and which are essential in different cell lines
-hart <- read.xlsx("Gene_lists/Cell_KOs/hart_essentials.xlsx",startRow = 1, colNames = TRUE, rowNames = FALSE)
-hart$Gene<- checkGeneSymbols(hart$Gene, unmapped.as.na=FALSE,hgnc.table=hgnc.table)[[3]]
-hart<- hart[-which(duplicated(hart$Gene)=="TRUE"),] 
+f <- ggplot(dat=inh_mis_human_lethalm, aes(x=variable, y=value, fill=mis_constraint))
+f<- f+geom_bar(width = 0.8, stat = "identity",color="slategray",position=position_fill(reverse = TRUE))+scale_y_continuous(expand = c(0, 0)) +bar_theme()
+f<- f+labs(y = "Proportion")+scale_fill_manual(values=c("lightsalmon2","steelblue3"))+theme(legend.position="bottom")
+ggsave("Analysis/Sandra_Figures/Figs/fig3aii.pdf",height=7, width=7, units='cm')
+rm(inh_mis_human_lethal,inh_mis_human_lethalm,f)
 
-common_genes <-data.frame(intersect(wang$Gene,intersect(hart$Gene,blomen$Gene)))
-names(common_genes) <- "genes"
-common_genes$wang_essentialome <- vlookup(common_genes$genes,wang,result_column = "essentialome",lookup_column = "Gene")
-common_genes$blomen_essentialome <- vlookup(common_genes$genes,blomen,result_column = "essentialome",lookup_column = "Gene")
-common_genes$hart_essentialome <- vlookup(common_genes$genes,hart,result_column = "essentialome",lookup_column = "Gene")
+inh_lof_nmd <- data.frame(MT=c(length(which(grepl(pattern="MT",universe_df$Inheritance_pattern)&universe_df$nmd=="Y"&universe_df$pLI>=0.9))/length(which(grepl(pattern="MT",universe_df$Inheritance_pattern)&universe_df$nmd=="Y"&!is.na(universe_df$exac))),
+                               length(which(grepl(pattern="MT",universe_df$Inheritance_pattern)&universe_df$nmd=="Y"&universe_df$pLI<0.9))/length(which(grepl(pattern="MT",universe_df$Inheritance_pattern)&universe_df$nmd=="Y"&!is.na(universe_df$exac)))),
+                          AR=c(length(which(universe_df$Inheritance_pattern=="AR"&universe_df$nmd=="Y"&universe_df$pLI>=0.9))/length(which(universe_df$Inheritance_pattern=="AR"&universe_df$nmd=="Y"&!is.na(universe_df$exac))),
+                               length(which(universe_df$Inheritance_pattern=="AR"&universe_df$nmd=="Y"&universe_df$pLI<0.9))/length(which(universe_df$Inheritance_pattern=="AR"&universe_df$nmd=="Y"&!is.na(universe_df$exac)))),
+                          "ARAD"=c(length(which(universe_df$Inheritance_pattern=="AR,AD"&universe_df$nmd=="Y"&universe_df$pLI>=0.9))/length(which(universe_df$Inheritance_pattern=="AR,AD"&universe_df$nmd=="Y"&!is.na(universe_df$exac))),
+                                   length(which(universe_df$Inheritance_pattern=="AR,AD"&universe_df$nmd=="Y"&universe_df$pLI<0.9))/length(which(universe_df$Inheritance_pattern=="AR,AD"&universe_df$nmd=="Y"&!is.na(universe_df$exac)))),
+                          AD=c(length(which(universe_df$Inheritance_pattern=="AD"&universe_df$nmd=="Y"&universe_df$pLI>=0.9))/length(which(universe_df$Inheritance_pattern=="AD"&universe_df$nmd=="Y"&!is.na(universe_df$exac))),
+                               length(which(universe_df$Inheritance_pattern=="AD"&universe_df$nmd=="Y"&universe_df$pLI<0.9))/length(which(universe_df$Inheritance_pattern=="AD"&universe_df$nmd=="Y"&!is.na(universe_df$exac)))),
+                          XL=c(length(which(grepl("XL",universe_df$Inheritance_pattern)&!grepl("MT",universe_df$Inheritance_pattern)&universe_df$nmd=="Y"&universe_df$pLI>=0.9))/length(which(grepl("XL",universe_df$Inheritance_pattern)&!grepl("MT",universe_df$Inheritance_pattern)&universe_df$nmd=="Y"&!is.na(universe_df$exac))),
+                               length(which(grepl("XL",universe_df$Inheritance_pattern)&!grepl("MT",universe_df$Inheritance_pattern)&universe_df$nmd=="Y"&universe_df$pLI<0.9))/length(which(grepl("XL",universe_df$Inheritance_pattern)&!grepl("MT",universe_df$Inheritance_pattern)&universe_df$nmd=="Y"&!is.na(universe_df$exac)))))
 
-overrideTriple<- "ye"
-png('Sandra_Figures/Figs/fig3a-BWH_venn_nolabels.png',width=30,height=30,units="cm",res=1000)
-draw.triple.venn(area1 = length(which(common_genes$wang_essentialome=="essential")), area2 = length(which(common_genes$blomen_essentialome=="essential")), area3 = length(which(common_genes$hart_essentialome=="essential")), 
-                 n12 = length(which(common_genes$wang_essentialome=="essential"&common_genes$blomen_essentialome=="essential")),
-                 n23 = length(which(common_genes$hart_essentialome=="essential"&common_genes$blomen_essentialome=="essential")), 
-                 n13 = length(which(common_genes$wang_essentialome=="essential"&common_genes$hart_essentialome=="essential")), 
-                 n123 = length(which(common_genes$wang_essentialome=="essential"&common_genes$blomen_essentialome=="essential"&common_genes$hart_essentialome=="essential")), category = c("Wang", "Blomen", "Hart"), lty = "blank", 
-                 fill = c("#f1c266", "#f3a292", "#65bbc4"), euler.d = TRUE, scaled = TRUE,fontfamily=rep("Helvetica",7),cat.fontfamily = rep("Helvetica", 3),cex=rep(5,7),cat.cex=rep(0,3))
-dev.off()
-png('Sandra_Figures/Figs/fig3a-BWH_venn_withlabels.png',width=30,height=30,units="cm",res=1000)
-draw.triple.venn(area1 = length(which(common_genes$wang_essentialome=="essential")), area2 = length(which(common_genes$blomen_essentialome=="essential")), area3 = length(which(common_genes$hart_essentialome=="essential")), 
-                 n12 = length(which(common_genes$wang_essentialome=="essential"&common_genes$blomen_essentialome=="essential")),
-                 n23 = length(which(common_genes$hart_essentialome=="essential"&common_genes$blomen_essentialome=="essential")), 
-                 n13 = length(which(common_genes$wang_essentialome=="essential"&common_genes$hart_essentialome=="essential")), 
-                 n123 = length(which(common_genes$wang_essentialome=="essential"&common_genes$blomen_essentialome=="essential"&common_genes$hart_essentialome=="essential")), category = c("Wang", "Blomen", "Hart"), lty = "blank", 
-                 fill = c("#f1c266", "#f3a292", "#65bbc4"), euler.d = TRUE, scaled = TRUE,fontfamily=rep("Helvetica",7),cat.fontfamily = rep("Helvetica", 3),cex=rep(5,7),cat.cex=rep(3,3))
+inh_lof_nmdm <- melt(inh_lof_nmd)
+inh_lof_nmdm$mis_constraint <- rep(c("Missense constraint     ", "No missense constraint     "), 5)
 
-dev.off()
-rm(wang,hart,blomen,common_genes,overrideTriple)
+f <- ggplot(dat=inh_lof_nmdm, aes(x=variable, y=value, fill=mis_constraint))
+f<- f+geom_bar(width = 0.8, stat = "identity",color="slategray",position=position_fill(reverse = TRUE))+scale_y_continuous(expand = c(0, 0)) +bar_theme()
+f<- f+labs(y = "Proportion")+scale_fill_manual(values=c("indianred3","steelblue3"))+theme(legend.position="bottom")
+ggsave("Analysis/Sandra_Figures/Figs/fig3aiii.pdf",height=7, width=7, units='cm')
+rm(inh_lof_nmd,inh_lof_nmdm,f)
 
+inh_lof_human_lethal <- data.frame(MT=c(length(which(grepl(pattern="MT",universe_df$Inheritance_pattern)&universe_df$human_lethal=="Y"&universe_df$pLI>=0.9))/length(which(grepl(pattern="MT",universe_df$Inheritance_pattern)&universe_df$human_lethal=="Y"&!is.na(universe_df$exac))),
+                                        length(which(grepl(pattern="MT",universe_df$Inheritance_pattern)&universe_df$human_lethal=="Y"&universe_df$pLI<0.9))/length(which(grepl(pattern="MT",universe_df$Inheritance_pattern)&universe_df$human_lethal=="Y"&!is.na(universe_df$exac)))),
+                                   AR=c(length(which(universe_df$Inheritance_pattern=="AR"&universe_df$human_lethal=="Y"&universe_df$pLI>=0.9))/length(which(universe_df$Inheritance_pattern=="AR"&universe_df$human_lethal=="Y"&!is.na(universe_df$exac))),
+                                        length(which(universe_df$Inheritance_pattern=="AR"&universe_df$human_lethal=="Y"&universe_df$pLI<0.9))/length(which(universe_df$Inheritance_pattern=="AR"&universe_df$human_lethal=="Y"&!is.na(universe_df$exac)))),
+                                   "ARAD"=c(length(which(universe_df$Inheritance_pattern=="AR,AD"&universe_df$human_lethal=="Y"&universe_df$pLI>=0.9))/length(which(universe_df$Inheritance_pattern=="AR,AD"&universe_df$human_lethal=="Y"&!is.na(universe_df$exac))),
+                                            length(which(universe_df$Inheritance_pattern=="AR,AD"&universe_df$human_lethal=="Y"&universe_df$pLI<0.9))/length(which(universe_df$Inheritance_pattern=="AR,AD"&universe_df$human_lethal=="Y"&!is.na(universe_df$exac)))),
+                                   AD=c(length(which(universe_df$Inheritance_pattern=="AD"&universe_df$human_lethal=="Y"&universe_df$pLI>=0.9))/length(which(universe_df$Inheritance_pattern=="AD"&universe_df$human_lethal=="Y"&!is.na(universe_df$exac))),
+                                        length(which(universe_df$Inheritance_pattern=="AD"&universe_df$human_lethal=="Y"&universe_df$pLI<0.9))/length(which(universe_df$Inheritance_pattern=="AD"&universe_df$human_lethal=="Y"&!is.na(universe_df$exac)))),
+                                   XL=c(length(which(grepl("XL",universe_df$Inheritance_pattern)&!grepl("MT",universe_df$Inheritance_pattern)&universe_df$human_lethal=="Y"&universe_df$pLI>=0.9))/length(which(grepl("XL",universe_df$Inheritance_pattern)&!grepl("MT",universe_df$Inheritance_pattern)&universe_df$human_lethal=="Y"&!is.na(universe_df$exac))),
+                                        length(which(grepl("XL",universe_df$Inheritance_pattern)&!grepl("MT",universe_df$Inheritance_pattern)&universe_df$human_lethal=="Y"&universe_df$pLI<0.9))/length(which(grepl("XL",universe_df$Inheritance_pattern)&!grepl("MT",universe_df$Inheritance_pattern)&universe_df$human_lethal=="Y"&!is.na(universe_df$exac)))))
 
-###3b
-cell_line_cutoff_levels <- seq(1, 11, by=1)
-cell_line_cutoff_numbers <- lapply(cell_line_cutoff_levels,function(x) length(which(universe_df$cell_essential_hits >= x)))
-cutoffs <- data.frame(cell_line_cutoff_levels,unlist(cell_line_cutoff_numbers))
-names(cutoffs)<-c("levels","numbers")
-chosen <- subset(cutoffs, levels== "3")
-png('Sandra_Figures/Figs/fig3b_cell_cutoffs.png',width=30,height=30,units="cm",res=1000)
-cell_cutoff_plot <- ggplot(cutoffs,aes(x=levels,y=numbers))+
-  geom_point(size=6,color="sandybrown")+scatter_theme()+
-  labs(x="Number of cell lines",y="Number of essential genes")+
-  scale_y_continuous(breaks = pretty(cutoffs$numbers, n = 10))+
-  scale_x_continuous(breaks = pretty(cutoffs$levels, n = 10))
-ggsave("Sandra_Figures/Figs/fig3b_cell_cutoffs.pdf",height=6.5, width=6.5, units='in')
-dev.off()
-rm(cell_line_cutoff_numbers,cell_line_cutoff_levels,cutoffs,chosen,cell_cutoff_plot)
+inh_lof_human_lethalm <- melt(inh_lof_human_lethal)
+inh_lof_human_lethalm$mis_constraint <- rep(c("Missense constraint     ", "No missense constraint     "), 5)
 
+f <- ggplot(dat=inh_lof_human_lethalm, aes(x=variable, y=value, fill=mis_constraint))
+f<- f+geom_bar(width = 0.8, stat = "identity",color="slategray",position=position_fill(reverse = TRUE))+scale_y_continuous(expand = c(0, 0)) +bar_theme()
+f<- f+labs(y = "Proportion")+scale_fill_manual(values=c("indianred3","steelblue3"))+theme(legend.position="bottom")
+ggsave("Analysis/Sandra_Figures/Figs/fig3aiv.pdf",height=7, width=7, units='cm')
+rm(inh_lof_human_lethal,inh_lof_human_lethalm,f)
 
-###3c
-#overlap between cell + mouse lethality when using cutoff of 3 cell lines
+#Figure 3B proportions of mouse lethal for OMIM, NMD and human_lethal
+mouse_lethal_prop <- data.frame(OMIM=c(length(which(universe_df$omim=="Y"&universe_df$lethal_mouse=="Y"))/length(which(universe_df$omim=="Y"&!is.na(universe_df$lethal_mouse))),
+                                       length(which(universe_df$omim=="Y"&universe_df$lethal_mouse=="N"))/length(which(universe_df$omim=="Y"&!is.na(universe_df$lethal_mouse)))),
+                                Human_Lethal=c(length(which(universe_df$human_lethal=="Y"&universe_df$lethal_mouse=="Y"))/length(which(universe_df$human_lethal=="Y"&!is.na(universe_df$lethal_mouse))),
+                                               length(which(universe_df$human_lethal=="Y"&universe_df$lethal_mouse=="N"))/length(which(universe_df$human_lethal=="Y"&!is.na(universe_df$lethal_mouse)))))
 
-mouse=textGrob("Mouse Lethal", gp=gpar(fontsize=40,fontfamily="Helvetica"),rot=90)
-cell=textGrob("Cell Essential", gp=gpar(fontsize=40,fontfamily="Helvetica"),rot=270)
-a3=draw.pairwise.venn(area1 = length(which(universe_df$lethal_mouse=="N"&universe_df$cell_essential_hits>=3))+
-                        length(which(universe_df$lethal_mouse=="Y"&universe_df$cell_essential_hits>=3)),
-                      area2 = length(which(universe_df$lethal_mouse=="Y"&universe_df$cell_essential_hits<3))+
-                        length(which(universe_df$lethal_mouse=="Y"&universe_df$cell_essential_hits>=3)), 
-                      cross.area=length(which(universe_df$lethal_mouse=="Y"&universe_df$cell_essential_hits>=3)), 
-                      category = c("", ""), lty = "blank",fill = c("sandybrown", "firebrick4"), euler.d = TRUE, 
-                      scaled = TRUE,cat.default.pos='outer',cex=c(5,5,5),fontfamily="Helvetica")
+mouse_lethal_propm <- melt(mouse_lethal_prop)
+mouse_lethal_propm$mis_constraint <- rep(c("Mouse Lethal     ", "Mouse non-Lethal     "), 2)
 
-png('Sandra_Figures/Figs/fig3c_cellmouseoverlap.png',width=30,height=30,units="cm",res=1000)
-grid.arrange(gTree(children=a3),left=mouse,right=cell)
-dev.off()
+f <- ggplot(dat=mouse_lethal_propm, aes(x=variable, y=value, fill=mis_constraint))
+f<- f+geom_bar(width = 0.8, stat = "identity",color="slategray",position=position_fill(reverse = TRUE))+scale_y_continuous(expand = c(0, 0)) +bar_theme()
+f<- f+labs(y = "Proportion")+scale_fill_manual(values=c("black","steelblue3"))+theme(legend.position="bottom")
+ggsave("Analysis/Sandra_Figures/Figs/fig3bi.pdf",height=7, width=7, units='cm')
+rm(mouse_lethal_prop,mouse_lethal_propm,f)
 
 
+#Figure 3C HPO lethal annotations human lethal- mouse lethality
+
+death_phens_mouse <- data.frame("Stillbirth"=c(length(which(grepl("Stillbirth",universe_df$hpo_names)&universe_df$lethal_mouse=="Y"))/length(which(grepl("Stillbirth",universe_df$hpo_names)&!is.na(universe_df$lethal_mouse))),
+                                               length(which(grepl("Stillbirth",universe_df$hpo_names)&universe_df$lethal_mouse=="N"))/length(which(grepl("Stillbirth",universe_df$hpo_names)&!is.na(universe_df$lethal_mouse)))),
+                                "Neonatal death"=c(length(which(grepl("Neonatal death",universe_df$hpo_names)&universe_df$lethal_mouse=="Y"))/length(which(grepl("Neonatal death",universe_df$hpo_names)&!is.na(universe_df$lethal_mouse))),
+                                                   length(which(grepl("Neonatal death",universe_df$hpo_names)&universe_df$lethal_mouse=="N"))/length(which(grepl("Neonatal death",universe_df$hpo_names)&!is.na(universe_df$lethal_mouse)))),
+                                "Death in infancy"=c(length(which(grepl("Death in infancy",universe_df$hpo_names)&universe_df$lethal_mouse=="Y"))/length(which(grepl("Death in infancy",universe_df$hpo_names)&!is.na(universe_df$lethal_mouse))),
+                                                     length(which(grepl("Death in infancy",universe_df$hpo_names)&universe_df$lethal_mouse=="N"))/length(which(grepl("Death in infancy",universe_df$hpo_names)&!is.na(universe_df$lethal_mouse)))),
+                                "Death in childhood"=c(length(which(grepl("Death in childhood",universe_df$hpo_names)&universe_df$lethal_mouse=="Y"))/length(which(grepl("Death in childhood",universe_df$hpo_names)&!is.na(universe_df$lethal_mouse))),
+                                                       length(which(grepl("Death in childhood",universe_df$hpo_names)&universe_df$lethal_mouse=="N"))/length(which(grepl("Death in childhood",universe_df$hpo_names)&!is.na(universe_df$lethal_mouse)))),
+                                "Sudden death"=c(length(which(grepl("Sudden death",universe_df$hpo_names)&universe_df$lethal_mouse=="Y"))/length(which(grepl("Sudden death",universe_df$hpo_names)&!is.na(universe_df$lethal_mouse))),
+                                                 length(which(grepl("Sudden death",universe_df$hpo_names)&universe_df$lethal_mouse=="N"))/length(which(grepl("Sudden death",universe_df$hpo_names)&!is.na(universe_df$lethal_mouse)))),
+                                "Death in early adulthood"=c(length(which(grepl("Death in early adulthood",universe_df$hpo_names)&universe_df$lethal_mouse=="Y"))/length(which(grepl("Death in early adulthood",universe_df$hpo_names)&!is.na(universe_df$lethal_mouse))),
+                                                             length(which(grepl("Death in early adulthood",universe_df$hpo_names)&universe_df$lethal_mouse=="N"))/length(which(grepl("Death in early adulthood",universe_df$hpo_names)&!is.na(universe_df$lethal_mouse)))))
+
+
+death_phens_mousem <- melt(death_phens_mouse)
+death_phens_mousem$lethality <- rep(c("Lethal in a mouse", "Non-lethal in a muose"), 6)
+
+d <- ggplot(dat=death_phens_mousem, aes(x=variable, y=value, fill=lethality))
+d<- d+geom_bar(width = 0.8, stat = "identity",color="slategray",position=position_fill(reverse = TRUE))+scale_y_continuous(expand = c(0, 0)) +bar_theme()
+d<- d+labs(x = "HPO term")+scale_fill_manual(values=c("black","steelblue3"))+theme(legend.position="bottom")+coord_flip()
+d<- d+scale_y_continuous(breaks = pretty(death_phens_mousem$value, n = 5))
+ggsave("Analysis/Sandra_Figures/Figs/fig3bii.pdf",height=7, width=14, units='cm')

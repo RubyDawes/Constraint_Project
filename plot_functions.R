@@ -24,14 +24,14 @@ bar_twosided_theme <- function() {
     )
 }
 scatter_theme <- function() {
-  theme_bw(base_size=40,base_family="Helvetica") %+replace%
+  theme_bw(base_size=12,base_family="Helvetica") %+replace%
     theme(
       panel.grid=element_blank(),
       panel.border = element_blank(),
       axis.line = element_line(),
-      plot.title=element_text(size=40, face="bold"),
-      axis.title=element_text(size=30),
-      axis.text=element_text(size=30)
+      plot.title=element_text(size=12, face="bold"),
+      axis.title=element_text(size=12),
+      axis.text=element_text(size=12)
     )
 }
 scatter_theme_goodsizes <- function() {
@@ -71,6 +71,23 @@ bar_theme <- function() {
       legend.title=element_blank()
     )
 }
+
+bar_theme_or <- function() {
+  theme_bw(base_size=12,base_family="Helvetica") %+replace%
+    theme(
+      axis.title.x = element_blank(),
+      panel.grid=element_blank(),
+      panel.border = element_blank(),
+      axis.ticks.x = element_blank(),
+      axis.line.x = element_blank(),
+      axis.line.y = element_line(),
+      legend.title=element_blank()
+    )
+}
+
+
+
+
 
 density_theme <- function() {
   theme_bw(base_size=12,base_family="Helvetica") %+replace%
