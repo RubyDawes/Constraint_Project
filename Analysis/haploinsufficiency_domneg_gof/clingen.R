@@ -28,6 +28,7 @@ retrieve_haplo_evidence<-function(gene_name){
 
 clingen$evidence_text<-unlist(lapply(clingen$Gene.Symbol,retrieve_haplo_evidence))
 
+save(clingen, file="output/Data/clingen_haploinsufficiency_evidence.rda", compress="bzip2")
 
 #dominant negative
 

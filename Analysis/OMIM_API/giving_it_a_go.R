@@ -197,6 +197,13 @@ extract_phen_id <- function(phenotype){
   return(substr(phenotype,start,end))
 }
 
+extract_phen_id <- function(phenotype){
+  no_phens <- length(phenotype)
+  start<- unlist(lapply(1:no_phens,function(x) regexpr("\\(3\\)",phenotype[x])[1]-7))
+  end<-unlist(lapply(1:no_phens,function(x) regexpr("\\(3\\)",phenotype[x])[1]-2))
+  return(substr(phenotype,start,end))
+}
+
 lethal_genes$omim_phen_id<-lapply(lethal_genes$phenotype,extract_phen_id)
 
 lethal_genes$lethal_phenotype_mim <- lapply(lethal_genes$omim_phen_id,function(x) unique(x[which(x%in%results3$mim_numbers)]))
