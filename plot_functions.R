@@ -75,13 +75,13 @@ bar_theme <- function() {
 bar_theme_or <- function() {
   theme_bw(base_size=12,base_family="Helvetica") %+replace%
     theme(
-      axis.title.x = element_blank(),
       panel.grid=element_blank(),
       panel.border = element_blank(),
       axis.ticks.x = element_blank(),
       axis.line.x = element_blank(),
       axis.line.y = element_line(),
-      legend.title=element_blank()
+      legend.title=element_blank(),
+      legend.position = "none"
     )
 }
 

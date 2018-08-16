@@ -66,8 +66,8 @@ omim_metrics_OR<-data.frame(categories = c("Constraint","Murine Lethality", "Cel
 omim_metrics_OR$categories <- factor(omim_metrics_OR$categories, levels = omim_metrics_OR$categories)
 
 ggplot(omim_metrics_OR) +
-  geom_bar( aes(x=categories, y=OR), stat="identity", fill="grey") +
-  geom_errorbar( aes(x=categories, ymin=confint_lower, ymax=confint_upper), width=0.2, colour="orange", alpha=0.9, size=1)+
+  geom_bar( aes(x=categories, y=OR), stat="identity", fill=c("indianred3","black","sandybrown")) +
+  geom_errorbar( aes(x=categories, ymin=confint_lower, ymax=confint_upper), width=0.2, colour="grey40", alpha=0.9, size=1)+
   bar_theme_or()+geom_hline(yintercept=1)+
   scale_y_continuous(trans="log10", limits=c(NA,3),breaks = c(1.0,1.5, 2.0,2.5,3.0))+
   ylab("Odds Ratio \n (OMIM vs non-OMIM)")+theme(axis.text.x = element_text(angle=60, hjust=1))
@@ -94,8 +94,8 @@ omim_metrics_AD_OR<-data.frame(categories = c("Constraint","Murine Lethality", "
 omim_metrics_AD_OR$categories <- factor(omim_metrics_OR$categories, levels = omim_metrics_OR$categories)
 
 ggplot(omim_metrics_AD_OR) +
-  geom_bar( aes(x=categories, y=OR), stat="identity", fill="grey") +
-  geom_errorbar( aes(x=categories, ymin=confint_lower, ymax=confint_upper), width=0.2, colour="orange", alpha=0.9, size=1)+
+  geom_bar( aes(x=categories, y=OR), stat="identity", fill=c("indianred3","black","sandybrown")) +
+  geom_errorbar( aes(x=categories, ymin=confint_lower, ymax=confint_upper), width=0.2, colour="grey40", alpha=0.9, size=1)+
   bar_theme_or()+geom_hline(yintercept=1)+
   scale_y_continuous(trans="log10", limits=c(NA,5.5),breaks = c(1.0,1.5, 2.0,2.5,3.0,4,5))+
   ylab("Odds Ratio \n (AD OMIM vs non-OMIM)")+theme(axis.text.x = element_text(angle=60, hjust=1))
@@ -123,9 +123,66 @@ omim_metrics_AR_OR<-data.frame(categories = c("Constraint","Murine Lethality", "
 omim_metrics_AR_OR$categories <- factor(omim_metrics_OR$categories, levels = omim_metrics_OR$categories)
 
 ggplot(omim_metrics_AR_OR) +
-  geom_bar( aes(x=categories, y=OR), stat="identity", fill="grey") +
-  geom_errorbar( aes(x=categories, ymin=confint_lower, ymax=confint_upper), width=0.2, colour="orange", alpha=0.9, size=1)+
+  geom_bar( aes(x=categories, y=OR), stat="identity", fill=c("indianred3","black","sandybrown")) +
+  geom_errorbar( aes(x=categories, ymin=confint_lower, ymax=confint_upper), width=0.2, colour="grey40", alpha=0.9, size=1)+
   bar_theme_or()+geom_hline(yintercept=1)+
   scale_y_continuous(trans="log10", limits=c(NA,2.5),breaks = c(0.1,0.5,0.7,1.0,1.5, 2.0,2.5,3.0,4,5))+
   ylab("Odds Ratio \n (AR OMIM vs non-OMIM)")+theme(axis.text.x = element_text(angle=60, hjust=1))
 ggsave("Analysis/Sandra_Figures/Figs/OR_AR_metrics.pdf",height=7, width=7, units='cm')
+
+#comparing OR, grouped into: AR/MT/XLr AND AD/XLd
+omim_constraint_ARMTXLR_OR<- OR_test(length(which(universe_df$omim=="Y"&(grepl(pattern="AR",universe_df$Inheritance_pattern)|grepl(pattern="MT",universe_df$Inheritance_pattern)|grepl("XLr",universe_df$Inheritance_pattern))&universe_df$constrained=="Y")),
+                             length(which(is.na(universe_df$omim)&universe_df$constrained=="Y")),
+                             length(which(universe_df$omim=="Y"&(grepl(pattern="AR",universe_df$Inheritance_pattern)|grepl(pattern="MT",universe_df$Inheritance_pattern)|grepl("XLr",universe_df$Inheritance_pattern))&universe_df$constrained=="N")),
+                             length(which(is.na(universe_df$omim)&universe_df$constrained=="N")))
+omim_mouseleth_ARMTXLR_OR<- OR_test(length(which(universe_df$omim=="Y"&(grepl(pattern="AR",universe_df$Inheritance_pattern)|grepl(pattern="MT",universe_df$Inheritance_pattern)|grepl("XLr",universe_df$Inheritance_pattern))&universe_df$lethal_mouse=="Y")),
+                            length(which(is.na(universe_df$omim)&universe_df$lethal_mouse=="Y")),
+                            length(which(universe_df$omim=="Y"&(grepl(pattern="AR",universe_df$Inheritance_pattern)|grepl(pattern="MT",universe_df$Inheritance_pattern)|grepl("XLr",universe_df$Inheritance_pattern))&universe_df$lethal_mouse=="N")),
+                            length(which(is.na(universe_df$omim)&universe_df$lethal_mouse=="N")))
+omim_celless_ARMTXLR_OR<- OR_test(length(which(universe_df$omim=="Y"&(grepl(pattern="AR",universe_df$Inheritance_pattern)|grepl(pattern="MT",universe_df$Inheritance_pattern)|grepl("XLr",universe_df$Inheritance_pattern))&universe_df$cell_essential=="Y")),
+                          length(which(is.na(universe_df$omim)&universe_df$cell_essential=="Y")),
+                          length(which(universe_df$omim=="Y"&(grepl(pattern="AR",universe_df$Inheritance_pattern)|grepl(pattern="MT",universe_df$Inheritance_pattern)|grepl("XLr",universe_df$Inheritance_pattern))&universe_df$cell_essential=="N")),
+                          length(which(is.na(universe_df$omim)&universe_df$cell_essential=="N")))
+omim_metrics_ARMTXLR_OR<-data.frame(categories = c("Constraint","Murine Lethality", "Cell Essentiality"),
+                               OR = c(omim_constraint_ARMTXLR_OR$estimate,omim_mouseleth_ARMTXLR_OR$estimate,omim_celless_ARMTXLR_OR$estimate),
+                               confint_lower = c(omim_constraint_ARMTXLR_OR$conf.int[1],omim_mouseleth_ARMTXLR_OR$conf.int[1],omim_celless_ARMTXLR_OR$conf.int[1]),
+                               confint_upper = c(omim_constraint_ARMTXLR_OR$conf.int[2],omim_mouseleth_ARMTXLR_OR$conf.int[2],omim_celless_ARMTXLR_OR$conf.int[2]))
+
+omim_metrics_ARMTXLR_OR$categories <- factor(omim_metrics_OR$categories, levels = omim_metrics_OR$categories)
+
+ggplot(omim_metrics_ARMTXLR_OR) +
+  geom_bar( aes(x=categories, y=OR), stat="identity", fill=c("indianred3","black","sandybrown")) +
+  geom_errorbar( aes(x=categories, ymin=confint_lower, ymax=confint_upper), width=0.2, colour="grey40", alpha=0.9, size=1)+
+  bar_theme_or()+geom_hline(yintercept=1)+
+  scale_y_continuous(trans="log10", limits=c(NA,2.5),breaks = c(0.1,0.5,0.7,1.0,1.5, 2.0,2.5,3.0,4,5))+
+  ylab("Odds Ratio \n (AR/MT/XLr OMIM vs non-OMIM)")+theme(axis.text.x = element_text(angle=60, hjust=1))
+ggsave("Analysis/Sandra_Figures/Figs/OR_rec_inheritance_grouped.pdf",height=7, width=7, units='cm')
+
+
+omim_constraint_ADXLD_OR<- OR_test(length(which(universe_df$omim=="Y"&(grepl(pattern="AD",universe_df$Inheritance_pattern)|grepl(pattern="XLd",universe_df$Inheritance_pattern))&universe_df$constrained=="Y")),
+                                   length(which(is.na(universe_df$omim)&universe_df$constrained=="Y")),
+                                   length(which(universe_df$omim=="Y"&(grepl(pattern="AD",universe_df$Inheritance_pattern)|grepl(pattern="XLd",universe_df$Inheritance_pattern))&universe_df$constrained=="N")),
+                                   length(which(is.na(universe_df$omim)&universe_df$constrained=="N")))
+
+omim_mouseleth_ADXLD_OR<- OR_test(length(which(universe_df$omim=="Y"&(grepl(pattern="AD",universe_df$Inheritance_pattern)|grepl(pattern="XLd",universe_df$Inheritance_pattern))&universe_df$lethal_mouse=="Y")),
+                            length(which(is.na(universe_df$omim)&universe_df$lethal_mouse=="Y")),
+                            length(which(universe_df$omim=="Y"&(grepl(pattern="AD",universe_df$Inheritance_pattern)|grepl(pattern="XLd",universe_df$Inheritance_pattern))&universe_df$lethal_mouse=="N")),
+                            length(which(is.na(universe_df$omim)&universe_df$lethal_mouse=="N")))
+omim_celless_ADXLD_OR<- OR_test(length(which(universe_df$omim=="Y"&(grepl(pattern="AD",universe_df$Inheritance_pattern)|grepl(pattern="XLd",universe_df$Inheritance_pattern))&universe_df$cell_essential=="Y")),
+                          length(which(is.na(universe_df$omim)&universe_df$cell_essential=="Y")),
+                          length(which(universe_df$omim=="Y"&(grepl(pattern="AD",universe_df$Inheritance_pattern)|grepl(pattern="XLd",universe_df$Inheritance_pattern))&universe_df$cell_essential=="N")),
+                          length(which(is.na(universe_df$omim)&universe_df$cell_essential=="N")))
+omim_metrics_ADXLD_OR<-data.frame(categories = c("Constraint","Murine Lethality", "Cell Essentiality"),
+                               OR = c(omim_constraint_ADXLD_OR$estimate,omim_mouseleth_ADXLD_OR$estimate,omim_celless_ADXLD_OR$estimate),
+                               confint_lower = c(omim_constraint_ADXLD_OR$conf.int[1],omim_mouseleth_ADXLD_OR$conf.int[1],omim_celless_ADXLD_OR$conf.int[1]),
+                               confint_upper = c(omim_constraint_ADXLD_OR$conf.int[2],omim_mouseleth_ADXLD_OR$conf.int[2],omim_celless_ADXLD_OR$conf.int[2]))
+
+omim_metrics_ADXLD_OR$categories <- factor(omim_metrics_OR$categories, levels = omim_metrics_OR$categories)
+ggplot(omim_metrics_ADXLD_OR) +
+  geom_bar( aes(x=categories, y=OR), stat="identity", fill=c("indianred3","black","sandybrown")) +
+  geom_errorbar( aes(x=categories, ymin=confint_lower, ymax=confint_upper), width=0.2, colour="grey40", alpha=0.9, size=1)+
+  bar_theme_or()+geom_hline(yintercept=1)+
+  scale_y_continuous(trans="log10", limits=c(NA,4.5),breaks = c(0.1,0.5,0.7,1.0,1.5, 2.0,2.5,3.0,4,5))+
+  ylab("Odds Ratio \n (AD/XLd OMIM vs non-OMIM)")+theme(axis.text.x = element_text(angle=60, hjust=1))
+ggsave("Analysis/Sandra_Figures/Figs/OR_dom_inheritance_grouped.pdf",height=7, width=7, units='cm')
+

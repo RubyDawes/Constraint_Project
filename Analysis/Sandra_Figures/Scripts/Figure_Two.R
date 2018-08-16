@@ -44,8 +44,9 @@ hart <- read.xlsx("Gene_lists/Cell_KOs/hart_essentials.xlsx",startRow = 1, colNa
 hart$Gene<- checkGeneSymbols(hart$Gene, unmapped.as.na=FALSE)[[3]]
 hart<- hart[-which(duplicated(hart$Gene)=="TRUE"),] 
 
-common_genes <-data.frame(intersect(wang$Gene,intersect(hart$Gene,blomen$Gene)))
-names(common_genes) <- "genes"
+a<-intersect(wang$Gene,intersect(hart$Gene,blomen$Gene))
+common_genes <-data.frame(genes=a[which(a%in%universe_df$gene)])
+
 common_genes$wang_essentialome <- vlookup(common_genes$genes,wang,result_column = "essentialome",lookup_column = "Gene")
 common_genes$blomen_essentialome <- vlookup(common_genes$genes,blomen,result_column = "essentialome",lookup_column = "Gene")
 common_genes$hart_essentialome <- vlookup(common_genes$genes,hart,result_column = "essentialome",lookup_column = "Gene")

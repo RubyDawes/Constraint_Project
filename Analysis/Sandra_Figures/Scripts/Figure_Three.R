@@ -83,6 +83,7 @@ mouse_lethal_prop <- data.frame(OMIM=c(length(which(universe_df$omim=="Y"&univer
                                 Human_Lethal=c(length(which(universe_df$human_lethal=="Y"&universe_df$lethal_mouse=="Y"))/length(which(universe_df$human_lethal=="Y"&!is.na(universe_df$lethal_mouse))),
                                                length(which(universe_df$human_lethal=="Y"&universe_df$lethal_mouse=="N"))/length(which(universe_df$human_lethal=="Y"&!is.na(universe_df$lethal_mouse)))))
 
+
 mouse_lethal_propm <- melt(mouse_lethal_prop)
 mouse_lethal_propm$mis_constraint <- rep(c("Mouse Lethal     ", "Mouse non-Lethal     "), 2)
 
@@ -90,6 +91,23 @@ f <- ggplot(dat=mouse_lethal_propm, aes(x=variable, y=value, fill=mis_constraint
 f<- f+geom_bar(width = 0.8, stat = "identity",color="slategray",position=position_fill(reverse = TRUE))+scale_y_continuous(expand = c(0, 0)) +bar_theme()
 f<- f+labs(y = "Proportion")+scale_fill_manual(values=c("black","steelblue3"))+theme(legend.position="bottom")
 ggsave("Analysis/Sandra_Figures/Figs/fig3bi.pdf",height=7, width=7, units='cm')
+rm(mouse_lethal_prop,mouse_lethal_propm,f)
+
+#adding in non-OMIM
+mouse_lethal_prop <- data.frame(non_OMIM=c(length(which(is.na(universe_df$omim)&universe_df$lethal_mouse=="Y"))/length(which(is.na(universe_df$omim)&!is.na(universe_df$lethal_mouse))),
+                                           length(which(is.na(universe_df$omim)&universe_df$lethal_mouse=="N"))/length(which(is.na(universe_df$omim)&!is.na(universe_df$lethal_mouse)))),
+                                OMIM=c(length(which(universe_df$omim=="Y"&universe_df$lethal_mouse=="Y"))/length(which(universe_df$omim=="Y"&!is.na(universe_df$lethal_mouse))),
+                                       length(which(universe_df$omim=="Y"&universe_df$lethal_mouse=="N"))/length(which(universe_df$omim=="Y"&!is.na(universe_df$lethal_mouse)))),
+                                Human_Lethal=c(length(which(universe_df$human_lethal=="Y"&universe_df$lethal_mouse=="Y"))/length(which(universe_df$human_lethal=="Y"&!is.na(universe_df$lethal_mouse))),
+                                               length(which(universe_df$human_lethal=="Y"&universe_df$lethal_mouse=="N"))/length(which(universe_df$human_lethal=="Y"&!is.na(universe_df$lethal_mouse)))))
+
+mouse_lethal_propm <- melt(mouse_lethal_prop)
+mouse_lethal_propm$mis_constraint <- rep(c("Mouse Lethal     ", "Mouse non-Lethal     "), 3)
+
+f <- ggplot(dat=mouse_lethal_propm, aes(x=variable, y=value, fill=mis_constraint))
+f<- f+geom_bar(width = 0.8, stat = "identity",color="slategray",position=position_fill(reverse = TRUE))+scale_y_continuous(expand = c(0, 0)) +bar_theme()
+f<- f+labs(y = "Proportion")+scale_fill_manual(values=c("black","steelblue3"))+theme(legend.position="bottom")
+ggsave("Analysis/Sandra_Figures/Figs/fig3bi-withnonomim.pdf",height=7, width=7, units='cm')
 rm(mouse_lethal_prop,mouse_lethal_propm,f)
 
 

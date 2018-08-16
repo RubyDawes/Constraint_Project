@@ -32,6 +32,7 @@ universe_df$nmd_min_rank<-universe_df$nmd_min_rank/0.01
 rm(nmd_min)
 
 universe_df$any_constraint <- ifelse(universe_df$mis_z>=3.09|universe_df$pLI>=0.9|universe_df$ccr99=="Y"|universe_df$regional_missense_constraint=="Y"|universe_df$nmd_min=="Y","Y","N")
+universe_df$any_reg_constraint <- ifelse(universe_df$ccr99=="Y"|universe_df$regional_missense_constraint=="Y"|universe_df$nmd_min=="Y","Y","N")
 
 #MGI mouse knockouts- lethal or non-lethal in a mouse
 universe_df$MGI_ID <- vlookup(universe_df$gene,mgi,result_column="MGI_ID",lookup_column="human_symbol")
@@ -89,5 +90,5 @@ universe_df$human_lethal <- ifelse(is.na(vlookup(universe_df$gene,lethal_genes))
 rm(lethal_genes)
 
 save(universe_df, file="output/Data/universe_df.rda", compress="bzip2")
-write.xlsx(universe_df[,c(1:39,44:46)],"output/spreadsheets/universe_all_info.xlsx",append=TRUE)
+write.xlsx(universe_df[,c(1:39,44:47)],"output/spreadsheets/universe_all_info.xlsx",append=TRUE)
 
