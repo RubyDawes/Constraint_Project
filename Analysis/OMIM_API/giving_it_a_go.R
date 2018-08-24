@@ -3,7 +3,7 @@
 
 source("OMIM_API/API_search_functions.R")
 
-#searching omim for entries related to foetal/perinatal lethality
+################searching omim for entries related to foetal/perinatal lethality#################
 search_term<-"((lethal AND congenital) OR (lethal AND prenatal) OR (lethal AND perinatal) OR (lethal AND fetal) OR (lethal AND embryonic) OR (lethal AND neonatal) OR (lethal AND infantile))"
 search_fields <- c("tx_clinical_features","tx_biochemical_features","tx_description",
                    "tx_other_features","tx_genotype_phenotype_correlations")
@@ -185,10 +185,11 @@ write.xlsx(results3,"output/spreadsheets/omim_api_search_results_better.xlsx")
 save(results3, file="output/Data/human_lethal_hits.rda", compress="bzip2")
 save(lethal_genes, file="output/Data/human_lethal_genes.rda", compress="bzip2")
 
+
+#########################writing spreadsheet for Sandra########
 load("output/Data/human_lethal_hits.rda")
 load("output/Data/human_lethal_genes.rda")
 
-#writing spreadsheet for Sandra
 lethal_genes <- lethal_genes[,-c(1,6,11,16,18,20,22,32,34,36)]
 extract_phen_id <- function(phenotype){
   no_phens <- length(phenotype)
@@ -226,5 +227,4 @@ lethal_genes$lethal_phenotype<-lapply(lethal_genes$lethal_phenotype_mim,function
 save(lethal_genes, file="output/Data/human_lethal_genes.rda", compress="bzip2")
 
 #write.xlsx(lethal_genes[,-c(25,26,27)],"output/spreadsheets/human_lethal_genes.xlsx")
-
 

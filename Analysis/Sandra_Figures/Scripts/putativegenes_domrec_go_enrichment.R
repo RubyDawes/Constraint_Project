@@ -59,7 +59,7 @@ slimshady <- slimshady[order(slimshady$odds_ratio),]
 slimshady$gene <- rep("gene",length(slimshady$go_term))
 slimshady$logodds <- log(slimshady$odds_ratio)
 slimshady <- slimshady[-which(slimshady$go_term=="biological_process"),]
-slimshady <- slimshady[-which(slimshady$pval>0.05),]
+slimshady <- slimshady[-which(slimshady$pval>0.005),]
 
 #fixing abbreviated GO names
 slimshady$go_term<-as.character(slimshady$go_term)
@@ -71,8 +71,8 @@ slimshady$go_term[which(slimshady$go_term=="generation of precursor metabolites.
 slimshady$go_term <- factor(slimshady$go_term, levels = slimshady$go_term)
 #plotting heat map
 ggplot(data = slimshady, aes(x= gene,y = go_term)) +
-  geom_tile(aes(fill = odds_ratio,width=1)) +scale_fill_gradient2(low = "pink",mid="white",high = "green",trans="log",breaks=c(min(slimshady$odds_ratio),1,max(slimshady$odds_ratio)),labels=c("Enriched in PUTATIVE RECESSIVE human lethal genes","","enriched in PUTATIVE DOMINANT human lethal genes"))+bar_theme()
-ggsave("Analysis/Sandra_Figures/Figs/PUTATIVE_domrec_BP_go_heatmap.pdf",height=18, width=22, units='cm')
+  geom_tile(aes(fill = odds_ratio,width=1)) +scale_fill_gradient2(low = "#beaed4",mid="white",high = "#7fc97f",trans="log",breaks=c(min(slimshady$odds_ratio),1,max(slimshady$odds_ratio)),labels=c("Enriched in PUTATIVE RECESSIVE human lethal genes","","enriched in PUTATIVE DOMINANT human lethal genes"))+bar_theme()
+ggsave("Analysis/Sandra_Figures/Figs/PUTATIVE_domrec_BP_go_heatmap_0.005.pdf",height=18, width=35, units='cm')
 
 
 
@@ -146,8 +146,8 @@ slimshady$go_term <- factor(slimshady$go_term, levels = slimshady$go_term)
 
 #plotting heat map
 ggplot(data = slimshady, aes(x= gene,y = go_term)) +
-  geom_tile(aes(fill = odds_ratio,width=1)) +scale_fill_gradient2(low = "pink",mid="white",high = "green",trans="log",breaks=c(min(slimshady$odds_ratio),1,max(slimshady$odds_ratio)),labels=c("Enriched in PUTATIVE RECESSIVE human lethal genes","","enriched in PUTATIVE DOMINANT human lethal genes"))+bar_theme()
-ggsave("Analysis/Sandra_Figures/Figs/PUTATIVE_domrec_MF_go_heatmap.pdf",height=18, width=22, units='cm')
+  geom_tile(aes(fill = odds_ratio,width=1)) +scale_fill_gradient2(low = "#beaed4",mid="white",high = "#7fc97f",trans="log",breaks=c(min(slimshady$odds_ratio),1,max(slimshady$odds_ratio)),labels=c("Enriched in PUTATIVE RECESSIVE human lethal genes","","enriched in PUTATIVE DOMINANT human lethal genes"))+bar_theme()
+ggsave("Analysis/Sandra_Figures/Figs/PUTATIVE_domrec_MF_go_heatmap.pdf",height=18, width=30, units='cm')
 
 
 
@@ -217,8 +217,8 @@ slimshady <- slimshady[-which(slimshady$pval>0.05),]
 slimshady$go_term <- factor(slimshady$go_term, levels = slimshady$go_term)
 #plotting heat map
 ggplot(data = slimshady, aes(x= gene,y = go_term)) +
-  geom_tile(aes(fill = odds_ratio,width=1)) +scale_fill_gradient2(low = "pink",mid="white",high = "green",trans="log",breaks=c(min(slimshady$odds_ratio),1,max(slimshady$odds_ratio)),labels=c("Enriched in PUTATIVE RECESSIVE human lethal genes","","enriched in PUTATIVE DOMINANT human lethal genes"))+bar_theme()
-ggsave("Analysis/Sandra_Figures/Figs/PUTATIVE_domrec_CC_go_heatmap.pdf",height=18, width=18, units='cm')
+  geom_tile(aes(fill = odds_ratio,width=1)) +scale_fill_gradient2(low = "#beaed4",mid="white",high = "#7fc97f",trans="log",breaks=c(min(slimshady$odds_ratio),1,max(slimshady$odds_ratio)),labels=c("Enriched in PUTATIVE RECESSIVE human lethal genes","","enriched in PUTATIVE DOMINANT human lethal genes"))+bar_theme()
+ggsave("Analysis/Sandra_Figures/Figs/PUTATIVE_domrec_CC_go_heatmap.pdf",height=18, width=30, units='cm')
 
 
 
