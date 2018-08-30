@@ -1,0 +1,86 @@
+gene	phenotype MIM	phrase	search term
+STILLBIRTH/NEONATAL DEATH			
+DOK7	208150- provisional link	resulting in fetal death; infants who died perinatally	"(""fetal death"") OR (""infants died""~3)"
+GDF5	201250- provisional link	no lethal terms	
+MBTPS2	308205	death by age 2 years ; died of respiratory distress 6 hours after delivery;died a few hours after delivery ;  died at age 1 year	"(""died hours after delivery""~5) OR (""died 1 year""~3)"
+PTEN	276950	died at 4.5 months of age; died secondary to respiratory failure	"(""died at months of age""~3)"
+DEATH IN INFANCY			
+ROR2	268310	 died of unknown cause in infancy	"(""died in infancy""~4)"
+GRIP1	617667	2 unrelated stillborn male fetuses	"(""stillborn fetus""~3)"
+PEX2	614866	die in the first year of life	"(""die first year of life""~3)"
+PEX16	614876	die in the first year of life	"(""die first year of life""~3)"
+PEX10	614870	die in the first year of life; she died at age 7 months; died at 4 days of age	"(""died at months""~3) OR (""died days""~4)"
+ERCC5	616570	death at 7 months of age	"(""death months""~3)"
+LIPT1	616299	death at age 9 days	"(""death at days"")~3"
+HESX1	182230	death in 5 children 	"(""death children""~5)"
+IDUA	607014	"death occurred in a boy, aged 3 years 9 months ; death occurred in a 14-month-old child "	"(""death occurred month-old""~3)"
+LIPA	278000	Death occurs early in life;  death occurred at the age of about 3 months; death by nutritional failure by 2 to 4 months of age.	"(""death early life""~3) OR (""death age months""~4) OR (""death by months""~5)"
+ERCC1	610758	died at age 2.5 years	"(""died at age years""~2)"
+ASXL1	605039	died at ages 6 years and 23 hours after birth	"(""died at ages years""~3) OR (""died hours after birth""~7)"
+MESP2	608681	died within 6 months	"(""died within months""~2)"
+LTC4S	614037	infant with a fatal developmental syndrome; the infant died at the age of 6 months;the infant died at 6 months of age	"(""infant fatal""~3) OR (""infant died"") "
+CLCF1	610313	result in early death without advanced care	"(""early death"")"
+PQBP1	309500	Three of the 4 patients died at an early age	"(""died early age""~3)"
+SNRPB	117650	"whom died at 12 hours, and the other at 10 months"	"(""died at hours""~2)"
+CDON	614226	were noted in this patient at autopsy [a bit of a stretch]	
+MYH11	132900	no lethal terms	
+SMOC1	206920	no lethal terms	
+PROKR2	244200	no lethal terms	
+LHX4	262700	no lethal terms	
+OCRL	309000	no lethal terms	
+NRAS	613224	no lethal terms	
+MYLK	613780	no lethal terms	
+WDR11	614858	no lethal terms	"(""died days of life""~3)"
+CCDC22	300963	no lethal terms	
+FLI1	617443	no lethal terms	
+HDAC6	300863- provisional link	died at 6 days of life	"(""died days of life""~3)"
+CNTN1	612540-provisional link	died shortly after birth	
+PEX11B	614920- provisional link	no lethal terms	"(""died at years""~3)"
+NADK2	616034- provisional link	the patient died of respiratory acidosis at 4 months of age; He died at age 5 years of aspiration pneumonia.	"(""death at months""~4)"
+TFAM	617156- provisional link	"death at ages 2 and 4 months, respectively"	
+GPR161	"seems to have been deleted from HPO, no disease association in OMIM"		
+LMOD1	"in HPO annotations but not searchable on HPO website, no disease association in OMIM"		
+NXN	"in HPO annotations but not searchable on HPO website, no disease association in OMIM"		
+PLXND1	"in HPO annotations but not searchable on HPO website, no disease association in OMIM"		
+REV3L	"in HPO annotations but not searchable on HPO website, no disease association in OMIM"		
+ROBO1	"in HPO annotations but not searchable on HPO website, no disease association in OMIM"		
+BMPR1B	3 phenotypes in OMIM- don't seem lethal. couldn't find lethal phenotype in OMIM- maybe phenotype in ORPHA?		
+GPC4	not in OMIM		
+DEATH IN CHILDHOOD			
+ABCB11	"(""died in infancy""~6)"		
+ERCC6			
+HMGCL			
+OGDH			
+PEX5			
+RNASEH2A			
+RNASEH2C			
+STT3B			
+DEATH IN EARLY ADULTHOOD			
+ALMS1			
+APP			
+BAZ1B			
+CLIP2			
+CST3			
+ELN			
+GTF2I			
+GTF2IRD1			
+KRAS			
+LIMK1			
+MLH1			
+MLH3			
+MSH2			
+MSH6			
+MT-CO3			
+MT-ND4			
+MT-ND5			
+MT-ND6			
+PIK3CA			
+PMS1			
+PMS2			
+RFC2			
+RPS6KA3			
+SLC9A6			
+TBL2			
+TGFBR2			
+TYMP			
+VPS13A			
