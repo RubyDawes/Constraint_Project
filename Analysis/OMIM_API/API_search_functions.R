@@ -62,3 +62,12 @@ search_omim_phrase <- function(search_term,search_field){
 }
 mapping <- read.csv(file = "Gene_lists/OMIM/mim2gene.txt", sep = "\t", comment.char = "#",stringsAsFactors = FALSE)
 names(mapping)<-c("mim_number","entry_type", "entrez_gene_id", "hgnc_symbol")
+
+retrieve_inheritance  <- function(omim_id){
+  my_mim   <- paste('mimNumber=', omim_id, sep='')
+  my_link  <- 'http://api.omim.org/api/entry?'
+  my_query <- paste(my_link, my_mim, "&include=geneMap&",my_key,sep='')
+  xml<-xmlTreeParse(my_query, useInternalNodes=TRUE)
+  inheritance <-unlist(xpathApply(xml, "/omim/entryList/entry/phenotypeMapList/phenotypeMap/phenotypeInheritance", xmlValue))
+  return(inheritance)
+}

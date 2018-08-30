@@ -1,12 +1,10 @@
 ###############Do lethal genes have different inheritances?#########
 
-lethal_omim<- universe_df[which(universe_df$human_lethal=="Y"&!is.na(universe_df$Inheritance_pattern)),c("gene","Inheritance_pattern")]
+lethal_omim<- universe_df[which(universe_df$human_lethal=="Y"&!is.na(universe_df$lethal_inheritance)),c("gene","lethal_inheritance")]
 nonlethal_omim<- universe_df[which(universe_df$human_lethal=="N"&universe_df$omim=="Y"&!is.na(universe_df$Inheritance_pattern)),c("gene","Inheritance_pattern")]
 
-lethal_omim$Inheritance_pattern[which(grepl(pattern="MT",lethal_omim$Inheritance_pattern))]<-"MT"
-lethal_omim$Inheritance_pattern[which(grepl("XL",lethal_omim$Inheritance_pattern)&!grepl("MT",lethal_omim$Inheritance_pattern))]<-"XL"
-lethal_omim$Inheritance_grouped <- ifelse((lethal_omim$Inheritance_pattern=="AR"|lethal_omim$Inheritance_pattern=="XLr"|lethal_omim$Inheritance_pattern=="MT"),"recessive",
-                                             ifelse((lethal_omim$Inheritance_pattern=="AD"|lethal_omim$Inheritance_pattern=="XLd"),"dominant","recessive/dominant"))
+lethal_omim$Inheritance_grouped <- ifelse((lethal_omim$lethal_inheritance=="AR"|lethal_omim$lethal_inheritance=="XLr"|lethal_omim$lethal_inheritance=="MT,AR"),"recessive",
+                                             ifelse((lethal_omim$lethal_inheritance=="AD"|lethal_omim$lethal_inheritance=="XLd"|lethal_omim$lethal_inheritance=="MT,XLd"),"dominant","recessive/dominant"))
 nonlethal_omim$Inheritance_pattern[which(grepl(pattern="MT",nonlethal_omim$Inheritance_pattern))]<-"MT"
 nonlethal_omim$Inheritance_pattern[which(grepl("XL",nonlethal_omim$Inheritance_pattern)&!grepl("MT",nonlethal_omim$Inheritance_pattern))]<-"XL"
 nonlethal_omim$Inheritance_grouped <- ifelse((nonlethal_omim$Inheritance_pattern=="AR"|nonlethal_omim$Inheritance_pattern=="XLr"|nonlethal_omim$Inheritance_pattern=="MT"),"recessive",

@@ -1,6 +1,44 @@
 load("output/Data/human_lethal_genes.rda")
+###########fixing genes with multiple phenotypes so we know the inheritance of the lETHAL phenotype ###############
+retrieve_inheritance  <- function(omim_id){
+  my_mim   <- paste('mimNumber=', omim_id, sep='')
+  my_link  <- 'http://api.omim.org/api/entry?'
+  my_query <- paste(my_link, my_mim, "&include=geneMap&",my_key,sep='')
+  xml<-xmlTreeParse(my_query, useInternalNodes=TRUE)
+  inheritance <-unlist(xpathApply(xml, "/omim/entryList/entry/phenotypeMapList/phenotypeMap/phenotypeInheritance", xmlValue))
+  return(inheritance)
+}
+lethal_genes$lethal_inh <- lapply(1:length(lethal_genes$lethal_phenotype_mim),function(x) lapply(lethal_genes$lethal_phenotype_mim[[x]],retrieve_inheritance))
+lethal_genes$lethal_inh<-lapply(1:length(lethal_genes$lethal_inh),function(x) lapply(lethal_genes$lethal_inh[[x]],unique))
 
-#Facts
+lethal_genes$AR<-lapply(1:length(lethal_genes$lethal_inh),function(x) 
+  ifelse(grepl("Autosomal recessive",lethal_genes$lethal_inh[x]),"Y","N"))
+lethal_genes$AD<-lapply(1:length(lethal_genes$lethal_inh),function(x) 
+  ifelse(grepl("Autosomal dominant",lethal_genes$lethal_inh[x]),"Y","N"))
+lethal_genes$XLd<-lapply(1:length(lethal_genes$lethal_inh),function(x) 
+  ifelse(grepl("X-linked dominant",lethal_genes$lethal_inh[x]),"Y","N"))
+lethal_genes$XLr<-lapply(1:length(lethal_genes$lethal_inh),function(x) 
+  ifelse(grepl("X-linked recessive",lethal_genes$lethal_inh[x]),"Y","N"))
+lethal_genes$MT<-lapply(1:length(lethal_genes$lethal_inh),function(x) 
+  ifelse(grepl("Mitochondrial",lethal_genes$lethal_inh[x]),"Y","N"))
+lethal_genes$MT<-lapply(1:length(lethal_genes$lethal_inh),function(x) 
+  ifelse(grepl("X-linked",lethal_genes$lethal_inh[x]),"Y","N"))
+
+
+lethal_genes$lethal_inheritance_pattern <- rep(NA,length(lethal_genes$gene))
+lethal_genes$lethal_inheritance_pattern[which(lethal_genes$MT=="Y")] <- "MT"
+lethal_genes$lethal_inheritance_pattern[which(lethal_genes$XLd == "Y")]<- ifelse(is.na(lethal_genes$lethal_inheritance_pattern[which(lethal_genes$XLd == "Y")]),"XLd",paste(lethal_genes$lethal_inheritance_pattern[which(lethal_genes$XLd == "Y")],"XLd",sep=","))
+lethal_genes$lethal_inheritance_pattern[which(lethal_genes$XLr == "Y")]<- ifelse(is.na(lethal_genes$lethal_inheritance_pattern[which(lethal_genes$XLr == "Y")]),"XLr",paste(lethal_genes$lethal_inheritance_pattern[which(lethal_genes$XLr == "Y")],"XLr",sep=","))
+lethal_genes$lethal_inheritance_pattern[which(lethal_genes$AR == "Y")]<- ifelse(is.na(lethal_genes$lethal_inheritance_pattern[which(lethal_genes$AR == "Y")]),"AR",paste(lethal_genes$lethal_inheritance_pattern[which(lethal_genes$AR == "Y")],"AR",sep=","))
+lethal_genes$lethal_inheritance_pattern[which(lethal_genes$AD == "Y")]<- ifelse(is.na(lethal_genes$lethal_inheritance_pattern[which(lethal_genes$AD == "Y")]),"AD",paste(lethal_genes$lethal_inheritance_pattern[which(lethal_genes$AD == "Y")],"AD",sep=","))
+
+#fix inheritances of phenotype 252010
+lethal_genes$lethal_inheritance_pattern[which(lethal_genes$gene=="NDUFA1")]<-"MT,XLd"
+lethal_genes$lethal_inheritance_pattern[which(lethal_genes$lethal_inheritance_pattern=="MT,XLd,AR")]<-"MT,AR"
+
+save(lethal_genes, file="output/Data/human_lethal_genes.rda", compress="bzip2")
+
+#############Facts##############################
 length(which(lethal_genes$mouse_ko=="Y"))
 length(which(lethal_genes$lethal_mouse=="Y"))
 length(which(lethal_genes$lethal_mouse=="N"))
@@ -80,5 +118,6 @@ a3=draw.pairwise.venn(area1 = length(which(is.na(universe_df$omim)&universe_df$l
 png('Sandra_Figures/Figs/mouse_vs_human_lethal.png',width=30,height=30,units="cm",res=1000)
 grid.arrange(gTree(children=a3),left=mouse,right=human)
 dev.off()
+
 
 
