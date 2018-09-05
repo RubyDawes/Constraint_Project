@@ -9,8 +9,6 @@ length(which(!is.na(universe_df$lethal_mouse[a])))
 
 length(which(universe_df$human_lethal[a]=="Y"))
 length(which(universe_df$human_lethal[a]=="N"))
-#72% of HPO genes were caught by my search
-#(excluded 12 sudden death genes and 28 death in early adulthood genes)
 
 hpo_lethal <- data.frame(gene=universe_df$gene[a],hpo_names=universe_df$hpo_names[a],my_list=universe_df$human_lethal[a])
 lethal_terms <- c("Stillbirth","Neonatal death","Death in infancy","Death in childhood","Sudden death", "Death in early adulthood")

@@ -4,6 +4,7 @@ search_omim <- function(search_term,search_field){
   my_search   <- paste('search=', search_field,":",search_term, sep='')
   my_link  <- 'http://api.omim.org/api/entry/search?'
   my_query <- paste(my_link, my_search, "&start=0&limit=10000","&", my_key,sep='')
+  print(my_search)
   xml<-xmlTreeParse(my_query, useInternalNodes=TRUE)
   mim_numbers<- unlist(xpathApply(xml, "/omim/searchResponse/entryList/entry/mimNumber", xmlValue))
   preferred_titles<- unlist(xpathApply(xml, "/omim/searchResponse/entryList/entry/titles/preferredTitle", xmlValue))
