@@ -71,7 +71,15 @@ bar_theme <- function() {
       legend.title=element_blank()
     )
 }
-
+bar_theme_go <- function() {
+  theme_bw(base_size=20,base_family="Helvetica") %+replace%
+    theme(
+      panel.grid=element_blank(),
+      panel.border = element_blank(),
+      axis.line = element_line(),
+      legend.title=element_blank()
+    )
+}
 bar_theme_or <- function() {
   theme_bw(base_size=12,base_family="Helvetica") %+replace%
     theme(
