@@ -226,5 +226,5 @@ lethal_genes$lethal_phenotype<-lapply(lethal_genes$lethal_phenotype_mim,function
 
 save(lethal_genes, file="output/Data/human_lethal_genes.rda", compress="bzip2")
 
-#write.xlsx(lethal_genes[,-c(25,26,27)],"output/spreadsheets/human_lethal_genes.xlsx")
+#write.xlsx(lethal_genes[,-c(40:45)],"output/spreadsheets/human_lethal_genes.xlsx")
 
