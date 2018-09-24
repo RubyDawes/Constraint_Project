@@ -28,6 +28,7 @@ source("plot_functions.R")
 
 #IMPC data
 #source("Universe_Data/3.Mouse_phenotypes/IMPC_phenotypes.R")
+#load("output/Data/impc.rda")
 
 #df of genes tested in wang, blomen and hart CRISPR knockout papers and whether they were lethal or not in each of the 11 cell lines
 ##tested throughout the three papers

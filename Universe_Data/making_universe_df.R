@@ -47,11 +47,22 @@ universe_df$allele_info <- vlookup(universe_df$gene,mgi,result_column="allele_in
 universe_df$mouse_symbol <- vlookup(universe_df$gene,mgi,result_column="mouse_symbol",lookup_column="human_symbol")
 
 #IMPC phenotype data
-universe_df$IMPC_phen <- vlookup(universe_df$gene,impc,result_column="IMPC",lookup_column="Gene_symbol")
+universe_df$lethal_IMPC <- vlookup(universe_df$gene,impc,result_column="is_lethal",lookup_column="human_symbol")
+universe_df$IMPC_all_MP_ID <- vlookup(universe_df$gene,impc,result_column="all_MP_ID",lookup_column="human_symbol")
+universe_df$IMPC_all_MP_phen <- vlookup(universe_df$gene,impc,result_column="all_MP_phen",lookup_column="human_symbol")
+universe_df$IMPC_lethal_MP_ID <- vlookup(universe_df$gene,impc,result_column="lethal_MP_ID",lookup_column="human_symbol")
+universe_df$IMPC_lethal_MP_phen <- vlookup(universe_df$gene,impc,result_column="lethal_MP_phen",lookup_column="human_symbol")
 
-universe_df$mouse_ko <- ifelse(!is.na(universe_df$MGI_ID),"Y",ifelse(!is.na(universe_df$IMPC_phen),"Y",NA))
-universe_df$lethal_mouse <- ifelse(grepl(pattern="Y|Lethal",paste(universe_df$lethal_MGI,universe_df$IMPC_phen)),"Y",ifelse(!is.na(universe_df$mouse_ko),"N",NA))
+universe_df$IMPC_ko <- rep(NA,length(universe_df$gene))
+universe_df$IMPC_ko[which(lengths(universe_df$IMPC_all_MP_ID)>0)] <-  "Y"
+
+universe_df$mouse_ko <- ifelse(!is.na(universe_df$MGI_ID),"Y",ifelse(universe_df$IMPC_ko=="Y","Y",NA))
+universe_df$lethal_mouse <- rep(NA,length(universe_df$gene))
+universe_df$lethal_mouse[which(universe_df$mouse_ko=="Y")] <- "N"
+universe_df$lethal_mouse[which(universe_df$lethal_MGI=="Y"|universe_df$lethal_IMPC=="Y")] <- "Y"
+
 rm(mgi,impc)
+
 
 #cell knockouts
 #source("4.Cell_Knockouts/cell_essential_genes.R")
@@ -93,5 +104,6 @@ universe_df$lethal_inheritance <- lapply(universe_df$gene,function(x) vlookup(x,
 rm(lethal_genes)
 
 save(universe_df, file="output/Data/universe_df.rda", compress="bzip2")
-write.xlsx(universe_df[,c(1:40,47:50)],"output/spreadsheets/universe_all_info.xlsx",append=TRUE)
+write.xlsx(universe_df[,c(1:45,52:55)],"output/spreadsheets/universe_all_info.xlsx",append=TRUE)
+
 
