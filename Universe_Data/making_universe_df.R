@@ -86,11 +86,12 @@ rm(hpo_annotations,hp,general_cats,general_cats_names)
 
 #human lethal genes- are the genes in my OMIM API search for genes causing lethality in humans
 load("output/Data/human_lethal_genes.rda")
-universe_df$human_lethal <- ifelse(is.na(vlookup(universe_df$gene,lethal_genes,lookup_column = "gene")),"N","Y")
-universe_df$lethal_phen <- lapply(universe_df$gene,function(x) vlookup(x,lethal_genes,lookup_column = "gene",result_column = "lethal_phenotype_mim"))
-universe_df$lethal_inheritance <- lapply(universe_df$gene,function(x) vlookup(x,lethal_genes,lookup_column = "gene",result_column = "lethal_inheritance_pattern"))
+universe_df$human_lethal_B <- ifelse(is.na(vlookup(universe_df$gene,lethal_genes[which(lethal_genes$listB=="yes"),],lookup_column = "gene")),"N","Y")
+universe_df$human_lethal_A <- ifelse(is.na(vlookup(universe_df$gene,lethal_genes[which(lethal_genes$listA=="yes"),],lookup_column = "gene")),"N","Y")
+universe_df$lethal_phen <- lapply(universe_df$gene,function(x) vlookup(x,lethal_genes[which(lethal_genes$listB=="yes"),],lookup_column = "gene",result_column = "lethal_phenotype_mim"))
+universe_df$lethal_inheritance <- lapply(universe_df$gene,function(x) vlookup(x,lethal_genes[which(lethal_genes$listB=="yes"),],lookup_column = "gene",result_column = "lethal_inheritance_pattern"))
 rm(lethal_genes)
 
 save(universe_df, file="output/Data/universe_df.rda", compress="bzip2")
-write.xlsx(universe_df[,c(1:39,44:48)],"output/spreadsheets/universe_all_info.xlsx",append=TRUE)
+write.xlsx(universe_df[,c(1:40,47:50)],"output/spreadsheets/universe_all_info.xlsx",append=TRUE)
 
