@@ -21,7 +21,7 @@ nonomim_ko_pie<- nonomim_ko_pie+ggtitle(paste("Non-OMIM genes \n n=",length(whic
 
 
 ggarrange(omim_ko_pie,nonomim_ko_pie,common.legend=TRUE,legend="bottom")
-  ggsave("Sandra_Figures/Figs/fig2a-KOpies.pdf",height=6, width=17.8, units='cm')
+  ggsave("Analysis/Sandra_Figures/Figs/fig2a-KOpies.pdf",height=6, width=17.8, units='cm')
   dev.off()
 rm(omim_ko,nonomim_ko,omim_ko_pie,nonomim_ko_pie)
 
@@ -110,7 +110,9 @@ dev.off()
 overrideTriple<- "ye"
 #overlap between OMIM, cell + mouse lethality when using cutoff of 3 cell lines
 png('Analysis/Sandra_Figures/Figs/fig-omim_cell_mouse_venn-LABELS.png',width=30,height=30,units="cm",res=1000)
-draw.triple.venn(area1 = length(which(universe_df$omim=="Y")), area2 = length(which(universe_df$lethal_mouse=="Y")), area3 = length(which(universe_df$cell_essential=="Y")), 
+draw.triple.venn(area1 = length(which(universe_df$omim=="Y")),
+                 area2 = length(which(universe_df$lethal_mouse=="Y")),
+                 area3 = length(which(universe_df$cell_essential=="Y")), 
                  n12 = length(which(universe_df$omim=="Y"&universe_df$lethal_mouse=="Y")),
                  n23 = length(which(universe_df$lethal_mouse=="Y"&universe_df$cell_essential=="Y")), 
                  n13 = length(which(universe_df$omim=="Y"&universe_df$cell_essential=="Y")), 
@@ -126,15 +128,40 @@ draw.triple.venn(area1 = length(which(universe_df$omim=="Y")), area2 = length(wh
                  fill = c("slategray","firebrick4", "sandybrown"), euler.d = TRUE, scaled = TRUE,fontfamily=rep("Helvetica",7),cat.fontfamily = rep("Helvetica", 3),cex=rep(5,7),cat.cex=rep(0,3))
 dev.off()
 
+#overlap between OMIM, cell + mouse lethality when using cutoff of 3 cell lines- only genes with cell or mouse data
+png('Analysis/Sandra_Figures/Figs/fig-omim_cell_mouse_venn.png',width=30,height=30,units="cm",res=1000)
+draw.triple.venn(area1 = length(which(universe_df$omim=="Y"&(universe_df$cell_ko=="Y"|universe_df$mouse_ko=="Y"))),
+                 area2 = length(which(universe_df$lethal_mouse=="Y")),
+                 area3 = length(which(universe_df$cell_essential=="Y")), 
+                 n12 = length(which(universe_df$omim=="Y"&universe_df$lethal_mouse=="Y")),
+                 n23 = length(which(universe_df$lethal_mouse=="Y"&universe_df$cell_essential=="Y")), 
+                 n13 = length(which(universe_df$omim=="Y"&universe_df$cell_essential=="Y")), 
+                 n123 = length(which(universe_df$omim=="Y"&universe_df$lethal_mouse=="Y"&universe_df$cell_essential=="Y")), category = c("OMIM", "Mouse Lethal", "Cell Essential"), lty = "blank", 
+                 fill = c("slategray","firebrick4", "sandybrown"), euler.d = TRUE, scaled = TRUE,fontfamily=rep("Helvetica",7),cat.fontfamily = rep("Helvetica", 3),cex=rep(5,7),cat.cex=rep(3,3))
+dev.off()
+png('Analysis/Sandra_Figures/Figs/fig-omim_cell_mouse_venn.png',width=30,height=30,units="cm",res=1000)
+draw.triple.venn(area1 = length(which(universe_df$omim=="Y")), area2 = length(which(universe_df$lethal_mouse=="Y")), area3 = length(which(universe_df$cell_essential=="Y")), 
+                 n12 = length(which(universe_df$omim=="Y"&universe_df$lethal_mouse=="Y")),
+                 n23 = length(which(universe_df$lethal_mouse=="Y"&universe_df$cell_essential=="Y")), 
+                 n13 = length(which(universe_df$omim=="Y"&universe_df$cell_essential=="Y")), 
+                 n123 = length(which(universe_df$omim=="Y"&universe_df$lethal_mouse=="Y"&universe_df$cell_essential=="Y")), category = c("OMIM", "Mouse Lethal", "Cell Essential"), lty = "blank", 
+                 fill = c("slategray","firebrick4", "sandybrown"), euler.d = TRUE, scaled = TRUE,fontfamily=rep("Helvetica",7),cat.fontfamily = rep("Helvetica", 3),cex=rep(5,7),cat.cex=rep(0,3))
+dev.off()
+
+
 #overlap between OMIM, cell + mouse lethality when using cutoff of 3 cell lines- but only genes with mouse data
 png('Analysis/Sandra_Figures/Figs/fig-omim_cell_mouse_venn_withmousedata-LABELS.png',width=30,height=30,units="cm",res=1000)
-draw.triple.venn(area1 = length(which(universe_df$omim=="Y"&!is.na(universe_df$lethal_mouse)&!is.na(universe_df$cell_essential))), area2 = length(which(universe_df$lethal_mouse=="Y"&!is.na(universe_df$cell_essential))), area3 = length(which(universe_df$cell_essential=="Y"&!is.na(universe_df$lethal_mouse))), 
+draw.triple.venn(area1 = length(which(universe_df$omim=="Y"&!is.na(universe_df$lethal_mouse)&!is.na(universe_df$cell_essential))), 
+                 area2 = length(which(universe_df$lethal_mouse=="Y"&!is.na(universe_df$cell_essential))), 
+                 area3 = length(which(universe_df$cell_essential=="Y"&!is.na(universe_df$lethal_mouse))), 
                  n12 = length(which(universe_df$omim=="Y"&universe_df$lethal_mouse=="Y"&!is.na(universe_df$cell_essential))),
                  n23 = length(which(universe_df$lethal_mouse=="Y"&universe_df$cell_essential=="Y")), 
                  n13 = length(which(universe_df$omim=="Y"&universe_df$cell_essential=="Y"&!is.na(universe_df$lethal_mouse))), 
                  n123 = length(which(universe_df$omim=="Y"&universe_df$lethal_mouse=="Y"&universe_df$cell_essential=="Y")), category = c("OMIM", "Mouse Lethal", "Cell Essential"), lty = "blank", 
                  fill = c("slategray","firebrick4", "sandybrown"), euler.d = TRUE, scaled = TRUE,fontfamily=rep("Helvetica",7),cat.fontfamily = rep("Helvetica", 3),cex=rep(1,7),cat.cex=rep(1,3))
 dev.off()
+
+
 #overlap between OMIM, cell + mouse lethality when using cutoff of 3 cell lines- but only genes with mouse data
 png('Analysis/Sandra_Figures/Figs/fig-omim_cell_mouse_venn_withmousedata.png',width=30,height=30,units="cm",res=1000)
 draw.triple.venn(area1 = length(which(universe_df$omim=="Y"&!is.na(universe_df$lethal_mouse)&!is.na(universe_df$cell_essential))), area2 = length(which(universe_df$lethal_mouse=="Y"&!is.na(universe_df$cell_essential))), area3 = length(which(universe_df$cell_essential=="Y"&!is.na(universe_df$lethal_mouse))), 

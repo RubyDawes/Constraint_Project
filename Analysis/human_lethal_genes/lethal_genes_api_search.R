@@ -141,4 +141,17 @@ lethal_genes$lethal_inheritance_pattern[which(lethal_genes$lethal_inheritance_pa
 
 save(lethal_genes, file="output/Data/human_lethal_genes.rda", compress="bzip2")
 
+####loading in curated lethal genes list#####
+load("output/Data/human_lethal_genes.rda")
+#lethal_mc<-read.xlsx("Gene_lists/lethal_genes/human_lethal_genes_MC.xlsx")
+
+#lethal_genes$listA <- lethal_mc$listA
+#lethal_genes$listB <- lethal_mc$listB
+#lethal_genes$earliest.death <- lethal_mc$earliest.death
+#lethal_genes$caveats <- lethal_mc$caveats
+#save(lethal_genes, file="output/Data/human_lethal_genes.rda", compress="bzip2")
+
+
+
+
 

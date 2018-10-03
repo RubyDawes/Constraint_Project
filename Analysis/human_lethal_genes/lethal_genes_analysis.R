@@ -1,15 +1,3 @@
-####loading in curated lethal genes list#####
-load("output/Data/human_lethal_genes.rda")
-#lethal_mc<-read.xlsx("Gene_lists/lethal_genes/human_lethal_genes_MC.xlsx")
-
-#lethal_genes$listA <- lethal_mc$listA
-#lethal_genes$listB <- lethal_mc$listB
-#lethal_genes$earliest.death <- lethal_mc$earliest.death
-#lethal_genes$caveats <- lethal_mc$caveats
-#save(lethal_genes, file="output/Data/human_lethal_genes.rda", compress="bzip2")
-
-
-
 ####plotting proportion of mouse lethal genes in each list####
 mouse_lethal_prop <- data.frame(non_OMIM=c(length(which(is.na(universe_df$omim)&universe_df$lethal_mouse=="Y"))/length(which(is.na(universe_df$omim)&!is.na(universe_df$lethal_mouse)&!is.na(universe_df$all_MP_phen))),
                                            length(which(is.na(universe_df$omim)&universe_df$lethal_mouse=="N"&grepl("premature death",universe_df$all_MP_phen)))/length(which(is.na(universe_df$omim)&!is.na(universe_df$lethal_mouse)&!is.na(universe_df$all_MP_phen))),
@@ -28,9 +16,9 @@ mouse_lethal_propm <- melt(mouse_lethal_prop)
 mouse_lethal_propm$mis_constraint <- rep(c("1. Mouse Lethal     ","2. Premature death     ", "3. Mouse non-Lethal     "), 4)
 
 f <- ggplot(dat=mouse_lethal_propm, aes(x=variable, y=value, fill=mis_constraint))
-f<- f+geom_bar(width = 0.8, stat = "identity",color="slategray",position=position_fill(reverse = TRUE))+scale_y_continuous(expand = c(0, 0)) +bar_theme()
-f<- f+labs(y = "Proportion")+scale_fill_manual(values=c("black","grey","steelblue3"))+theme(legend.position="bottom")
-ggsave("Analysis/Sandra_Figures/Figs/lethal_prop_MC.pdf",height=15, width=23, units='cm')
+f<- f+geom_bar(width = 0.8, stat = "identity",color="black",position=position_fill(reverse = TRUE))+scale_y_continuous(expand = c(0, 0)) +bar_theme()
+f<- f+labs(y = "Proportion")+scale_fill_manual(values=c("black","grey","steelblue3"))+theme(legend.position="right")
+ggsave("Analysis/Sandra_Figures/Figs/lethal_prop_MC.pdf",height=10, width=20, units='cm')
 rm(mouse_lethal_prop,mouse_lethal_propm,f)
 
 

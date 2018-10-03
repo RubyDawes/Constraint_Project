@@ -3,8 +3,8 @@
 length(which(universe_df$Inheritance_pattern=="AD"&universe_df$pLI>=0.9))/
 length(which(universe_df$Inheritance_pattern=="AD"&!is.na(universe_df$pLI)))
 
-length(which(universe_df$Inheritance_pattern=="AR"&universe_df$pLI>=0.9))/
-length(which(universe_df$Inheritance_pattern=="AR"&!is.na(universe_df$pLI)))
+length(which(universe_df$Inheritance_pattern=="AR"&universe_df$constrained=="N"))/
+length(which(universe_df$Inheritance_pattern=="AR"&!is.na(universe_df$exac)))
 
 length(which(universe_df$Inheritance_pattern=="AR,AD"&universe_df$pLI>=0.9))/
 length(which(universe_df$Inheritance_pattern=="AR,AD"&!is.na(universe_df$pLI)))
@@ -55,6 +55,23 @@ length(which(is.na(universe_df$omim)&universe_df$pLI>=0.9&universe_df$mis_z<3.09
 length(which(is.na(universe_df$omim)&universe_df$pLI<0.9&universe_df$mis_z>=3.09))
 length(which(is.na(universe_df$omim)&universe_df$pLI>=0.9&universe_df$mis_z>=3.09))
 length(which(is.na(universe_df$omim)&universe_df$pLI<0.9&universe_df$mis_z<3.09))
+
+length(which(universe_df$omim=="Y"&universe_df$mis_z>=3.09))/length(which(universe_df$omim=="Y"&!is.na(universe_df$exac)))
+length(which(is.na(universe_df$omim)&universe_df$mis_z>=3.09))/length(which(is.na(universe_df$omim)&!is.na(universe_df$exac)))
+
+length(which(universe_df$omim=="Y"&universe_df$pLI>=0.9))/length(which(universe_df$omim=="Y"&!is.na(universe_df$exac)))
+length(which(is.na(universe_df$omim)&universe_df$pLI>=0.9))/length(which(is.na(universe_df$omim)&!is.na(universe_df$exac)))
+
+
+
+
+
+#2d figure legend
+length(which(universe_df$omim=="Y"&universe_df$mis_z<3.09&universe_df$any_reg_constraint=="N"))/
+  length(which(universe_df$omim=="Y"&!is.na(universe_df$exac)))
+
+length(which(universe_df$omim=="Y"&universe_df$Inheritance_pattern=="AR"&universe_df$mis_z<3.09&universe_df$any_reg_constraint=="N"))/
+  length(which(universe_df$omim=="Y"&universe_df$mis_z<3.09&universe_df$any_reg_constraint=="N"))
 
 
 

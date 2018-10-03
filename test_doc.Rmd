@@ -1,0 +1,35 @@
+---
+title: "test_doc"
+output: html_document
+---
+```{r universeskip}
+load("output/Data/universe_df.rda")
+```
+
+### Genetic Constraint THMs (Figure One)
+
+
+```{r plot_fun}
+library(ggplot2)
+library(ggpubr)
+library(scales)
+(library(dplyr))
+blank_theme <- function() {
+  theme_minimal(base_size=12,base_family="Helvetica") %+replace%
+    theme(
+      axis.title.x = element_blank(),
+      axis.title.y = element_blank(),
+      axis.text = element_blank(),
+      panel.border = element_blank(),
+      panel.grid=element_blank(),
+      axis.ticks = element_blank(),
+      plot.title=element_text(size=12, face="bold"),
+      legend.title=element_blank()
+    )
+}
+
+```
+
+* ```r length(which(universe_df$Inheritance_pattern=="AR"&!is.na(universe_df$exac)))``` OMIM genes cause autosomal recessive (AR) inheritance
+    * ```r length(which(universe_df$Inheritance_pattern=="AR"&universe_df$mis_z>=3.09))```/```r length(which(universe_df$Inheritance_pattern=="AR"&!is.na(universe_df$exac)))``` (```r round(length(which(universe_df$Inheritance_pattern=="AR"&universe_df$mis_z>=3.09))/length(which(universe_df$Inheritance_pattern=="AR"&!is.na(universe_df$exac)))*100,1)```% ) show missense constraint
+    * with 122/1451 (8.4%) of AR genes intolerant to LoF variation.  

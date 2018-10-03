@@ -84,3 +84,15 @@ c<- c+scale_fill_manual(values=c("black","steelblue3"))
 c<- c+geom_text(aes(y = value,label = percent(value/sum(value))),size=6,position = position_stack(vjust = 0.5))
 ggsave("Analysis/Sandra_Figures/Figs/mouselethal_pie.pdf",height=18, width=18, units='cm')
 
+
+############pie of cell essential genes##############
+cell_essential_pie <- data.frame(group=c("Essential     ","Unessential     "),
+                               value=c(length(which(universe_df$cell_essential=="Y")),
+                                       length(which(universe_df$cell_essential=="N"))))
+cell_essential_pie$group <- factor(cell_essential_pie$group, levels = cell_essential_pie$group)
+c <- ggplot(cell_essential_pie, aes(x="", y=value, fill=group))
+c<- c+geom_bar(width = 1, stat = "identity")+blank_theme()+coord_polar(theta="y",direction=-1)
+c<- c+scale_fill_manual(values=c("black","steelblue3"))
+c<- c+geom_text(aes(y = value,label = percent(value/sum(value))),size=6,position = position_stack(vjust = 0.5))
+ggsave("Analysis/Sandra_Figures/Figs/cellessential_pie.pdf",height=18, width=18, units='cm')
+

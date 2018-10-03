@@ -61,7 +61,7 @@ bar_blank_theme <- function() {
     )
 }
 bar_theme <- function() {
-  theme_bw(base_size=20,base_family="Helvetica") %+replace%
+  theme_bw(base_size=12,base_family="Helvetica") %+replace%
     theme(
       axis.title.x = element_blank(),
       panel.grid=element_blank(),

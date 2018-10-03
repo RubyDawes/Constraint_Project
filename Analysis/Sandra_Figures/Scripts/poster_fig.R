@@ -26,8 +26,8 @@ c<- c+geom_text(aes(y = value,label = paste(percent(value/sum(value)),"\n",value
 ggsave("Analysis/Sandra_Figures/Figs/hospweek_pie_one.pdf",height=18, width=18, units='cm')
 
 human_lethal_pie <- data.frame(group=c("Disease genes","Lethal","Mouse Lethal, No known phenotype in humans","non-Disease"),
-                               value=c(length(which(universe_df$omim=="Y"&universe_df$human_lethal=="N")),
-                                       length(which(universe_df$human_lethal=="Y")),
+                               value=c(length(which(universe_df$omim=="Y"&universe_df$human_lethal_B=="N")),
+                                       length(which(universe_df$human_lethal_B=="Y")),
                                        length(which(is.na(universe_df$omim)&universe_df$lethal_mouse=="Y")),
                                        length(which(is.na(universe_df$omim)&(universe_df$lethal_mouse=="N"|is.na(universe_df$lethal_mouse))))))
 human_lethal_pie$group <- factor(human_lethal_pie$group, levels = human_lethal_pie$group)
