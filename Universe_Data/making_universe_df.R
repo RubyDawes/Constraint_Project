@@ -63,14 +63,11 @@ universe_df$lethal_mouse[which(universe_df$lethal_MGI=="Y"|universe_df$lethal_IM
 
 rm(mgi,impc)
 
-
 #cell knockouts
-#source("4.Cell_Knockouts/cell_essential_genes.R")
 universe_df$cell_ko <- ifelse(universe_df$gene%in%cell_KOs$Gene,"Y",NA)
 universe_df$cell_essential_hits <- vlookup(universe_df$gene,cell_KOs,result_column="no_hits",lookup_column="Gene")
 universe_df$cell_essential <- ifelse(universe_df$cell_essential_hits>=3,"Y","N")
 rm(cell_KOs)
-
 
 #GO terms
 ##slow- don't recommend running
@@ -79,21 +76,6 @@ load("output/Data/GO_annotations.rda")
 universe_df$go_terms <- go_annotations$universe_df.go_terms
 universe_df$go_names <- go_annotations$universe_df.go_names
 rm(go_annotations)
-
-#HPO terms
-#this is slow- just load
-#source("5.HPO/getting_HPO_terms.R")
-load("output/Data/HPO_annotations.rda")
-universe_df$hpo_terms <- hpo_annotations$universe_df.HPO_id
-universe_df$hpo_names <- hpo_annotations$universe_df.HPO_name
-hp <- get.ontology("Gene_lists/HPO/hp.obo",qualifier="HP")
-universe_df$hpo_ancestors <- lapply(universe_df$hpo_terms,function(x) get.ancestors(hp,x))
-general_cats <- c("HP:0000707","HP:0000478","HP:0000152","HP:0000119","HP:0000924","HP:0001939","HP:0003011",
-                  "HP:0001871","HP:0001626","HP:0002664","HP:0002715","HP:0001574","HP:0040064","HP:0025031",
-                  "HP:0000598","HP:0000818","HP:0002086","HP:0001197","HP:0003549","HP:0000769","HP:0001507","HP:0045027")
-general_cats_names <- get.shortened.names(hp,general_cats)
-universe_df$hpo_slim <- lapply(universe_df$hpo_ancestors,function(x) general_cats_names[which(general_cats%in%x)])
-rm(hpo_annotations,hp,general_cats,general_cats_names)
 
 #human lethal genes- are the genes in my OMIM API search for genes causing lethality in humans
 load("output/Data/human_lethal_genes.rda")
@@ -104,6 +86,6 @@ universe_df$lethal_inheritance <- lapply(universe_df$gene,function(x) vlookup(x,
 rm(lethal_genes)
 
 save(universe_df, file="output/Data/universe_df.rda", compress="bzip2")
-write.xlsx(universe_df[,c(1:45,52:55)],"output/spreadsheets/universe_all_info.xlsx",append=TRUE)
+write.xlsx(universe_df[,c(1:45,48:51)],"output/spreadsheets/universe_all_info.xlsx",append=TRUE)
 
 

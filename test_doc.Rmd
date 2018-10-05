@@ -30,6 +30,3 @@ blank_theme <- function() {
 
 ```
 
-* ```r length(which(universe_df$Inheritance_pattern=="AR"&!is.na(universe_df$exac)))``` OMIM genes cause autosomal recessive (AR) inheritance
-    * ```r length(which(universe_df$Inheritance_pattern=="AR"&universe_df$mis_z>=3.09))```/```r length(which(universe_df$Inheritance_pattern=="AR"&!is.na(universe_df$exac)))``` (```r round(length(which(universe_df$Inheritance_pattern=="AR"&universe_df$mis_z>=3.09))/length(which(universe_df$Inheritance_pattern=="AR"&!is.na(universe_df$exac)))*100,1)```% ) show missense constraint
-    * with 122/1451 (8.4%) of AR genes intolerant to LoF variation.  
