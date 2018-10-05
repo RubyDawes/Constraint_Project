@@ -35,7 +35,7 @@ source("setup.R")
 #GO terms
 ##slow- don't recommend running
 #source("5.GO/gene_ontology_annotations.R)
-load("output/Data/GO_annotations.rda")
+#load("output/Data/GO_annotations.rda")
 
 #puts all info on disease status, phenotype, exac scores, mouse phenotypes and cell knockouts for each protein-coding gene in HGNC into one 
 ##dataframe 'universe'

@@ -20,7 +20,6 @@ library(XML)
 library(plyr)
 library("hpoPlot")
 
-load("output/Data/hgnc.table.rda")
 
 hgnc<- read.csv("Gene_lists/Universe/gene_with_protein_product.txt",sep = "\t", comment.char = "#",stringsAsFactors = FALSE)
 hgnc$symbol<- checkGeneSymbols(hgnc$symbol)[[3]]
