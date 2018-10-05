@@ -2,9 +2,6 @@
 ##which will be added to with info from other scripts, loads universe which will be used as reference list of 'all protein-coding genes'
 source("setup.R")
 
-#functions for making pretty graphs
-source("plot_functions.R")
-
 #get omim df with filtered list of OMIM genes with mim numbers, phenotypes, and inheritance
 ##criteria for high confidence disease genes: phenotype mapping key (3) "molecular basis is known", filter out any nondiseases, 
 ###susceptibilities, provisional links, somatic mutations, removing non protein-coding genes (noncoding RNAs, complex loci etc)
@@ -14,10 +11,10 @@ source("plot_functions.R")
 #source("Universe_Data/1.OMIM_filtering/nmd_genes.R")
 
 #get exac scores for protein coding genes
-#source("Universe_Data/2.ExAC_constraint/exac_constraint.R")
+#source("Universe_Data/2.constraint/exac_constraint.R")
 
 #regional constraint
-#source("Universe_Data/Regional_constraint.R")
+#source("Universe_Data/2.constraint/Regional_constraint.R")
 
 #take all genes with mouse knockout/hypomorph phenotypes from MGI, see which ones are lethal and what the lethal phenotypes are
 ##for list of lethal phenotypes see Gene_lists/MGI_MPs/MGI_lethal_phenotypes.xlsx
@@ -35,6 +32,10 @@ source("plot_functions.R")
 #source("Universe_Data/4.Cell_Knockouts/cell_essential_genes.R")
 #load("output/Data/cell_KOs.rda")
 
+#GO terms
+##slow- don't recommend running
+#source("5.GO/gene_ontology_annotations.R)
+load("output/Data/GO_annotations.rda")
 
 #puts all info on disease status, phenotype, exac scores, mouse phenotypes and cell knockouts for each protein-coding gene in HGNC into one 
 ##dataframe 'universe'
