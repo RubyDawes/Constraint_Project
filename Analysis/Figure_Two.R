@@ -171,5 +171,5 @@ e<- e+geom_bar(width = 0.8, stat = "identity",color="black")+scale_y_continuous(
 e<- e+labs(y = "Proportion")+scale_fill_manual(values=c("steelblue3","#f9b8a0","lightsalmon2"))+theme(legend.position="right")+geom_text(aes(label = labels),position = position_stack(vjust=1.4))
 
 
-ggsave("output/Figures/2E.pdf",height=7, width=16, units='cm')
+ggsave("output/Figures/2D.pdf",height=7, width=16, units='cm')
 rm(regconst,regconstm,e,labels,levels)
