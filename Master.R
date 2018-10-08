@@ -2,6 +2,8 @@
 ##which will be added to with info from other scripts, loads universe which will be used as reference list of 'all protein-coding genes'
 source("setup.R")
 
+#source("Universe_data/initialise.R")
+
 #get omim df with filtered list of OMIM genes with mim numbers, phenotypes, and inheritance
 ##criteria for high confidence disease genes: phenotype mapping key (3) "molecular basis is known", filter out any nondiseases, 
 ###susceptibilities, provisional links, somatic mutations, removing non protein-coding genes (noncoding RNAs, complex loci etc)
