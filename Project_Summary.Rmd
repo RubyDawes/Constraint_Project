@@ -25,19 +25,21 @@ library(scales)
 
 ```
 
+```{r universeskip,include=FALSE}
+load("output/Data/universe_df.rda")
+```
+
 ### Initialising data frame of all protein-coding genes
 
-Next, we'll initialise our data frame of all protein-coding genes, ```r universe_df```, which we'll be using throughout the project. 
+Next, we'll initialise our data frame of all protein-coding genes, universe_df, which we'll be using throughout the project. 
 
 To do this, we'll load in HGNC's spreadsheet of protein-coding genes, downloaded from [their website](https://www.genenames.org/cgi-bin/statistics), updating gene symbols using, and taking only the columns we want. 
 
-```{r universe_init, results='hide', message=FALSE, warning=FALSE}
-#we can load directly from website:
-#hgnc<- fread("ftp://ftp.ebi.ac.uk/pub/databases/genenames/new/tsv/locus_types/gene_with_protein_product.txt")
-# or used version I downloaded (quicker)
+```{r universe_init, eval = FALSE}
+#read protein-coding gene list
 hgnc<- read.csv("Gene_lists/Universe/gene_with_protein_product.txt",sep = "\t", comment.char = "#",stringsAsFactors = FALSE)
 
-
+#take only needed columns
 hgnc$symbol<- checkGeneSymbols(hgnc$symbol)[[3]]
 universe_df <- data.frame(hgnc$hgnc_id,hgnc$symbol,hgnc$name,hgnc$gene_family,hgnc$location,hgnc$mgd_id)
 names(universe_df) <- c("hgnc_id","gene","gene_name","gene_family","location","mgd_id")
@@ -53,7 +55,7 @@ A complete list of OMIM genes was downloaded from [OMIM Data Downloads page](htt
 
 First, we load in data in genemap2:
 
-```{r omim_df_parse}
+```{r omim_df_parse, eval=FALSE}
 # Load in genemap2
 omim <- read.csv(file = "Gene_lists/OMIM/genemap2.txt", sep = "\t", comment.char = "#",stringsAsFactors = FALSE)
 #take only needed columns
@@ -72,7 +74,7 @@ Next, we're going to filter these genes so we only include genes which meet our 
 
 [see OMIM FAQ]("https://www.omim.org/help/faq#1_6")
 
-```{r omim_df_filter1}
+```{r omim_df_filter1, eval= FALSE}
 
 # keep only rows containing phenotype mapping key (3) "molecular basis is known"
 omim <- omim[which(grepl(pattern="\\(3)",x=omim$Phenotypes,ignore.case=FALSE)==TRUE),]
@@ -95,7 +97,7 @@ Now we
 * exclude non protein-coding genes by checking OMIM genes are in our universe gene list
 
 
-```{r omim_df_filter2, results='hide', message=FALSE, warning=FALSE}
+```{r omim_df_filter2, eval=FALSE}
 #updating gene names
 omim$Gene <- checkGeneSymbols(omim$Approved.Symbol,unmapped.as.na=TRUE)[[3]]
 
@@ -128,7 +130,7 @@ omim <- omim[-which(!omim$Gene%in%universe_df$gene&!grepl(pattern="///",omim$Gen
 
 Now we annotate these genes with the inheritance pattern of any associated phenotypes
 
-```{r omim_df_inheritance, results='hide', message=FALSE, warning=FALSE}
+```{r omim_df_inheritance, eval=FALSE}
 #getting inheritances
 # Extend OMIM data
 omim$MT <- ifelse(omim$Phenotypes == "",NA,ifelse(grepl(pattern = ", Mitochondrial", x = omim$Phenotypes, ignore.case = FALSE),"Y","N"))
@@ -150,7 +152,7 @@ omim$Inheritance_pattern[which(omim$IS == "Y")]<- ifelse(is.na(omim$Inheritance_
 
 And we can save our filtered OMIM gene list for easy access/use later
 
-```{r omim_save, results='hide', message=FALSE, warning=FALSE}
+```{r omim_save, eval=FALSE}
 #taking only needed rows, saving to spreadsheet
 omim <- omim[,c(1,4,5,6,13)]
 write.xlsx(omim, file= "output/spreadsheets/omim_filtered_with_inheritances.xlsx", row.names = FALSE,col.names = TRUE)
@@ -161,17 +163,14 @@ write.xlsx(omim, file= "output/spreadsheets/omim_filtered_with_inheritances.xlsx
 
 Next we'll load in ExAC gene constraint data 
 
-```{r exac1}
-#using ftp
-#exac<- fread("ftp://ftp.broadinstitute.org/pub/ExAC_release/release0.3.1/functional_gene_constraint/fordist_cleaned_exac_r03_march16_z_pli_rec_null_data.txt")
-#using downloaded file (quicker)
+```{r exac1,eval=FALSE}
 exac <- read.table("Gene_lists/ExAC/fordist_cleaned_exac_r03_march16_z_pli_rec_null_data.txt",header = TRUE,fill = TRUE)
 exac <- exac[,c(2,17,18,20)]
 ```
 
 Some ExAC gene symbols map to the same gene symbol when updated, here we remove the duplicated genes, as well as removing any ExAC genes that aren't protein coding
 
-```{r exac2, results='hide', message=FALSE, warning=FALSE }
+```{r exac2, eval=FALSE }
 
 genecheck <- checkGeneSymbols(exac$gene,unmapped.as.na=FALSE)
 baddups <- genecheck[which(duplicated(genecheck[[3]])==TRUE),3]
@@ -200,29 +199,27 @@ bioRxiv 220814; doi: https://doi.org/10.1101/220814
 
 I used the CCR Bed File from the github repo to put together details on the highest CCR contained in each protein-coding genes in universe, as well as which genes had a CCR>99.
 
-```{r ccr}
+```{r ccr, eval=FALSE}
 #havrilla CCR
-#ccr <- as.data.frame(read.table("Gene_lists/Regional_Constraint/ccrs.autosomes.v2.20180420.bed",header = FALSE, sep="\t",stringsAsFactors=FALSE))
-#ccr95 <- ccr[which(ccr$V4>95),]
-#ccr95$V5<-checkGeneSymbols(ccr95$V5,unmapped.as.na=FALSE,map=hgnc.table)[[3]]
-#save(ccr95, file="output/Data/ccr95.rda", compress="bzip2")
-#ccr99 <- ccr[which(ccr$V4>99),]
-#ccr99$V5<-checkGeneSymbols(ccr99$V5,unmapped.as.na=FALSE,map=hgnc.table)[[3]]
-#save(ccr99, file="output/Data/ccr99.rda", compress="bzip2")
+ccr <- as.data.frame(read.table("Gene_lists/Regional_Constraint/ccrs.autosomes.v2.20180420.bed",header = FALSE, sep="\t",stringsAsFactors=FALSE))
+ccr95 <- ccr[which(ccr$V4>95),]
+ccr95$V5<-checkGeneSymbols(ccr95$V5,unmapped.as.na=FALSE,map=hgnc.table)[[3]]
+save(ccr95, file="output/Data/ccr95.rda", compress="bzip2")
+ccr99 <- ccr[which(ccr$V4>99),]
+ccr99$V5<-checkGeneSymbols(ccr99$V5,unmapped.as.na=FALSE,map=hgnc.table)[[3]]
+save(ccr99, file="output/Data/ccr99.rda", compress="bzip2")
 
-#mult99<-read.table("Gene_lists/Regional_Constraint/genesw99CCR(supp_table_1).tsv", sep = '\t', header = TRUE,stringsAsFactors=FALSE)
-#ccr99_genes <- data.frame(gene=unique(ccr99$V5))
-#ccr99_genes$n <- ifelse(ccr99_genes$gene%in%mult99$gene,vlookup(ccr99_genes$gene,mult99,result_column="n",lookup_column = "gene"),1)
-#save(ccr99_genes, file="output/Data/ccr99_genes.rda", compress="bzip2")
-#rm(mult99)
-load("output/Data/ccr99_genes.rda")
+mult99<-read.table("Gene_lists/Regional_Constraint/genesw99CCR(supp_table_1).tsv", sep = '\t', header = TRUE,stringsAsFactors=FALSE)
+ccr99_genes <- data.frame(gene=unique(ccr99$V5))
+ccr99_genes$n <- ifelse(ccr99_genes$gene%in%mult99$gene,vlookup(ccr99_genes$gene,mult99,result_column="n",lookup_column = "gene"),1)
+save(ccr99_genes, file="output/Data/ccr99_genes.rda", compress="bzip2")
+rm(mult99)
 
-#highest_ccr <- data.frame(gene=unique(ccr$V5))
-#highest_ccr$ccr <- rep(NA,length(highest_ccr$gene))
-#highest_ccr$ccr <- unlist(lapply(highest_ccr$gene,function(x) max(ccr$V4[which(ccr$V5==x)])))
-#highest_ccr$gene<-checkGeneSymbols(highest_ccr$gene,unmapped.as.na=FALSE,map=hgnc.table)[[3]]
-#save(highest_ccr, file="output/Data/highest_ccr.rda", compress="bzip2")
-load("output/Data/highest_ccr.rda")
+highest_ccr <- data.frame(gene=unique(ccr$V5))
+highest_ccr$ccr <- rep(NA,length(highest_ccr$gene))
+highest_ccr$ccr <- unlist(lapply(highest_ccr$gene,function(x) max(ccr$V4[which(ccr$V5==x)])))
+highest_ccr$gene<-checkGeneSymbols(highest_ccr$gene,unmapped.as.na=FALSE,map=hgnc.table)[[3]]
+save(highest_ccr, file="output/Data/highest_ccr.rda", compress="bzip2")
 ```
 
 Next we load in data from 
@@ -235,7 +232,7 @@ Here I load in missense constraint data using Table S4 downloaded from [here](ht
 
 I annotate each protein-coding gene with the lowest gamma contained in the gene as defined by Samocha et al.
 
-```{r samocha, results='hide', message=FALSE, warning=FALSE }
+```{r samocha, eval=FALSE }
 #samocha regional missense constraint
 samocha<-read.xlsx("Gene_lists/Regional_Constraint/148353-3.xlsx",sheet=2)
 genes_w_var <- data.frame(gene=unique(samocha$gene))
@@ -253,7 +250,7 @@ The American Journal of Human Genetics,Volume 103, Issue 2; doi: https://doi.org
 
 We load in Table S4 from the paper, a list of 1,996 protein coding genes they defined as having NMD-escape constraint, as well as their rank
 
-```{r nmd, results='hide', message=FALSE, warning=FALSE}
+```{r nmd, eval=FALSE}
 #coban-akdemir NMD- constraint
 nmd_min <-read.xlsx("Gene_lists/Regional_Constraint/1-s2.0-S0002929718302039-mmc5.xlsx",startRow=2)
 nmd_min<-nmd_min[,c(1,2)]
@@ -275,7 +272,7 @@ All spreadsheets downloaded from [MGI Data and Statistical Reports page](http://
 
 MGI_PhenoGenoMP contains all Mammalian Phenotype (MP) terms associated with every allele in MGI. We load in that spreadsheet, and remove any alleles which involve more than one protein-coding gene
 
-```{r mgi_parse}
+```{r mgi_parse,eval=FALSE}
 #load in all genes and phenotypes
 mgi_df <- read.xlsx("Gene_lists/MGI_MPs/MGI_PhenoGenoMP.xlsx")
 mgi_df <- mgi_df[,c(1,2,6,4)]
@@ -284,7 +281,7 @@ mgi_df<- mgi_df[which(!grepl(pattern = "\\,", x = mgi_df$MGI_ID, ignore.case = F
 
 Next we check whether alleles are functional knockouts using the allele information spreadsheet
 
-```{r mgi_parse2}
+```{r mgi_parse2,eval=FALSE}
 allele <- read.xlsx("Gene_lists/MGI_MPs/MGI_PhenotypicAllele.xlsx")
 mgi_df$allele_info <- vlookup(mgi_df$`Allele.Symbol(s)`,allele,result_column="Allele.Attribute",lookup_column="Allele.Symbol")
 mgi_df <- mgi_df[which(grepl(pattern="Null/knockout",x=mgi_df$allele_info,ignore.case=FALSE)|grepl(pattern="Hypomorph",x=mgi_df$allele_info,ignore.case=TRUE)),]
@@ -298,7 +295,7 @@ We also add a column with 'high level phens' to add another level of possible an
 
 We then annotate MGI with gene symbols (mouse and human)
 
-```{r mgi_parse3}
+```{r mgi_parse3,eval=FALSE}
 mgi <- data.frame(MGI_ID= unique(mgi_df$MGI_ID))
 
 #which genes have a lethal phenotype
@@ -364,7 +361,7 @@ release 8.0 phenotype information downloaded from [ftp](ftp://ftp.ebi.ac.uk/pub/
 * remove non protein-coding genes
 
 
-```{r impc, results='hide', message=FALSE, warning=FALSE}
+```{r impc, eval=FALSE}
 impc_all<- read.csv("Gene_lists/IMPC/ALL_genotype_phenotype.csv",header=TRUE, sep = ",",fill=TRUE,stringsAsFactors = FALSE)
 impc_all<-impc_all[-which(impc_all$mp_term_id==""|impc_all$zygosity!="homozygote"),]
 
@@ -400,7 +397,7 @@ save(impc, file="output/Data/impc.rda", compress="bzip2")
 Cell essentiality data downloaded from 3 papers
 *FINISH LATER!!!*
 
-```{r cell_ko, results='hide', message=FALSE, warning=FALSE}
+```{r cell_ko, eval=FALSE}
 #get wang, blomen, hart genes and essentialomes
 #read wang genes and which are essential in different cell lines
 wang <- read.xlsx("Gene_lists/Cell_KOs/wang_essentials.xlsx",startRow = 1, colNames = TRUE, rowNames = FALSE)
@@ -434,11 +431,13 @@ rm(blomen,hart,wang,common_genes)
 
 ```
 
+### GO Annotations
+
 ### Human Lethal Genes- OMIM API Search
 
 
 ### Putting it all together
-```{r universe}
+```{r universe, eval=FALSE}
 #disease status, phenotype, inheritance pattern
 universe_df$omim <- ifelse(universe_df$gene%in%omim$Gene,"Y",NA)
 universe_df$mim_number <- vlookup(universe_df$gene,omim,result_column="Mim.Number",lookup_column="Gene")
@@ -503,7 +502,6 @@ rm(mgi,impc)
 
 
 #cell knockouts
-#source("4.Cell_Knockouts/cell_essential_genes.R")
 universe_df$cell_ko <- ifelse(universe_df$gene%in%cell_KOs$Gene,"Y",NA)
 universe_df$cell_essential_hits <- vlookup(universe_df$gene,cell_KOs,result_column="no_hits",lookup_column="Gene")
 universe_df$cell_essential <- ifelse(universe_df$cell_essential_hits>=3,"Y","N")
@@ -511,9 +509,6 @@ rm(cell_KOs)
 
 
 #GO terms
-##slow- don't recommend running
-#source("5.GO/gene_ontology_annotations.R)
-load("output/Data/GO_annotations.rda")
 universe_df$go_terms <- go_annotations$universe_df.go_terms
 universe_df$go_names <- go_annotations$universe_df.go_names
 rm(go_annotations)
@@ -532,25 +527,54 @@ write.xlsx(universe_df[,-c(which(names(universe_df)=="go_terms"),which(names(uni
 
 ```
 
-OR- just load in universe
-
-```{r universeskip}
-load("output/Data/universe_df.rda")
-```
 
 ## Results/ Analysis
 
 Seperated according to paper figures
 
 ### Functions for the plots 
- * FIX LATER *
+
  
 ```{r plot_fun}
-source("plot_functions.R")
+blank_theme <- function() {
+  theme_minimal(base_size=12,base_family="Helvetica") %+replace%
+    theme(
+      axis.title.x = element_blank(),
+      axis.title.y = element_blank(),
+      axis.text = element_blank(),
+      panel.border = element_blank(),
+      panel.grid=element_blank(),
+      axis.ticks = element_blank(),
+      plot.title=element_text(size=12, face="bold"),
+      legend.title=element_blank()
+    )
+}
+
+scatter_theme <- function() {
+  theme_bw(base_size=12,base_family="Helvetica") %+replace%
+    theme(
+      panel.grid=element_blank(),
+      panel.border = element_blank(),
+      axis.line = element_line(),
+      plot.title=element_text(size=12, face="bold"),
+      axis.title=element_text(size=12),
+      axis.text=element_text(size=12)
+    )
+}
+
+bar_theme <- function() {
+  theme_bw(base_size=12,base_family="Helvetica") %+replace%
+    theme(
+      axis.title.x = element_blank(),
+      panel.grid=element_blank(),
+      panel.border = element_blank(),
+      axis.ticks.x = element_blank(),
+      axis.line = element_line(),
+      legend.title=element_blank()
+    )
+}
 ```
 
-
-### Genetic Constraint THMs (Figure One)
 
 
 

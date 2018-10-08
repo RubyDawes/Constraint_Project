@@ -125,46 +125,28 @@ $(document).ready(function () {
 </div>
 
 
-<pre class="r"><code>load(&quot;output/Data/universe_df.rda&quot;)</code></pre>
-<div id="genetic-constraint-thms-figure-one" class="section level3">
-<h3>Genetic Constraint THMs (Figure One)</h3>
-<pre class="r"><code>library(ggplot2)
-library(ggpubr)</code></pre>
-<pre><code>## Loading required package: magrittr</code></pre>
-<pre class="r"><code>library(scales)
-(library(dplyr))</code></pre>
-<pre><code>## Warning: package 'dplyr' was built under R version 3.5.1</code></pre>
-<pre><code>## 
-## Attaching package: 'dplyr'</code></pre>
-<pre><code>## The following objects are masked from 'package:stats':
-## 
-##     filter, lag</code></pre>
-<pre><code>## The following objects are masked from 'package:base':
-## 
-##     intersect, setdiff, setequal, union</code></pre>
-<pre><code>##  [1] &quot;dplyr&quot;     &quot;scales&quot;    &quot;ggpubr&quot;    &quot;magrittr&quot;  &quot;ggplot2&quot;  
-##  [6] &quot;stats&quot;     &quot;graphics&quot;  &quot;grDevices&quot; &quot;utils&quot;     &quot;datasets&quot; 
-## [11] &quot;methods&quot;   &quot;base&quot;</code></pre>
-<pre class="r"><code>blank_theme &lt;- function() {
-  theme_minimal(base_size=12,base_family=&quot;Helvetica&quot;) %+replace%
-    theme(
-      axis.title.x = element_blank(),
-      axis.title.y = element_blank(),
-      axis.text = element_blank(),
-      panel.border = element_blank(),
-      panel.grid=element_blank(),
-      axis.ticks = element_blank(),
-      plot.title=element_text(size=12, face=&quot;bold&quot;),
-      legend.title=element_blank()
-    )
-}</code></pre>
-<ul>
-<li><code>1540</code> OMIM genes cause autosomal recessive (AR) inheritance
-<ul>
-<li><code>67</code>/<code>1540</code> (<code>4.4</code>) show missense constraint</li>
-<li>with 122/1451 (8.4%) of AR genes intolerant to LoF variation.</li>
-</ul></li>
-</ul>
+<div id="loading-required-libraries" class="section level3">
+<h3>Loading required libraries</h3>
+<p>First, we’ll load all required libraries</p>
+<pre class="r"><code>library(HGNChelper)
+library(openxlsx)
+library(expss)
+library(ggpubr)
+library(dplyr)
+library(scales)</code></pre>
+</div>
+<div id="initialising-data-frame-of-all-protein-coding-genes" class="section level3">
+<h3>Initialising data frame of all protein-coding genes</h3>
+<p>Next, we’ll initialise our data frame of all protein-coding genes, universe_df, which we’ll be using throughout the project.</p>
+<p>To do this, we’ll load in HGNC’s spreadsheet of protein-coding genes, downloaded from <a href="https://www.genenames.org/cgi-bin/statistics">their website</a>, updating gene symbols using, and taking only the columns we want.</p>
+<pre class="r"><code>#read protein-coding gene list
+hgnc&lt;- read.csv(&quot;Gene_lists/Universe/gene_with_protein_product.txt&quot;,sep = &quot;\t&quot;, comment.char = &quot;#&quot;,stringsAsFactors = FALSE)
+
+#take only needed columns
+hgnc$symbol&lt;- checkGeneSymbols(hgnc$symbol)[[3]]
+universe_df &lt;- data.frame(hgnc$hgnc_id,hgnc$symbol,hgnc$name,hgnc$gene_family,hgnc$location,hgnc$mgd_id)
+names(universe_df) &lt;- c(&quot;hgnc_id&quot;,&quot;gene&quot;,&quot;gene_name&quot;,&quot;gene_family&quot;,&quot;location&quot;,&quot;mgd_id&quot;)
+rm(hgnc)</code></pre>
 </div>
 
 

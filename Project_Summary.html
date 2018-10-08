@@ -134,6 +134,15 @@ $(document).ready(function () {
 <li><a href="#getting-disease-genes-from-omim">Getting disease genes from OMIM</a></li>
 <li><a href="#get-exac-scores-for-protein-coding-genes">get exac scores for protein coding genes</a></li>
 <li><a href="#regional-constraint">regional constraint</a></li>
+<li><a href="#mouse-ko-phenotypes">Mouse KO phenotypes</a></li>
+<li><a href="#cell-ko-data">Cell KO data</a></li>
+<li><a href="#go-annotations">GO Annotations</a></li>
+<li><a href="#human-lethal-genes--omim-api-search">Human Lethal Genes- OMIM API Search</a></li>
+<li><a href="#putting-it-all-together">Putting it all together</a></li>
+</ul></li>
+<li><a href="#results-analysis">Results/ Analysis</a><ul>
+<li><a href="#functions-for-the-plots">Functions for the plots</a></li>
+<li><a href="#genetic-constraint-thms-figure-one">Genetic Constraint THMs (Figure One)</a></li>
 </ul></li>
 </ul>
 </div>
@@ -145,18 +154,19 @@ $(document).ready(function () {
 <p>First, we’ll load all required libraries</p>
 <pre class="r"><code>library(HGNChelper)
 library(openxlsx)
-library(expss)</code></pre>
+library(expss)
+library(ggpubr)
+library(dplyr)
+library(scales)</code></pre>
 </div>
 <div id="initialising-data-frame-of-all-protein-coding-genes" class="section level3">
 <h3>Initialising data frame of all protein-coding genes</h3>
-<p>Next, we’ll initialise our data frame of all protein-coding genes, <code>universe_df</code>, which we’ll be using throughout the project.</p>
-<p>To do this, we’ll load in HGNC’s spreadsheet of protein-coding genes, downloaded from <a href="https://www.genenames.org/cgi-bin/statistics">their website</a>, updating gene symbols using <code>checkGeneSymbols</code>, and taking only the columns we want.</p>
-<pre class="r"><code>#we can load directly from website:
-#hgnc&lt;- fread(&quot;ftp://ftp.ebi.ac.uk/pub/databases/genenames/new/tsv/locus_types/gene_with_protein_product.txt&quot;)
-# or used version I downloaded (quicker)
+<p>Next, we’ll initialise our data frame of all protein-coding genes, universe_df, which we’ll be using throughout the project.</p>
+<p>To do this, we’ll load in HGNC’s spreadsheet of protein-coding genes, downloaded from <a href="https://www.genenames.org/cgi-bin/statistics">their website</a>, updating gene symbols using, and taking only the columns we want.</p>
+<pre class="r"><code>#read protein-coding gene list
 hgnc&lt;- read.csv(&quot;Gene_lists/Universe/gene_with_protein_product.txt&quot;,sep = &quot;\t&quot;, comment.char = &quot;#&quot;,stringsAsFactors = FALSE)
 
-
+#take only needed columns
 hgnc$symbol&lt;- checkGeneSymbols(hgnc$symbol)[[3]]
 universe_df &lt;- data.frame(hgnc$hgnc_id,hgnc$symbol,hgnc$name,hgnc$gene_family,hgnc$location,hgnc$mgd_id)
 names(universe_df) &lt;- c(&quot;hgnc_id&quot;,&quot;gene&quot;,&quot;gene_name&quot;,&quot;gene_family&quot;,&quot;location&quot;,&quot;mgd_id&quot;)
@@ -256,10 +266,7 @@ write.xlsx(omim, file= &quot;output/spreadsheets/omim_filtered_with_inheritances
 <div id="get-exac-scores-for-protein-coding-genes" class="section level3">
 <h3>get exac scores for protein coding genes</h3>
 <p>Next we’ll load in ExAC gene constraint data</p>
-<pre class="r"><code>#using ftp
-#exac&lt;- fread(&quot;ftp://ftp.broadinstitute.org/pub/ExAC_release/release0.3.1/functional_gene_constraint/fordist_cleaned_exac_r03_march16_z_pli_rec_null_data.txt&quot;)
-#using downloaded file (quicker)
-exac &lt;- read.table(&quot;Gene_lists/ExAC/fordist_cleaned_exac_r03_march16_z_pli_rec_null_data.txt&quot;,header = TRUE,fill = TRUE)
+<pre class="r"><code>exac &lt;- read.table(&quot;Gene_lists/ExAC/fordist_cleaned_exac_r03_march16_z_pli_rec_null_data.txt&quot;,header = TRUE,fill = TRUE)
 exac &lt;- exac[,c(2,17,18,20)]</code></pre>
 <p>Some ExAC gene symbols map to the same gene symbol when updated, here we remove the duplicated genes, as well as removing any ExAC genes that aren’t protein coding</p>
 <pre class="r"><code>genecheck &lt;- checkGeneSymbols(exac$gene,unmapped.as.na=FALSE)
@@ -283,27 +290,25 @@ exac &lt;- exac[-which(!exac$gene%in%universe_df$gene&amp;!grepl(pattern=&quot;/
 <p><a href="https://github.com/quinlan-lab/ccrhtml">github</a></p>
 <p>I used the CCR Bed File from the github repo to put together details on the highest CCR contained in each protein-coding genes in universe, as well as which genes had a CCR&gt;99.</p>
 <pre class="r"><code>#havrilla CCR
-#ccr &lt;- as.data.frame(read.table(&quot;Gene_lists/Regional_Constraint/ccrs.autosomes.v2.20180420.bed&quot;,header = FALSE, sep=&quot;\t&quot;,stringsAsFactors=FALSE))
-#ccr95 &lt;- ccr[which(ccr$V4&gt;95),]
-#ccr95$V5&lt;-checkGeneSymbols(ccr95$V5,unmapped.as.na=FALSE,map=hgnc.table)[[3]]
-#save(ccr95, file=&quot;output/Data/ccr95.rda&quot;, compress=&quot;bzip2&quot;)
-#ccr99 &lt;- ccr[which(ccr$V4&gt;99),]
-#ccr99$V5&lt;-checkGeneSymbols(ccr99$V5,unmapped.as.na=FALSE,map=hgnc.table)[[3]]
-#save(ccr99, file=&quot;output/Data/ccr99.rda&quot;, compress=&quot;bzip2&quot;)
+ccr &lt;- as.data.frame(read.table(&quot;Gene_lists/Regional_Constraint/ccrs.autosomes.v2.20180420.bed&quot;,header = FALSE, sep=&quot;\t&quot;,stringsAsFactors=FALSE))
+ccr95 &lt;- ccr[which(ccr$V4&gt;95),]
+ccr95$V5&lt;-checkGeneSymbols(ccr95$V5,unmapped.as.na=FALSE,map=hgnc.table)[[3]]
+save(ccr95, file=&quot;output/Data/ccr95.rda&quot;, compress=&quot;bzip2&quot;)
+ccr99 &lt;- ccr[which(ccr$V4&gt;99),]
+ccr99$V5&lt;-checkGeneSymbols(ccr99$V5,unmapped.as.na=FALSE,map=hgnc.table)[[3]]
+save(ccr99, file=&quot;output/Data/ccr99.rda&quot;, compress=&quot;bzip2&quot;)
 
-#mult99&lt;-read.table(&quot;Gene_lists/Regional_Constraint/genesw99CCR(supp_table_1).tsv&quot;, sep = '\t', header = TRUE,stringsAsFactors=FALSE)
-#ccr99_genes &lt;- data.frame(gene=unique(ccr99$V5))
-#ccr99_genes$n &lt;- ifelse(ccr99_genes$gene%in%mult99$gene,vlookup(ccr99_genes$gene,mult99,result_column=&quot;n&quot;,lookup_column = &quot;gene&quot;),1)
-#save(ccr99_genes, file=&quot;output/Data/ccr99_genes.rda&quot;, compress=&quot;bzip2&quot;)
-#rm(mult99)
-load(&quot;output/Data/ccr99_genes.rda&quot;)
+mult99&lt;-read.table(&quot;Gene_lists/Regional_Constraint/genesw99CCR(supp_table_1).tsv&quot;, sep = '\t', header = TRUE,stringsAsFactors=FALSE)
+ccr99_genes &lt;- data.frame(gene=unique(ccr99$V5))
+ccr99_genes$n &lt;- ifelse(ccr99_genes$gene%in%mult99$gene,vlookup(ccr99_genes$gene,mult99,result_column=&quot;n&quot;,lookup_column = &quot;gene&quot;),1)
+save(ccr99_genes, file=&quot;output/Data/ccr99_genes.rda&quot;, compress=&quot;bzip2&quot;)
+rm(mult99)
 
-#highest_ccr &lt;- data.frame(gene=unique(ccr$V5))
-#highest_ccr$ccr &lt;- rep(NA,length(highest_ccr$gene))
-#highest_ccr$ccr &lt;- unlist(lapply(highest_ccr$gene,function(x) max(ccr$V4[which(ccr$V5==x)])))
-#highest_ccr$gene&lt;-checkGeneSymbols(highest_ccr$gene,unmapped.as.na=FALSE,map=hgnc.table)[[3]]
-#save(highest_ccr, file=&quot;output/Data/highest_ccr.rda&quot;, compress=&quot;bzip2&quot;)
-load(&quot;output/Data/highest_ccr.rda&quot;)</code></pre>
+highest_ccr &lt;- data.frame(gene=unique(ccr$V5))
+highest_ccr$ccr &lt;- rep(NA,length(highest_ccr$gene))
+highest_ccr$ccr &lt;- unlist(lapply(highest_ccr$gene,function(x) max(ccr$V4[which(ccr$V5==x)])))
+highest_ccr$gene&lt;-checkGeneSymbols(highest_ccr$gene,unmapped.as.na=FALSE,map=hgnc.table)[[3]]
+save(highest_ccr, file=&quot;output/Data/highest_ccr.rda&quot;, compress=&quot;bzip2&quot;)</code></pre>
 <p>Next we load in data from</p>
 <ul>
 <li>Regional missense constraint improves variant deleteriousness prediction Kaitlin E. Samocha, Jack A. Kosmicki, Konrad J. Karczewski, Anne H. O’Donnell-Luria, Emma Pierce-Hoffman, Daniel G. MacArthur, Benjamin M. Neale, Mark J. Daly bioRxiv 148353; doi: <a href="https://doi.org/10.1101/148353" class="uri">https://doi.org/10.1101/148353</a></li>
@@ -318,14 +323,305 @@ genes_w_var$gene&lt;-checkGeneSymbols(genes_w_var$gene,unmapped.as.na=FALSE,map=
 rm(samocha)</code></pre>
 <p>Lastly, we’ll load in data from</p>
 <ul>
-<li><p>Item 1</p></li>
-<li><p>[Zeynep Coban-Akdemir, Janson J. White, Xiaofei Song, Shalini N. Jhangiani, Jawid M. Fatih, Tomasz Gambin, Yavuz Bayram, Ivan K. Chinn, Ender Karaca, Jaya Punetha, Cecilia Poli, Eric Boerwinkle, Chad A. Shaw, Jordan S. Orange, Richard A. Gibbs, Tuuli Lappalainen, James R. Lupski, Claudia M.B. Carvalho, Identifying Genes Whose Mutant Transcripts Cause Dominant Disease Traits by Potential Gain-of-Function Alleles, The American Journal of Human Genetics,Volume 103, Issue 2,(<a href="https://doi.org/10.1016/j.ajhg.2018.06.009" class="uri">https://doi.org/10.1016/j.ajhg.2018.06.009</a>.)</p></li>
+<li>Zeynep Coban-Akdemir, Janson J. White, Xiaofei Song, Shalini N. Jhangiani, Jawid M. Fatih, Tomasz Gambin, Yavuz Bayram, Ivan K. Chinn, Ender Karaca, Jaya Punetha, Cecilia Poli, Eric Boerwinkle, Chad A. Shaw, Jordan S. Orange, Richard A. Gibbs, Tuuli Lappalainen, James R. Lupski, Claudia M.B. Carvalho, Identifying Genes Whose Mutant Transcripts Cause Dominant Disease Traits by Potential Gain-of-Function Alleles, The American Journal of Human Genetics,Volume 103, Issue 2; doi: <a href="https://doi.org/10.1016/j.ajhg.2018.06.009" class="uri">https://doi.org/10.1016/j.ajhg.2018.06.009</a>.</li>
 </ul>
 <p>We load in Table S4 from the paper, a list of 1,996 protein coding genes they defined as having NMD-escape constraint, as well as their rank</p>
 <pre class="r"><code>#coban-akdemir NMD- constraint
 nmd_min &lt;-read.xlsx(&quot;Gene_lists/Regional_Constraint/1-s2.0-S0002929718302039-mmc5.xlsx&quot;,startRow=2)
 nmd_min&lt;-nmd_min[,c(1,2)]
 nmd_min$gene&lt;-checkGeneSymbols(nmd_min$gene,unmapped.as.na=FALSE,map=hgnc.table)[[3]]</code></pre>
+</div>
+<div id="mouse-ko-phenotypes" class="section level3">
+<h3>Mouse KO phenotypes</h3>
+<p>Next we’re going to load in data on mouse KO phenotypes, and find which protein coding genes are associated with lethality in recessive KO mice. We use two data sources:</p>
+<ol style="list-style-type: decimal">
+<li>Mouse Genome Informatics (MGI)</li>
+<li>International Mouse Phenotyping Consortium (IMPC)</li>
+</ol>
+<div id="mgi" class="section level4">
+<h4>MGI</h4>
+<p>All spreadsheets downloaded from <a href="http://www.informatics.jax.org/downloads/reports/index.html">MGI Data and Statistical Reports page</a></p>
+<p>MGI_PhenoGenoMP contains all Mammalian Phenotype (MP) terms associated with every allele in MGI. We load in that spreadsheet, and remove any alleles which involve more than one protein-coding gene</p>
+<pre class="r"><code>#load in all genes and phenotypes
+mgi_df &lt;- read.xlsx(&quot;Gene_lists/MGI_MPs/MGI_PhenoGenoMP.xlsx&quot;)
+mgi_df &lt;- mgi_df[,c(1,2,6,4)]
+mgi_df&lt;- mgi_df[which(!grepl(pattern = &quot;\\,&quot;, x = mgi_df$MGI_ID, ignore.case = FALSE)),]</code></pre>
+<p>Next we check whether alleles are functional knockouts using the allele information spreadsheet</p>
+<pre class="r"><code>allele &lt;- read.xlsx(&quot;Gene_lists/MGI_MPs/MGI_PhenotypicAllele.xlsx&quot;)
+mgi_df$allele_info &lt;- vlookup(mgi_df$`Allele.Symbol(s)`,allele,result_column=&quot;Allele.Attribute&quot;,lookup_column=&quot;Allele.Symbol&quot;)
+mgi_df &lt;- mgi_df[which(grepl(pattern=&quot;Null/knockout&quot;,x=mgi_df$allele_info,ignore.case=FALSE)|grepl(pattern=&quot;Hypomorph&quot;,x=mgi_df$allele_info,ignore.case=TRUE)),]</code></pre>
+<p>We use a manually curated list of lethal MP terms to check which protein-coding genes are associated with lethality in KO mice.</p>
+<p>We keep all MP annotations in one column, and create another column that’s just any lethal MP terms associated with each gene.</p>
+<p>We also add a column with ‘high level phens’ to add another level of possible analysis later.</p>
+<p>We then annotate MGI with gene symbols (mouse and human)</p>
+<pre class="r"><code>mgi &lt;- data.frame(MGI_ID= unique(mgi_df$MGI_ID))
+
+#which genes have a lethal phenotype
+mgi_lethalphens &lt;- read.xlsx(&quot;Gene_lists/MGI_MPs/MGI_lethal_phenotypes.xlsx&quot;)
+mgi_df$is_lethal &lt;- ifelse(mgi_df$MP_ID%in%mgi_lethalphens$MP.id,&quot;Y&quot;,&quot;N&quot;)
+
+#getting all other phens
+mgi_allphens &lt;- read.xlsx(&quot;Gene_lists/MGI_MPs/VOC_MammalianPhenotype.xlsx&quot;,startRow=1,colNames=FALSE)
+names(mgi_allphens)&lt;- c(&quot;MP.id&quot;,&quot;phenotype&quot;,&quot;definition&quot;)
+
+#high level phens
+mgi_highphens &lt;- read.xlsx(&quot;Gene_lists/MGI_MPs/HMD_HumanPhenotype.xlsx&quot;)
+mgi_highphens &lt;- mgi_highphens[,c(6,7)]
+names(mgi_highphens) &lt;- c(&quot;MGI.id&quot;,&quot;phenotype&quot;)
+#mp ids
+mgi$all_MP_ID &lt;- lapply(mgi$MGI_ID, function(x) unique(mgi_df$MP_ID[which(mgi_df$MGI_ID==x)]))
+mgi$lethal_MP_ID &lt;- lapply(mgi$MGI_ID, function(x) unique(mgi_df$MP_ID[which(mgi_df$MGI_ID==x&amp;mgi_df$is_lethal==&quot;Y&quot;)]))
+mgi$all_MP_phen &lt;- lapply(mgi$all_MP_ID, function(x) mgi_allphens$phenotype[which(mgi_allphens$MP.id%in%x)])
+mgi$lethal_MP_phen &lt;- lapply(mgi$lethal_MP_ID, function(x) mgi_lethalphens$phenotype[which(mgi_lethalphens$MP.id%in%x)])
+
+mgi$high_MP_ID &lt;- strsplit(vlookup(mgi$MGI_ID,mgi_highphens,result_column=&quot;phenotype&quot;,lookup_column=&quot;MGI.id&quot;),split=&quot; &quot;)
+mgi$high_MP_phen &lt;- lapply(mgi$high_MP_ID,function(x) unique(mgi_allphens$phenotype[which(mgi_allphens$MP.id%in%x)]))
+
+#allele info
+mgi$allele_info &lt;- lapply(mgi$MGI_ID, function(x) unique(mgi_df$allele_info[which(mgi_df$MGI_ID==x&amp;mgi_df$is_lethal==&quot;Y&quot;)]))
+
+#is_lethal
+mgi$is_lethal &lt;- ifelse(lapply(mgi$lethal_MP_ID,length)==0,&quot;N&quot;,&quot;Y&quot;)
+
+# add on gene names and human ortholog names
+mgi_names &lt;- read.xlsx(&quot;Gene_lists/MGI_MPs/HMD_HumanPhenotype.xlsx&quot;)
+mgi_names$MGI.Marker.Accession.ID &lt;- gsub(&quot; &quot;, &quot;&quot;, mgi_names$MGI.Marker.Accession.ID, fixed = TRUE)
+mgi$mouse_symbol &lt;- vlookup(mgi$MGI_ID,mgi_names,result_column=&quot;Mouse.Marker.Symbol&quot;,lookup_column = &quot;MGI.Marker.Accession.ID&quot;)
+
+names &lt;- read.csv(&quot;Gene_lists/Universe/gene_with_protein_product.txt&quot;,sep = &quot;\t&quot;, comment.char = &quot;#&quot;,stringsAsFactors = FALSE)
+mgi$human_symbol &lt;- vlookup(mgi$MGI_ID,names,result_column=&quot;symbol&quot;,lookup_column = &quot;mgd_id&quot;)
+
+ 
+unmapped &lt;- lapply(mgi$MGI_ID[which(!is.na(mgi$mouse_symbol)&amp;is.na(mgi$human_symbol))], function(x) which(grepl(x,universe_df$mgd_id)==TRUE) )
+lengths(unmapped)
+remapped &lt;- mgi$MGI_ID[which(!is.na(mgi$mouse_symbol)&amp;is.na(mgi$human_symbol))]
+mgi$human_symbol[which(mgi$MGI_ID%in%remapped[which(lengths(unmapped)==1)])] &lt;- universe_df$gene[unlist(unmapped[which(lengths(unmapped)==1)])]
+  
+mgi$MGI_ID[which(!is.na(mgi$mouse_symbol)&amp;is.na(mgi$human_symbol))]
+mgi$human_symbol &lt;- checkGeneSymbols(mgi$human_symbol,unmapped.as.na=FALSE)[[3]]
+
+
+#remove non protein-coding genes
+mgi &lt;- mgi[-which(is.na(mgi$human_symbol)),]  
+
+rm(allele,mgi_names,mgi_df,mgi_lethalphens,mgi_allphens,mgi_highphens,names,unmapped,remapped,lethalphens)
+save(mgi, file=&quot;output/Data/mgi.rda&quot;, compress=&quot;bzip2&quot;)
+write.xlsx(mgi,&quot;output/spreadsheets/MGI_genes_with_phenotypes.xlsx&quot;)</code></pre>
+</div>
+<div id="impc" class="section level4">
+<h4>IMPC</h4>
+<p>release 8.0 phenotype information downloaded from <a href="ftp://ftp.ebi.ac.uk/pub/databases/impc/release-8.0/csv/">ftp</a></p>
+<ul>
+<li>keep only homozygotes</li>
+<li>put together all MP terms and lethal MP terms</li>
+<li>add on human ortholog names</li>
+<li>remove non protein-coding genes</li>
+</ul>
+<pre class="r"><code>impc_all&lt;- read.csv(&quot;Gene_lists/IMPC/ALL_genotype_phenotype.csv&quot;,header=TRUE, sep = &quot;,&quot;,fill=TRUE,stringsAsFactors = FALSE)
+impc_all&lt;-impc_all[-which(impc_all$mp_term_id==&quot;&quot;|impc_all$zygosity!=&quot;homozygote&quot;),]
+
+lethalphens &lt;- read.xlsx(&quot;Gene_lists/MGI_MPs/MGI_lethal_phenotypes.xlsx&quot;)
+impc_all$is_lethal &lt;- ifelse(impc_all$mp_term_id%in%lethalphens$MP.id,&quot;Y&quot;,&quot;N&quot;)
+
+impc &lt;- data.frame(mgi_id=unique(impc_all$marker_accession_id))
+
+#mp ids
+impc$all_MP_ID &lt;- lapply(impc$mgi_id, function(x) unique(impc_all$mp_term_id[which(impc_all$marker_accession_id==x)]))
+impc$all_MP_phen &lt;- lapply(impc$mgi_id, function(x) unique(impc_all$mp_term_name[which(impc_all$marker_accession_id==x)]))
+impc$lethal_MP_ID &lt;- lapply(impc$mgi_id, function(x) unique(impc_all$mp_term_id[which(impc_all$marker_accession_id==x&amp;impc_all$is_lethal==&quot;Y&quot;)]))
+impc$lethal_MP_phen &lt;- lapply(impc$mgi_id, function(x) unique(impc_all$mp_term_name[which(impc_all$marker_accession_id==x&amp;impc_all$is_lethal==&quot;Y&quot;)]))
+
+impc$is_lethal &lt;- rep(&quot;N&quot;,length(impc$mgi_id))
+impc$is_lethal[which(lengths(impc$lethal_MP_ID)&gt;0)]&lt;-&quot;Y&quot;
+
+# add on gene names and human ortholog names
+names &lt;- read.csv(&quot;Gene_lists/Universe/gene_with_protein_product.txt&quot;,sep = &quot;\t&quot;, comment.char = &quot;#&quot;,stringsAsFactors = FALSE)
+impc$human_symbol &lt;- vlookup(impc$mgi_id,names,result_column=&quot;symbol&quot;,lookup_column = &quot;mgd_id&quot;)
+impc$human_symbol &lt;- checkGeneSymbols(impc$human_symbol,unmapped.as.na=FALSE)[[3]]
+#removing pseudogenes/non-coding genes etc
+impc &lt;- impc[-which(is.na(impc$human_symbol)),]
+
+rm(impc_all)
+save(impc, file=&quot;output/Data/impc.rda&quot;, compress=&quot;bzip2&quot;)</code></pre>
+</div>
+</div>
+<div id="cell-ko-data" class="section level3">
+<h3>Cell KO data</h3>
+<p>Cell essentiality data downloaded from 3 papers <em>FINISH LATER!!!</em></p>
+<pre class="r"><code>#get wang, blomen, hart genes and essentialomes
+#read wang genes and which are essential in different cell lines
+wang &lt;- read.xlsx(&quot;Gene_lists/Cell_KOs/wang_essentials.xlsx&quot;,startRow = 1, colNames = TRUE, rowNames = FALSE)
+wang$Gene&lt;- checkGeneSymbols(wang$Gene, unmapped.as.na=FALSE)[[3]]
+wang&lt;- wang[-which(duplicated(wang$Gene)==&quot;TRUE&quot;),] 
+
+#read blomen genes and which are essential in different cell lines
+blomen &lt;- read.xlsx(&quot;Gene_lists/Cell_KOs/blomen_essentials.xlsx&quot;,startRow = 1, colNames = TRUE, rowNames = FALSE)
+blomen$Gene&lt;- checkGeneSymbols(blomen$Gene, unmapped.as.na=FALSE)[[3]]
+blomen&lt;- blomen[-which(duplicated(blomen$Gene)==&quot;TRUE&quot;),] 
+
+#read hart genes and which are essential in different cell lines
+hart &lt;- read.xlsx(&quot;Gene_lists/Cell_KOs/hart_essentials.xlsx&quot;,startRow = 1, colNames = TRUE, rowNames = FALSE)
+hart$Gene&lt;- checkGeneSymbols(hart$Gene, unmapped.as.na=FALSE)[[3]]
+hart&lt;- hart[-which(duplicated(hart$Gene)==&quot;TRUE&quot;),] 
+
+common_genes &lt;- intersect(wang$Gene,intersect(hart$Gene,blomen$Gene))
+#Seeing essentiality of each gene accross all cell lines in the three papers
+cell_KOs &lt;- data.frame(common_genes,ifelse(vlookup(common_genes,blomen,result_column = &quot;hap1&quot;,lookup_column=&quot;Gene&quot;)==&quot;essential&quot;,1,0),
+                       ifelse(vlookup(common_genes,blomen,result_column = &quot;kbm7&quot;,lookup_column=&quot;Gene&quot;)==&quot;essential&quot;,1,0),ifelse(vlookup(common_genes,wang,result_column = &quot;KBM7&quot;,lookup_column=&quot;Gene&quot;)==&quot;essential&quot;,1,0),
+                       ifelse(vlookup(common_genes,wang,result_column = &quot;k562&quot;,lookup_column=&quot;Gene&quot;)==&quot;essential&quot;,1,0),ifelse(vlookup(common_genes,wang,result_column = &quot;jiyoye&quot;,lookup_column=&quot;Gene&quot;)==&quot;essential&quot;,1,0),
+                       ifelse(vlookup(common_genes,wang,result_column = &quot;raji&quot;,lookup_column=&quot;Gene&quot;)==&quot;essential&quot;,1,0),ifelse(vlookup(common_genes,hart,result_column = &quot;hct&quot;,lookup_column=&quot;Gene&quot;)==&quot;essential&quot;,1,0),
+                       ifelse(vlookup(common_genes,hart,result_column = &quot;hela&quot;,lookup_column=&quot;Gene&quot;)==&quot;essential&quot;,1,0),ifelse(vlookup(common_genes,hart,result_column = &quot;gbm&quot;,lookup_column=&quot;Gene&quot;)==&quot;essential&quot;,1,0),
+                       ifelse(vlookup(common_genes,hart,result_column = &quot;rpe1&quot;,lookup_column=&quot;Gene&quot;)==&quot;essential&quot;,1,0),ifelse(vlookup(common_genes,hart,result_column = &quot;dld1&quot;,lookup_column=&quot;Gene&quot;)==&quot;essential&quot;,1,0))
+colnames(cell_KOs) &lt;- c(&quot;Gene&quot;,&quot;blomen_hap1&quot;,&quot;blomen_kbm7&quot;,&quot;wang_kbm7&quot;,&quot;wang_k562&quot;,&quot;wang_jiyoye&quot;,&quot;wang_raji&quot;,&quot;hart_hct&quot;,&quot;hart_hela&quot;,&quot;hart_gbm&quot;,&quot;hart_rpe1&quot;,&quot;hart_dld1&quot;)
+cell_KOs$no_hits &lt;- cell_KOs$blomen_hap1+cell_KOs$blomen_kbm7+cell_KOs$wang_kbm7+cell_KOs$wang_k562+cell_KOs$wang_jiyoye+cell_KOs$wang_raji+
+                        cell_KOs$hart_hct+cell_KOs$hart_hela+cell_KOs$hart_gbm+cell_KOs$hart_rpe1+cell_KOs$hart_dld1
+
+save(cell_KOs, file=&quot;output/Data/cell_KOs.rda&quot;, compress=&quot;bzip2&quot;)
+rm(blomen,hart,wang,common_genes)</code></pre>
+</div>
+<div id="go-annotations" class="section level3">
+<h3>GO Annotations</h3>
+</div>
+<div id="human-lethal-genes--omim-api-search" class="section level3">
+<h3>Human Lethal Genes- OMIM API Search</h3>
+</div>
+<div id="putting-it-all-together" class="section level3">
+<h3>Putting it all together</h3>
+<pre class="r"><code>#disease status, phenotype, inheritance pattern
+universe_df$omim &lt;- ifelse(universe_df$gene%in%omim$Gene,&quot;Y&quot;,NA)
+universe_df$mim_number &lt;- vlookup(universe_df$gene,omim,result_column=&quot;Mim.Number&quot;,lookup_column=&quot;Gene&quot;)
+universe_df$phenotype &lt;- vlookup(universe_df$gene,omim,result_column=&quot;Phenotypes&quot;,lookup_column=&quot;Gene&quot;)
+universe_df$Inheritance_pattern &lt;- vlookup(universe_df$gene,omim,result_column=&quot;Inheritance_pattern&quot;,lookup_column=&quot;Gene&quot;)
+
+rm(omim)
+#exac scores
+universe_df$exac &lt;- ifelse(universe_df$gene%in%exac$gene,&quot;Y&quot;,NA)
+universe_df$mis_z &lt;- vlookup(universe_df$gene,exac,result_column=&quot;mis_z&quot;,lookup_column=&quot;gene&quot;)
+universe_df$syn_z &lt;- vlookup(universe_df$gene,exac,result_column=&quot;syn_z&quot;,lookup_column=&quot;gene&quot;)
+universe_df$pLI &lt;- vlookup(universe_df$gene,exac,result_column=&quot;pLI&quot;,lookup_column=&quot;gene&quot;)
+universe_df$constrained &lt;- ifelse(universe_df$mis_z&gt;=3.09|universe_df$pLI&gt;=0.9,&quot;Y&quot;,&quot;N&quot;)
+rm(exac)
+
+#regional constraint
+universe_df$highest_ccr&lt;-vlookup(universe_df$gene,highest_ccr,lookup_column = &quot;gene&quot;,result_column = &quot;ccr&quot;)
+universe_df$ccr99&lt;-ifelse(universe_df$gene%in%ccr99_genes$gene,&quot;Y&quot;,&quot;N&quot;)
+universe_df$ccr99_n&lt;-vlookup(universe_df$gene,ccr99_genes,lookup_column = &quot;gene&quot;,result_column = &quot;n&quot;)
+rm(ccr99_genes,highest_ccr)
+
+universe_df$regional_missense_constraint &lt;- ifelse(universe_df$gene%in%genes_w_var$gene,&quot;Y&quot;,&quot;N&quot;)
+universe_df$regional_missense_gamma&lt;-vlookup(universe_df$gene,genes_w_var,lookup_column = &quot;gene&quot;,result_column = &quot;lowest_gamma&quot;)
+rm(genes_w_var)
+
+universe_df$nmd_min &lt;-ifelse(universe_df$gene%in%nmd_min$gene,&quot;Y&quot;,&quot;N&quot;)
+universe_df$nmd_min_rank &lt;- vlookup(universe_df$gene,nmd_min,lookup_column = &quot;gene&quot;,result_column = &quot;min.rank&quot;)
+universe_df$nmd_min_rank&lt;-universe_df$nmd_min_rank/0.01
+rm(nmd_min)
+
+universe_df$any_constraint &lt;- ifelse(universe_df$mis_z&gt;=3.09|universe_df$pLI&gt;=0.9|universe_df$ccr99==&quot;Y&quot;|universe_df$regional_missense_constraint==&quot;Y&quot;|universe_df$nmd_min==&quot;Y&quot;,&quot;Y&quot;,&quot;N&quot;)
+universe_df$any_reg_constraint &lt;- ifelse(universe_df$ccr99==&quot;Y&quot;|universe_df$regional_missense_constraint==&quot;Y&quot;|universe_df$nmd_min==&quot;Y&quot;,&quot;Y&quot;,&quot;N&quot;)
+
+#MGI mouse knockouts- lethal or non-lethal in a mouse
+universe_df$MGI_ID &lt;- vlookup(universe_df$gene,mgi,result_column=&quot;MGI_ID&quot;,lookup_column=&quot;human_symbol&quot;)
+universe_df$lethal_MGI &lt;- vlookup(universe_df$gene,mgi,result_column=&quot;is_lethal&quot;,lookup_column=&quot;human_symbol&quot;)
+universe_df$lethal_MP_ID &lt;- vlookup(universe_df$gene,mgi,result_column=&quot;lethal_MP_ID&quot;,lookup_column=&quot;human_symbol&quot;)
+universe_df$lethal_MP_phen &lt;- vlookup(universe_df$gene,mgi,result_column=&quot;lethal_MP_phen&quot;,lookup_column=&quot;human_symbol&quot;)
+universe_df$all_MP_ID &lt;- vlookup(universe_df$gene,mgi,result_column=&quot;all_MP_ID&quot;,lookup_column=&quot;human_symbol&quot;)
+universe_df$all_MP_phen &lt;- vlookup(universe_df$gene,mgi,result_column=&quot;all_MP_phen&quot;,lookup_column=&quot;human_symbol&quot;)
+universe_df$high_MP_ID &lt;- vlookup(universe_df$gene,mgi,result_column=&quot;high_MP_ID&quot;,lookup_column=&quot;human_symbol&quot;)
+universe_df$high_MP_phen &lt;- vlookup(universe_df$gene,mgi,result_column=&quot;high_MP_phen&quot;,lookup_column=&quot;human_symbol&quot;)
+universe_df$allele_info &lt;- vlookup(universe_df$gene,mgi,result_column=&quot;allele_info&quot;,lookup_column=&quot;human_symbol&quot;)
+universe_df$mouse_symbol &lt;- vlookup(universe_df$gene,mgi,result_column=&quot;mouse_symbol&quot;,lookup_column=&quot;human_symbol&quot;)
+
+#IMPC phenotype data
+universe_df$lethal_IMPC &lt;- vlookup(universe_df$gene,impc,result_column=&quot;is_lethal&quot;,lookup_column=&quot;human_symbol&quot;)
+universe_df$IMPC_all_MP_ID &lt;- vlookup(universe_df$gene,impc,result_column=&quot;all_MP_ID&quot;,lookup_column=&quot;human_symbol&quot;)
+universe_df$IMPC_all_MP_phen &lt;- vlookup(universe_df$gene,impc,result_column=&quot;all_MP_phen&quot;,lookup_column=&quot;human_symbol&quot;)
+universe_df$IMPC_lethal_MP_ID &lt;- vlookup(universe_df$gene,impc,result_column=&quot;lethal_MP_ID&quot;,lookup_column=&quot;human_symbol&quot;)
+universe_df$IMPC_lethal_MP_phen &lt;- vlookup(universe_df$gene,impc,result_column=&quot;lethal_MP_phen&quot;,lookup_column=&quot;human_symbol&quot;)
+
+universe_df$IMPC_ko &lt;- rep(NA,length(universe_df$gene))
+universe_df$IMPC_ko[which(lengths(universe_df$IMPC_all_MP_ID)&gt;0)] &lt;-  &quot;Y&quot;
+
+universe_df$mouse_ko &lt;- ifelse(!is.na(universe_df$MGI_ID),&quot;Y&quot;,ifelse(universe_df$IMPC_ko==&quot;Y&quot;,&quot;Y&quot;,NA))
+universe_df$lethal_mouse &lt;- rep(NA,length(universe_df$gene))
+universe_df$lethal_mouse[which(universe_df$mouse_ko==&quot;Y&quot;)] &lt;- &quot;N&quot;
+universe_df$lethal_mouse[which(universe_df$lethal_MGI==&quot;Y&quot;|universe_df$lethal_IMPC==&quot;Y&quot;)] &lt;- &quot;Y&quot;
+
+rm(mgi,impc)
+
+
+#cell knockouts
+universe_df$cell_ko &lt;- ifelse(universe_df$gene%in%cell_KOs$Gene,&quot;Y&quot;,NA)
+universe_df$cell_essential_hits &lt;- vlookup(universe_df$gene,cell_KOs,result_column=&quot;no_hits&quot;,lookup_column=&quot;Gene&quot;)
+universe_df$cell_essential &lt;- ifelse(universe_df$cell_essential_hits&gt;=3,&quot;Y&quot;,&quot;N&quot;)
+rm(cell_KOs)
+
+
+#GO terms
+universe_df$go_terms &lt;- go_annotations$universe_df.go_terms
+universe_df$go_names &lt;- go_annotations$universe_df.go_names
+rm(go_annotations)
+
+#human lethal genes- are the genes in my OMIM API search for genes causing lethality in humans
+load(&quot;output/Data/human_lethal_genes.rda&quot;)
+universe_df$human_lethal_B &lt;- ifelse(is.na(vlookup(universe_df$gene,lethal_genes[which(lethal_genes$listB==&quot;yes&quot;),],lookup_column = &quot;gene&quot;)),&quot;N&quot;,&quot;Y&quot;)
+universe_df$human_lethal_A &lt;- ifelse(is.na(vlookup(universe_df$gene,lethal_genes[which(lethal_genes$listA==&quot;yes&quot;),],lookup_column = &quot;gene&quot;)),&quot;N&quot;,&quot;Y&quot;)
+universe_df$lethal_phen &lt;- lapply(universe_df$gene,function(x) vlookup(x,lethal_genes[which(lethal_genes$listB==&quot;yes&quot;),],lookup_column = &quot;gene&quot;,result_column = &quot;lethal_phenotype_mim&quot;))
+universe_df$lethal_inheritance &lt;- lapply(universe_df$gene,function(x) vlookup(x,lethal_genes[which(lethal_genes$listB==&quot;yes&quot;),],lookup_column = &quot;gene&quot;,result_column = &quot;lethal_inheritance_pattern&quot;))
+rm(lethal_genes)
+
+save(universe_df, file=&quot;output/Data/universe_df.rda&quot;, compress=&quot;bzip2&quot;)
+write.xlsx(universe_df[,-c(which(names(universe_df)==&quot;go_terms&quot;),which(names(universe_df)==&quot;go_names&quot;))],&quot;output/spreadsheets/universe_all_info.xlsx&quot;,append=TRUE)</code></pre>
+</div>
+</div>
+<div id="results-analysis" class="section level2">
+<h2>Results/ Analysis</h2>
+<p>Seperated according to paper figures</p>
+<div id="functions-for-the-plots" class="section level3">
+<h3>Functions for the plots</h3>
+<ul>
+<li>FIX LATER *</li>
+</ul>
+<pre class="r"><code>blank_theme &lt;- function() {
+  theme_minimal(base_size=12,base_family=&quot;Helvetica&quot;) %+replace%
+    theme(
+      axis.title.x = element_blank(),
+      axis.title.y = element_blank(),
+      axis.text = element_blank(),
+      panel.border = element_blank(),
+      panel.grid=element_blank(),
+      axis.ticks = element_blank(),
+      plot.title=element_text(size=12, face=&quot;bold&quot;),
+      legend.title=element_blank()
+    )
+}
+
+scatter_theme &lt;- function() {
+  theme_bw(base_size=12,base_family=&quot;Helvetica&quot;) %+replace%
+    theme(
+      panel.grid=element_blank(),
+      panel.border = element_blank(),
+      axis.line = element_line(),
+      plot.title=element_text(size=12, face=&quot;bold&quot;),
+      axis.title=element_text(size=12),
+      axis.text=element_text(size=12)
+    )
+}
+
+bar_theme &lt;- function() {
+  theme_bw(base_size=12,base_family=&quot;Helvetica&quot;) %+replace%
+    theme(
+      axis.title.x = element_blank(),
+      panel.grid=element_blank(),
+      panel.border = element_blank(),
+      axis.ticks.x = element_blank(),
+      axis.line = element_line(),
+      legend.title=element_blank()
+    )
+}</code></pre>
+</div>
+<div id="genetic-constraint-thms-figure-one" class="section level3">
+<h3>Genetic Constraint THMs (Figure One)</h3>
 </div>
 </div>
 
