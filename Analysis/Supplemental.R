@@ -5,14 +5,14 @@ library(GSEABase)
 
 fl <- "http://www.geneontology.org/ontology/subsets/goslim_generic.obo"
 slim <- getOBOCollection(fl)
-############lethal genes dominant vs recessive BP################
+############omim genes dominant vs recessive BP################
 #all genes go slim annotations- human lethal DOMINANT
 all <- unlist(universe_df$go_terms[
   which(universe_df$omim=="Y"&(universe_df$Inheritance_pattern=="AD"|universe_df$Inheritance_pattern=="XLd")&lengths(universe_df$go_terms)>0)])
 myCollection <- GOCollection(all)
 aa<-goSlim(myCollection, slim, "BP")
 
-slimshadyBP <- data.frame(go_id=rownames(aa),go_term=aa$Term,dom_count = aa$Count,dom_percent=aa$Percent)
+slimshadyOMIMOMIMBP <- data.frame(go_id=rownames(aa),go_term=aa$Term,dom_count = aa$Count,dom_percent=aa$Percent)
 rm(aa,all)
 #all genes go slim annotations- human lethal RECESSIVE
 myIds <- unlist(universe_df$go_terms[
@@ -20,72 +20,72 @@ myIds <- unlist(universe_df$go_terms[
 myCollection <- GOCollection(myIds)
 a<-goSlim(myCollection, slim, "BP")
 
-slimshadyBP$rec_count <- a$Count
-slimshadyBP$rec_percent <- a$Percent
+slimshadyOMIMOMIMBP$rec_count <- a$Count
+slimshadyOMIMOMIMBP$rec_percent <- a$Percent
 rm(a)
 
-slimshadyBP<-slimshadyBP[-c(38,47,69),]
+slimshadyOMIMOMIMBP<-slimshadyOMIMOMIMBP[-c(38,47,69),]
 #making 0 counts 1 to avoid infinity OR
-slimshadyBP$dom_percent[which(slimshadyBP$dom_count==0)]<-slimshadyBP$dom_percent[which(slimshadyBP$dom_count==1)][1]
-slimshadyBP$dom_count[which(slimshadyBP$dom_count==0)]<-1
+slimshadyOMIMOMIMBP$dom_percent[which(slimshadyOMIMOMIMBP$dom_count==0)]<-slimshadyOMIMOMIMBP$dom_percent[which(slimshadyOMIMOMIMBP$dom_count==1)][1]
+slimshadyOMIMOMIMBP$dom_count[which(slimshadyOMIMOMIMBP$dom_count==0)]<-1
 
-slimshadyBP$domrec_diff <- slimshadyBP$dom_percent-slimshadyBP$rec_percent
+slimshadyOMIMOMIMBP$domrec_diff <- slimshadyOMIMOMIMBP$dom_percent-slimshadyOMIMOMIMBP$rec_percent
 
 
-slimshadyBP$odds_ratio <- unlist(lapply(1:length(slimshadyBP$go_term),function(x) {
-  fish<-fisher.test(matrix(c(slimshadyBP$dom_count[x],(slimshadyBP$dom_count[x]/(slimshadyBP$dom_percent[x]/100))*(1-slimshadyBP$dom_percent[x]/100),
-                             slimshadyBP$rec_count[x],(slimshadyBP$rec_count[x]/(slimshadyBP$rec_percent[x]/100))*(1-slimshadyBP$rec_percent[x]/100)),nrow=2,ncol=2),alternative="two.sided")
+slimshadyOMIMOMIMBP$odds_ratio <- unlist(lapply(1:length(slimshadyOMIMOMIMBP$go_term),function(x) {
+  fish<-fisher.test(matrix(c(slimshadyOMIMOMIMBP$dom_count[x],(slimshadyOMIMOMIMBP$dom_count[x]/(slimshadyOMIMBP$dom_percent[x]/100))*(1-slimshadyOMIMBP$dom_percent[x]/100),
+                             slimshadyOMIMBP$rec_count[x],(slimshadyOMIMBP$rec_count[x]/(slimshadyOMIMBP$rec_percent[x]/100))*(1-slimshadyOMIMBP$rec_percent[x]/100)),nrow=2,ncol=2),alternative="two.sided")
   return(fish$estimate)
 }))
-slimshadyBP$confint_lower <- unlist(lapply(1:length(slimshadyBP$go_term),function(x) {
-  fish<-fisher.test(matrix(c(slimshadyBP$dom_count[x],(slimshadyBP$dom_count[x]/(slimshadyBP$dom_percent[x]/100))*(1-slimshadyBP$dom_percent[x]/100),
-                             slimshadyBP$rec_count[x],(slimshadyBP$rec_count[x]/(slimshadyBP$rec_percent[x]/100))*(1-slimshadyBP$rec_percent[x]/100)),nrow=2,ncol=2),alternative="two.sided")
+slimshadyOMIMBP$confint_lower <- unlist(lapply(1:length(slimshadyOMIMBP$go_term),function(x) {
+  fish<-fisher.test(matrix(c(slimshadyOMIMBP$dom_count[x],(slimshadyOMIMBP$dom_count[x]/(slimshadyOMIMBP$dom_percent[x]/100))*(1-slimshadyOMIMBP$dom_percent[x]/100),
+                             slimshadyOMIMBP$rec_count[x],(slimshadyOMIMBP$rec_count[x]/(slimshadyOMIMBP$rec_percent[x]/100))*(1-slimshadyOMIMBP$rec_percent[x]/100)),nrow=2,ncol=2),alternative="two.sided")
   return(fish$conf.int[1])
 }))
-slimshadyBP$confint_higher <- unlist(lapply(1:length(slimshadyBP$go_term),function(x) {
-  fish<-fisher.test(matrix(c(slimshadyBP$dom_count[x],(slimshadyBP$dom_count[x]/(slimshadyBP$dom_percent[x]/100))*(1-slimshadyBP$dom_percent[x]/100),
-                             slimshadyBP$rec_count[x],(slimshadyBP$rec_count[x]/(slimshadyBP$rec_percent[x]/100))*(1-slimshadyBP$rec_percent[x]/100)),nrow=2,ncol=2),alternative="two.sided")
+slimshadyOMIMBP$confint_higher <- unlist(lapply(1:length(slimshadyOMIMBP$go_term),function(x) {
+  fish<-fisher.test(matrix(c(slimshadyOMIMBP$dom_count[x],(slimshadyOMIMBP$dom_count[x]/(slimshadyOMIMBP$dom_percent[x]/100))*(1-slimshadyOMIMBP$dom_percent[x]/100),
+                             slimshadyOMIMBP$rec_count[x],(slimshadyOMIMBP$rec_count[x]/(slimshadyOMIMBP$rec_percent[x]/100))*(1-slimshadyOMIMBP$rec_percent[x]/100)),nrow=2,ncol=2),alternative="two.sided")
   return(fish$conf.int[2])
 }))
-slimshadyBP$pval <- unlist(lapply(1:length(slimshadyBP$go_term),function(x) {
-  fish<-fisher.test(matrix(c(slimshadyBP$dom_count[x],(slimshadyBP$dom_count[x]/(slimshadyBP$dom_percent[x]/100))*(1-slimshadyBP$dom_percent[x]/100),
-                             slimshadyBP$rec_count[x],(slimshadyBP$rec_count[x]/(slimshadyBP$rec_percent[x]/100))*(1-slimshadyBP$rec_percent[x]/100)),nrow=2,ncol=2),alternative="two.sided")
+slimshadyOMIMBP$pval <- unlist(lapply(1:length(slimshadyOMIMBP$go_term),function(x) {
+  fish<-fisher.test(matrix(c(slimshadyOMIMBP$dom_count[x],(slimshadyOMIMBP$dom_count[x]/(slimshadyOMIMBP$dom_percent[x]/100))*(1-slimshadyOMIMBP$dom_percent[x]/100),
+                             slimshadyOMIMBP$rec_count[x],(slimshadyOMIMBP$rec_count[x]/(slimshadyOMIMBP$rec_percent[x]/100))*(1-slimshadyOMIMBP$rec_percent[x]/100)),nrow=2,ncol=2),alternative="two.sided")
   return(fish$p.value)
 }))
 
 
-slimshadyBP <- slimshadyBP[-which(slimshadyBP$go_term=="biological_process"),]
+slimshadyOMIMBP <- slimshadyOMIMBP[-which(slimshadyOMIMBP$go_term=="biological_process"),]
 
-slimshadyBP <- slimshadyBP[order(slimshadyBP$odds_ratio),]
+slimshadyOMIMBP <- slimshadyOMIMBP[order(slimshadyOMIMBP$odds_ratio),]
 
-slimshadyBP$gene <- rep("gene",length(slimshadyBP$go_term))
+slimshadyOMIMBP$gene <- rep("gene",length(slimshadyOMIMBP$go_term))
 #fixing abbreviated GO names
-slimshadyBP$go_term<-as.character(slimshadyBP$go_term)
-slimshadyBP$go_term[which(slimshadyBP$go_term=="cellular amino acid metabolic proce...")]<-"cellular amino acid metabolic process"
+slimshadyOMIMBP$go_term<-as.character(slimshadyOMIMBP$go_term)
+slimshadyOMIMBP$go_term[which(slimshadyOMIMBP$go_term=="cellular amino acid metabolic proce...")]<-"cellular amino acid metabolic process"
 
 
-slimshadyBP$go_term <- factor(slimshadyBP$go_term, levels = slimshadyBP$go_term)
+slimshadyOMIMBP$go_term <- factor(slimshadyOMIMBP$go_term, levels = slimshadyOMIMBP$go_term)
 
 # taking 10 most significantly different terms
-slimshadyBP <- slimshadyBP[order(slimshadyBP$pval),]
-slimshadyBP <- slimshadyBP[1:8,]
-slimshadyBP <- slimshadyBP[order(slimshadyBP$odds_ratio),]
+slimshadyOMIMBP <- slimshadyOMIMBP[order(slimshadyOMIMBP$pval),]
+slimshadyOMIMBP <- slimshadyOMIMBP[1:8,]
+slimshadyOMIMBP <- slimshadyOMIMBP[order(slimshadyOMIMBP$odds_ratio),]
 #plotting heat map
-ap<-ggplot(data = slimshadyBP, aes(x= gene,y = go_term)) +
+api<-ggplot(data = slimshadyOMIMBP, aes(x= gene,y = go_term)) +
   geom_tile(aes(fill = odds_ratio,width=1)) +
   scale_fill_gradient2(low = "#a020f0",mid="white",high = "#008b45" ,trans="log",
-                       breaks=c(min(slimshadyBP$odds_ratio),1,max(slimshadyBP$odds_ratio)),
+                       breaks=c(min(slimshadyOMIMBP$odds_ratio),1,max(slimshadyOMIMBP$odds_ratio)),
                        labels=c("Enriched in RECESSIVE human lethal genes","","enriched in DOMINANT human lethal genes"))+
   bar_theme()+theme(axis.text.x=element_blank(),axis.title.y=element_blank(),legend.position = 'none',axis.text.y=element_text(size=12))+scale_y_discrete(expand = c(0, 0),labels = function(x) lapply(strwrap(x, width = 20, simplify = FALSE), paste, collapse="\n"))+scale_x_discrete(expand = c(0, 0))
 
-############lethal genes dominant vs recessive CC################
+############omim genes dominant vs recessive CC################
 #all genes go slim annotations- human lethal DOMINANT
 all <- unlist(universe_df$go_terms[
   which(universe_df$omim=="Y"&(universe_df$Inheritance_pattern=="AD"|universe_df$Inheritance_pattern=="XLd")&lengths(universe_df$go_terms)>0)])
 myCollection <- GOCollection(all)
 aa<-goSlim(myCollection, slim, "CC")
 
-slimshadyCC <- data.frame(go_id=rownames(aa),go_term=aa$Term,dom_count = aa$Count,dom_percent=aa$Percent)
+slimshadyOMIMCC <- data.frame(go_id=rownames(aa),go_term=aa$Term,dom_count = aa$Count,dom_percent=aa$Percent)
 rm(aa,all)
 #all genes go slim annotations- human lethal RECESSIVE
 myIds <- unlist(universe_df$go_terms[
@@ -93,60 +93,60 @@ myIds <- unlist(universe_df$go_terms[
 myCollection <- GOCollection(myIds)
 a<-goSlim(myCollection, slim, "CC")
 
-slimshadyCC$rec_count <- a$Count
-slimshadyCC$rec_percent <- a$Percent
+slimshadyOMIMCC$rec_count <- a$Count
+slimshadyOMIMCC$rec_percent <- a$Percent
 rm(a)
 
-slimshadyCC<-slimshadyCC[-c(38,47,69),]
+slimshadyOMIMCC<-slimshadyOMIMCC[-c(38,47,69),]
 #making 0 counts 1 to avoid infinity OR
-slimshadyCC$dom_percent[which(slimshadyCC$dom_count==0)]<-slimshadyCC$dom_percent[which(slimshadyCC$dom_count==1)][1]
-slimshadyCC$rec_percent[which(slimshadyCC$rec_percent==0)]<-slimshadyCC$rec_percent[which(slimshadyCC$rec_count==6)][1]/6
-slimshadyCC$dom_count[which(slimshadyCC$dom_count==0)]<-1
-slimshadyCC$rec_count[which(slimshadyCC$rec_count==0)]<-1
+slimshadyOMIMCC$dom_percent[which(slimshadyOMIMCC$dom_count==0)]<-slimshadyOMIMCC$dom_percent[which(slimshadyOMIMCC$dom_count==1)][1]
+slimshadyOMIMCC$rec_percent[which(slimshadyOMIMCC$rec_percent==0)]<-slimshadyOMIMCC$rec_percent[which(slimshadyOMIMCC$rec_count==6)][1]/6
+slimshadyOMIMCC$dom_count[which(slimshadyOMIMCC$dom_count==0)]<-1
+slimshadyOMIMCC$rec_count[which(slimshadyOMIMCC$rec_count==0)]<-1
 
-slimshadyCC$domrec_diff <- slimshadyCC$dom_percent-slimshadyCC$rec_percent
+slimshadyOMIMCC$domrec_diff <- slimshadyOMIMCC$dom_percent-slimshadyOMIMCC$rec_percent
 
 
-slimshadyCC$odds_ratio <- unlist(lapply(1:length(slimshadyCC$go_term),function(x) {
-  fish<-fisher.test(matrix(c(slimshadyCC$dom_count[x],(slimshadyCC$dom_count[x]/(slimshadyCC$dom_percent[x]/100))*(1-slimshadyCC$dom_percent[x]/100),
-                             slimshadyCC$rec_count[x],(slimshadyCC$rec_count[x]/(slimshadyCC$rec_percent[x]/100))*(1-slimshadyCC$rec_percent[x]/100)),nrow=2,ncol=2),alternative="two.sided")
+slimshadyOMIMCC$odds_ratio <- unlist(lapply(1:length(slimshadyOMIMCC$go_term),function(x) {
+  fish<-fisher.test(matrix(c(slimshadyOMIMCC$dom_count[x],(slimshadyOMIMCC$dom_count[x]/(slimshadyOMIMCC$dom_percent[x]/100))*(1-slimshadyOMIMCC$dom_percent[x]/100),
+                             slimshadyOMIMCC$rec_count[x],(slimshadyOMIMCC$rec_count[x]/(slimshadyOMIMCC$rec_percent[x]/100))*(1-slimshadyOMIMCC$rec_percent[x]/100)),nrow=2,ncol=2),alternative="two.sided")
   return(fish$estimate)
 }))
-slimshadyCC$confint_lower <- unlist(lapply(1:length(slimshadyCC$go_term),function(x) {
-  fish<-fisher.test(matrix(c(slimshadyCC$dom_count[x],(slimshadyCC$dom_count[x]/(slimshadyCC$dom_percent[x]/100))*(1-slimshadyCC$dom_percent[x]/100),
-                             slimshadyCC$rec_count[x],(slimshadyCC$rec_count[x]/(slimshadyCC$rec_percent[x]/100))*(1-slimshadyCC$rec_percent[x]/100)),nrow=2,ncol=2),alternative="two.sided")
+slimshadyOMIMCC$confint_lower <- unlist(lapply(1:length(slimshadyOMIMCC$go_term),function(x) {
+  fish<-fisher.test(matrix(c(slimshadyOMIMCC$dom_count[x],(slimshadyOMIMCC$dom_count[x]/(slimshadyOMIMCC$dom_percent[x]/100))*(1-slimshadyOMIMCC$dom_percent[x]/100),
+                             slimshadyOMIMCC$rec_count[x],(slimshadyOMIMCC$rec_count[x]/(slimshadyOMIMCC$rec_percent[x]/100))*(1-slimshadyOMIMCC$rec_percent[x]/100)),nrow=2,ncol=2),alternative="two.sided")
   return(fish$conf.int[1])
 }))
-slimshadyCC$confint_higher <- unlist(lapply(1:length(slimshadyCC$go_term),function(x) {
-  fish<-fisher.test(matrix(c(slimshadyCC$dom_count[x],(slimshadyCC$dom_count[x]/(slimshadyCC$dom_percent[x]/100))*(1-slimshadyCC$dom_percent[x]/100),
-                             slimshadyCC$rec_count[x],(slimshadyCC$rec_count[x]/(slimshadyCC$rec_percent[x]/100))*(1-slimshadyCC$rec_percent[x]/100)),nrow=2,ncol=2),alternative="two.sided")
+slimshadyOMIMCC$confint_higher <- unlist(lapply(1:length(slimshadyOMIMCC$go_term),function(x) {
+  fish<-fisher.test(matrix(c(slimshadyOMIMCC$dom_count[x],(slimshadyOMIMCC$dom_count[x]/(slimshadyOMIMCC$dom_percent[x]/100))*(1-slimshadyOMIMCC$dom_percent[x]/100),
+                             slimshadyOMIMCC$rec_count[x],(slimshadyOMIMCC$rec_count[x]/(slimshadyOMIMCC$rec_percent[x]/100))*(1-slimshadyOMIMCC$rec_percent[x]/100)),nrow=2,ncol=2),alternative="two.sided")
   return(fish$conf.int[2])
 }))
-slimshadyCC$pval <- unlist(lapply(1:length(slimshadyCC$go_term),function(x) {
-  fish<-fisher.test(matrix(c(slimshadyCC$dom_count[x],(slimshadyCC$dom_count[x]/(slimshadyCC$dom_percent[x]/100))*(1-slimshadyCC$dom_percent[x]/100),
-                             slimshadyCC$rec_count[x],(slimshadyCC$rec_count[x]/(slimshadyCC$rec_percent[x]/100))*(1-slimshadyCC$rec_percent[x]/100)),nrow=2,ncol=2),alternative="two.sided")
+slimshadyOMIMCC$pval <- unlist(lapply(1:length(slimshadyOMIMCC$go_term),function(x) {
+  fish<-fisher.test(matrix(c(slimshadyOMIMCC$dom_count[x],(slimshadyOMIMCC$dom_count[x]/(slimshadyOMIMCC$dom_percent[x]/100))*(1-slimshadyOMIMCC$dom_percent[x]/100),
+                             slimshadyOMIMCC$rec_count[x],(slimshadyOMIMCC$rec_count[x]/(slimshadyOMIMCC$rec_percent[x]/100))*(1-slimshadyOMIMCC$rec_percent[x]/100)),nrow=2,ncol=2),alternative="two.sided")
   return(fish$p.value)
 }))
 
 
-slimshadyCC <- slimshadyCC[-which(slimshadyCC$go_term=="cellular_component"),]
+slimshadyOMIMCC <- slimshadyOMIMCC[-which(slimshadyOMIMCC$go_term=="cellular_component"),]
 
-slimshadyCC <- slimshadyCC[order(slimshadyCC$odds_ratio),]
+slimshadyOMIMCC <- slimshadyOMIMCC[order(slimshadyOMIMCC$odds_ratio),]
 
-slimshadyCC$gene <- rep("gene",length(slimshadyCC$go_term))
+slimshadyOMIMCC$gene <- rep("gene",length(slimshadyOMIMCC$go_term))
 
-slimshadyCC$go_term <- factor(slimshadyCC$go_term, levels = slimshadyCC$go_term)
+slimshadyOMIMCC$go_term <- factor(slimshadyOMIMCC$go_term, levels = slimshadyOMIMCC$go_term)
 
 # taking 10 most significantly different terms
-slimshadyCC <- slimshadyCC[order(slimshadyCC$pval),]
-slimshadyCC <- slimshadyCC[1:6,]
-slimshadyCC <- slimshadyCC[order(slimshadyCC$odds_ratio),]
+slimshadyOMIMCC <- slimshadyOMIMCC[order(slimshadyOMIMCC$pval),]
+slimshadyOMIMCC <- slimshadyOMIMCC[1:6,]
+slimshadyOMIMCC <- slimshadyOMIMCC[order(slimshadyOMIMCC$odds_ratio),]
 
 #plotting heat map
-b<-ggplot(data = slimshadyCC, aes(x= gene,y = go_term)) +
+bi<-ggplot(data = slimshadyOMIMCC, aes(x= gene,y = go_term)) +
   geom_tile(aes(fill = odds_ratio,width=1)) +
   scale_fill_gradient2(low = "#a020f0",mid="white",high = "#008b45" ,trans="log",
-                       breaks=c(min(slimshadyCC$odds_ratio),1,max(slimshadyCC$odds_ratio)),
+                       breaks=c(min(slimshadyOMIMCC$odds_ratio),1,max(slimshadyOMIMCC$odds_ratio)),
                        labels=c("Enriched in RECESSIVE human lethal genes","","enriched in DOMINANT human lethal genes"))+
   bar_theme()+theme(axis.text.x=element_blank(),axis.title.y=element_blank(),legend.position = 'none',axis.text.y=element_text(size=12))+scale_y_discrete(expand = c(0, 0),labels = function(x) lapply(strwrap(x, width = 25, simplify = FALSE), paste, collapse="\n"))+scale_x_discrete(expand = c(0, 0))
 
@@ -157,14 +157,14 @@ b<-ggplot(data = slimshadyCC, aes(x= gene,y = go_term)) +
 
 
 
-###########lethal genes dominant vs recessive MF################
+###########omim genes dominant vs recessive MF################
 #all genes go slim annotations- human lethal DOMINANT
 all <- unlist(universe_df$go_terms[
   which(universe_df$omim=="Y"&(universe_df$Inheritance_pattern=="AD"|universe_df$Inheritance_pattern=="XLd")&lengths(universe_df$go_terms)>0)])
 myCollection <- GOCollection(all)
 aa<-goSlim(myCollection, slim, "MF")
 
-slimshadyMF <- data.frame(go_id=rownames(aa),go_term=aa$Term,dom_count = aa$Count,dom_percent=aa$Percent)
+slimshadyOMIMMF <- data.frame(go_id=rownames(aa),go_term=aa$Term,dom_count = aa$Count,dom_percent=aa$Percent)
 rm(aa,all)
 
 #all genes go slim annotations- human lethal RECESSIVE
@@ -173,68 +173,68 @@ myIds <- unlist(universe_df$go_terms[
 myCollection <- GOCollection(myIds)
 a<-goSlim(myCollection, slim, "MF")
 
-slimshadyMF$rec_count <- a$Count
-slimshadyMF$rec_percent <- a$Percent
+slimshadyOMIMMF$rec_count <- a$Count
+slimshadyOMIMMF$rec_percent <- a$Percent
 rm(a)
 
-slimshadyMF<-slimshadyMF[-c(38,47,69),]
+slimshadyOMIMMF<-slimshadyOMIMMF[-c(38,47,69),]
 #making 0 counts 1 to avoid infinity OR
-slimshadyMF$dom_percent[which(slimshadyMF$dom_count==0)]<-slimshadyMF$dom_percent[which(slimshadyMF$dom_count==1)][1]
-slimshadyMF$rec_percent[which(slimshadyMF$rec_percent==0)]<-slimshadyMF$rec_percent[which(slimshadyMF$rec_count==1)][1]
-slimshadyMF$dom_count[which(slimshadyMF$dom_count==0)]<-1
-slimshadyMF$rec_count[which(slimshadyMF$rec_count==0)]<-1
+slimshadyOMIMMF$dom_percent[which(slimshadyOMIMMF$dom_count==0)]<-slimshadyOMIMMF$dom_percent[which(slimshadyOMIMMF$dom_count==1)][1]
+slimshadyOMIMMF$rec_percent[which(slimshadyOMIMMF$rec_percent==0)]<-slimshadyOMIMMF$rec_percent[which(slimshadyOMIMMF$rec_count==1)][1]
+slimshadyOMIMMF$dom_count[which(slimshadyOMIMMF$dom_count==0)]<-1
+slimshadyOMIMMF$rec_count[which(slimshadyOMIMMF$rec_count==0)]<-1
 
-slimshadyMF$domrec_diff <- slimshadyMF$dom_percent-slimshadyMF$rec_percent
+slimshadyOMIMMF$domrec_diff <- slimshadyOMIMMF$dom_percent-slimshadyOMIMMF$rec_percent
 
 
-slimshadyMF$odds_ratio <- unlist(lapply(1:length(slimshadyMF$go_term),function(x) {
-  fish<-fisher.test(matrix(c(slimshadyMF$dom_count[x],(slimshadyMF$dom_count[x]/(slimshadyMF$dom_percent[x]/100))*(1-slimshadyMF$dom_percent[x]/100),
-                             slimshadyMF$rec_count[x],(slimshadyMF$rec_count[x]/(slimshadyMF$rec_percent[x]/100))*(1-slimshadyMF$rec_percent[x]/100)),nrow=2,ncol=2),alternative="two.sided")
+slimshadyOMIMMF$odds_ratio <- unlist(lapply(1:length(slimshadyOMIMMF$go_term),function(x) {
+  fish<-fisher.test(matrix(c(slimshadyOMIMMF$dom_count[x],(slimshadyOMIMMF$dom_count[x]/(slimshadyOMIMMF$dom_percent[x]/100))*(1-slimshadyOMIMMF$dom_percent[x]/100),
+                             slimshadyOMIMMF$rec_count[x],(slimshadyOMIMMF$rec_count[x]/(slimshadyOMIMMF$rec_percent[x]/100))*(1-slimshadyOMIMMF$rec_percent[x]/100)),nrow=2,ncol=2),alternative="two.sided")
   return(fish$estimate)
 }))
-slimshadyMF$confint_lower <- unlist(lapply(1:length(slimshadyMF$go_term),function(x) {
-  fish<-fisher.test(matrix(c(slimshadyMF$dom_count[x],(slimshadyMF$dom_count[x]/(slimshadyMF$dom_percent[x]/100))*(1-slimshadyMF$dom_percent[x]/100),
-                             slimshadyMF$rec_count[x],(slimshadyMF$rec_count[x]/(slimshadyMF$rec_percent[x]/100))*(1-slimshadyMF$rec_percent[x]/100)),nrow=2,ncol=2),alternative="two.sided")
+slimshadyOMIMMF$confint_lower <- unlist(lapply(1:length(slimshadyOMIMMF$go_term),function(x) {
+  fish<-fisher.test(matrix(c(slimshadyOMIMMF$dom_count[x],(slimshadyOMIMMF$dom_count[x]/(slimshadyOMIMMF$dom_percent[x]/100))*(1-slimshadyOMIMMF$dom_percent[x]/100),
+                             slimshadyOMIMMF$rec_count[x],(slimshadyOMIMMF$rec_count[x]/(slimshadyOMIMMF$rec_percent[x]/100))*(1-slimshadyOMIMMF$rec_percent[x]/100)),nrow=2,ncol=2),alternative="two.sided")
   return(fish$conf.int[1])
 }))
-slimshadyMF$confint_higher <- unlist(lapply(1:length(slimshadyMF$go_term),function(x) {
-  fish<-fisher.test(matrix(c(slimshadyMF$dom_count[x],(slimshadyMF$dom_count[x]/(slimshadyMF$dom_percent[x]/100))*(1-slimshadyMF$dom_percent[x]/100),
-                             slimshadyMF$rec_count[x],(slimshadyMF$rec_count[x]/(slimshadyMF$rec_percent[x]/100))*(1-slimshadyMF$rec_percent[x]/100)),nrow=2,ncol=2),alternative="two.sided")
+slimshadyOMIMMF$confint_higher <- unlist(lapply(1:length(slimshadyOMIMMF$go_term),function(x) {
+  fish<-fisher.test(matrix(c(slimshadyOMIMMF$dom_count[x],(slimshadyOMIMMF$dom_count[x]/(slimshadyOMIMMF$dom_percent[x]/100))*(1-slimshadyOMIMMF$dom_percent[x]/100),
+                             slimshadyOMIMMF$rec_count[x],(slimshadyOMIMMF$rec_count[x]/(slimshadyOMIMMF$rec_percent[x]/100))*(1-slimshadyOMIMMF$rec_percent[x]/100)),nrow=2,ncol=2),alternative="two.sided")
   return(fish$conf.int[2])
 }))
-slimshadyMF$pval <- unlist(lapply(1:length(slimshadyMF$go_term),function(x) {
-  fish<-fisher.test(matrix(c(slimshadyMF$dom_count[x],(slimshadyMF$dom_count[x]/(slimshadyMF$dom_percent[x]/100))*(1-slimshadyMF$dom_percent[x]/100),
-                             slimshadyMF$rec_count[x],(slimshadyMF$rec_count[x]/(slimshadyMF$rec_percent[x]/100))*(1-slimshadyMF$rec_percent[x]/100)),nrow=2,ncol=2),alternative="two.sided")
+slimshadyOMIMMF$pval <- unlist(lapply(1:length(slimshadyOMIMMF$go_term),function(x) {
+  fish<-fisher.test(matrix(c(slimshadyOMIMMF$dom_count[x],(slimshadyOMIMMF$dom_count[x]/(slimshadyOMIMMF$dom_percent[x]/100))*(1-slimshadyOMIMMF$dom_percent[x]/100),
+                             slimshadyOMIMMF$rec_count[x],(slimshadyOMIMMF$rec_count[x]/(slimshadyOMIMMF$rec_percent[x]/100))*(1-slimshadyOMIMMF$rec_percent[x]/100)),nrow=2,ncol=2),alternative="two.sided")
   return(fish$p.value)
 }))
 
 
-slimshadyMF <- slimshadyMF[-which(slimshadyMF$go_term=="molecular_function"),]
+slimshadyOMIMMF <- slimshadyOMIMMF[-which(slimshadyOMIMMF$go_term=="molecular_function"),]
 
-slimshadyMF <- slimshadyMF[order(slimshadyMF$odds_ratio),]
+slimshadyOMIMMF <- slimshadyOMIMMF[order(slimshadyOMIMMF$odds_ratio),]
 
-slimshadyMF$gene <- rep("gene",length(slimshadyMF$go_term))
+slimshadyOMIMMF$gene <- rep("gene",length(slimshadyOMIMMF$go_term))
 
 
 # taking 10 most significantly different terms
-slimshadyMF <- slimshadyMF[order(slimshadyMF$pval),]
-slimshadyMF <- slimshadyMF[1:8,]
-slimshadyMF <- slimshadyMF[order(slimshadyMF$odds_ratio),]
+slimshadyOMIMMF <- slimshadyOMIMMF[order(slimshadyOMIMMF$pval),]
+slimshadyOMIMMF <- slimshadyOMIMMF[1:8,]
+slimshadyOMIMMF <- slimshadyOMIMMF[order(slimshadyOMIMMF$odds_ratio),]
 
 #fixing abbreviated GO names
-slimshadyMF$go_term<-as.character(slimshadyMF$go_term)
-slimshadyMF$go_term[which(slimshadyMF$go_term=="DNA binding transcription factor ac...")]<-"DNA binding transcription factor"
-slimshadyMF$go_term[which(slimshadyMF$go_id=="GO:0016757")]<-"glycosyltransferase activity"
+slimshadyOMIMMF$go_term<-as.character(slimshadyOMIMMF$go_term)
+slimshadyOMIMMF$go_term[which(slimshadyOMIMMF$go_term=="DNA binding transcription factor ac...")]<-"DNA binding transcription factor"
+slimshadyOMIMMF$go_term[which(slimshadyOMIMMF$go_id=="GO:0016757")]<-"glycosyltransferase activity"
 
 
 
-slimshadyMF$go_term <- factor(slimshadyMF$go_term, levels = slimshadyMF$go_term)
+slimshadyOMIMMF$go_term <- factor(slimshadyOMIMMF$go_term, levels = slimshadyOMIMMF$go_term)
 
 #plotting heat map
-c<-ggplot(data = slimshadyMF, aes(x= gene,y = go_term)) +
+ci<-ggplot(data = slimshadyOMIMMF, aes(x= gene,y = go_term)) +
   geom_tile(aes(fill = odds_ratio,width=1)) +
   scale_fill_gradient2(low = "#a020f0",mid="white",high = "#008b45" ,trans="log",
-                       breaks=c(min(slimshadyMF$odds_ratio),1,max(slimshadyMF$odds_ratio)-0.2),
+                       breaks=c(min(slimshadyOMIMMF$odds_ratio),1,max(slimshadyOMIMMF$odds_ratio)-0.2),
                        labels=c("RECESSIVE           ","","DOMINANT        "))+
   bar_theme()+theme(axis.text.x=element_blank(),axis.title.y=element_blank(),axis.text.y=element_text(size=12))+scale_y_discrete(expand = c(0, 0),labels = function(x) lapply(strwrap(x, width = 3, simplify = FALSE), paste, collapse="\n"))+scale_x_discrete(expand = c(0, 0))
 
@@ -246,4 +246,4 @@ ggarrange(ap,b,c,widths=c(1,1.1,1.65),ncol=3)
 ggsave("output/Figures/Supp.pdf",height=15, width=26, units='cm')
 
 
-rm(ap,b,c,d,e,f,slim,myCollection,slimshadyBP,slimshadyBPput,slimshadyCC,slimshadyCCput,slimshadyMF,slimshadyMFput,fl,myIds)
+rm(ap,b,c,d,e,f,slim,myCollection,slimshadyOMIMBP,slimshadyOMIMBPput,slimshadyOMIMCC,slimshadyOMIMCCput,slimshadyOMIMMF,slimshadyOMIMMFput,fl,myIds)

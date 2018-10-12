@@ -1,0 +1,4 @@
+"0","#load in all genes and phenotypes"
+"0","mgi_df <- read.xlsx(""Gene_lists/MGI_MPs/MGI_PhenoGenoMP.xlsx"")"
+"0","mgi_df <- mgi_df[,c(1,2,6,4)]"
+"0","mgi_df<- mgi_df[which(!grepl(pattern = ""\\,"", x = mgi_df$MGI_ID, ignore.case = FALSE)),]"

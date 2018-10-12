@@ -5,6 +5,223 @@ library(GSEABase)
 
 fl <- "http://www.geneontology.org/ontology/subsets/goslim_generic.obo"
 slim <- getOBOCollection(fl)
+
+############omim genes dominant vs recessive BP################
+#all genes go slim annotations- human lethal DOMINANT
+all <- unlist(universe_df$go_terms[
+  which(universe_df$omim=="Y"&(universe_df$Inheritance_pattern=="AD"|universe_df$Inheritance_pattern=="XLd")&lengths(universe_df$go_terms)>0)])
+myCollection <- GOCollection(all)
+aa<-goSlim(myCollection, slim, "BP")
+
+slimshadyOMIMBP <- data.frame(go_id=rownames(aa),go_term=aa$Term,dom_count = aa$Count,dom_percent=aa$Percent)
+rm(aa,all)
+#all genes go slim annotations- human lethal RECESSIVE
+myIds <- unlist(universe_df$go_terms[
+  which(universe_df$omim=="Y"&(universe_df$Inheritance_pattern=="AR"|universe_df$Inheritance_pattern=="MT,AR"|universe_df$Inheritance_pattern=="XLr")&lengths(universe_df$go_terms)>0)])
+myCollection <- GOCollection(myIds)
+a<-goSlim(myCollection, slim, "BP")
+
+slimshadyOMIMBP$rec_count <- a$Count
+slimshadyOMIMBP$rec_percent <- a$Percent
+rm(a)
+
+slimshadyOMIMBP<-slimshadyOMIMBP[-c(38,47,69),]
+#making 0 counts 1 to avoid infinity OR
+slimshadyOMIMBP$dom_percent[which(slimshadyOMIMBP$dom_count==0)]<-slimshadyOMIMBP$dom_percent[which(slimshadyOMIMBP$dom_count==1)][1]
+slimshadyOMIMBP$dom_count[which(slimshadyOMIMBP$dom_count==0)]<-1
+
+slimshadyOMIMBP$domrec_diff <- slimshadyOMIMBP$dom_percent-slimshadyOMIMBP$rec_percent
+
+
+slimshadyOMIMBP$odds_ratio <- unlist(lapply(1:length(slimshadyOMIMBP$go_term),function(x) {
+  fish<-fisher.test(matrix(c(slimshadyOMIMBP$dom_count[x],(slimshadyOMIMBP$dom_count[x]/(slimshadyOMIMBP$dom_percent[x]/100))*(1-slimshadyOMIMBP$dom_percent[x]/100),
+                             slimshadyOMIMBP$rec_count[x],(slimshadyOMIMBP$rec_count[x]/(slimshadyOMIMBP$rec_percent[x]/100))*(1-slimshadyOMIMBP$rec_percent[x]/100)),nrow=2,ncol=2),alternative="two.sided")
+  return(fish$estimate)
+}))
+slimshadyOMIMBP$confint_lower <- unlist(lapply(1:length(slimshadyOMIMBP$go_term),function(x) {
+  fish<-fisher.test(matrix(c(slimshadyOMIMBP$dom_count[x],(slimshadyOMIMBP$dom_count[x]/(slimshadyOMIMBP$dom_percent[x]/100))*(1-slimshadyOMIMBP$dom_percent[x]/100),
+                             slimshadyOMIMBP$rec_count[x],(slimshadyOMIMBP$rec_count[x]/(slimshadyOMIMBP$rec_percent[x]/100))*(1-slimshadyOMIMBP$rec_percent[x]/100)),nrow=2,ncol=2),alternative="two.sided")
+  return(fish$conf.int[1])
+}))
+slimshadyOMIMBP$confint_higher <- unlist(lapply(1:length(slimshadyOMIMBP$go_term),function(x) {
+  fish<-fisher.test(matrix(c(slimshadyOMIMBP$dom_count[x],(slimshadyOMIMBP$dom_count[x]/(slimshadyOMIMBP$dom_percent[x]/100))*(1-slimshadyOMIMBP$dom_percent[x]/100),
+                             slimshadyOMIMBP$rec_count[x],(slimshadyOMIMBP$rec_count[x]/(slimshadyOMIMBP$rec_percent[x]/100))*(1-slimshadyOMIMBP$rec_percent[x]/100)),nrow=2,ncol=2),alternative="two.sided")
+  return(fish$conf.int[2])
+}))
+slimshadyOMIMBP$pval <- unlist(lapply(1:length(slimshadyOMIMBP$go_term),function(x) {
+  fish<-fisher.test(matrix(c(slimshadyOMIMBP$dom_count[x],(slimshadyOMIMBP$dom_count[x]/(slimshadyOMIMBP$dom_percent[x]/100))*(1-slimshadyOMIMBP$dom_percent[x]/100),
+                             slimshadyOMIMBP$rec_count[x],(slimshadyOMIMBP$rec_count[x]/(slimshadyOMIMBP$rec_percent[x]/100))*(1-slimshadyOMIMBP$rec_percent[x]/100)),nrow=2,ncol=2),alternative="two.sided")
+  return(fish$p.value)
+}))
+
+
+slimshadyOMIMBP <- slimshadyOMIMBP[-which(slimshadyOMIMBP$go_term=="biological_process"),]
+
+slimshadyOMIMBP <- slimshadyOMIMBP[order(slimshadyOMIMBP$odds_ratio),]
+
+slimshadyOMIMBP$gene <- rep("gene",length(slimshadyOMIMBP$go_term))
+#fixing abbreviated GO names
+slimshadyOMIMBP$go_term<-as.character(slimshadyOMIMBP$go_term)
+slimshadyOMIMBP$go_term[which(slimshadyOMIMBP$go_term=="cellular amino acid metabolic proce...")]<-"cellular amino acid metabolic process"
+
+
+slimshadyOMIMBP$go_term <- factor(slimshadyOMIMBP$go_term, levels = slimshadyOMIMBP$go_term)
+
+# taking 10 most significantly different terms
+slimshadyOMIMBP <- slimshadyOMIMBP[order(slimshadyOMIMBP$pval),]
+slimshadyOMIMBP <- slimshadyOMIMBP[1:8,]
+slimshadyOMIMBP <- slimshadyOMIMBP[order(slimshadyOMIMBP$odds_ratio),]
+
+############omim genes dominant vs recessive CC################
+#all genes go slim annotations- human lethal DOMINANT
+all <- unlist(universe_df$go_terms[
+  which(universe_df$omim=="Y"&(universe_df$Inheritance_pattern=="AD"|universe_df$Inheritance_pattern=="XLd")&lengths(universe_df$go_terms)>0)])
+myCollection <- GOCollection(all)
+aa<-goSlim(myCollection, slim, "CC")
+
+slimshadyOMIMCC <- data.frame(go_id=rownames(aa),go_term=aa$Term,dom_count = aa$Count,dom_percent=aa$Percent)
+rm(aa,all)
+#all genes go slim annotations- human lethal RECESSIVE
+myIds <- unlist(universe_df$go_terms[
+  which(universe_df$omim=="Y"&(universe_df$Inheritance_pattern=="AR"|universe_df$Inheritance_pattern=="MT,AR"|universe_df$Inheritance_pattern=="XLr")&lengths(universe_df$go_terms)>0)])
+myCollection <- GOCollection(myIds)
+a<-goSlim(myCollection, slim, "CC")
+
+slimshadyOMIMCC$rec_count <- a$Count
+slimshadyOMIMCC$rec_percent <- a$Percent
+rm(a)
+
+slimshadyOMIMCC<-slimshadyOMIMCC[-c(38,47,69),]
+#making 0 counts 1 to avoid infinity OR
+slimshadyOMIMCC$dom_percent[which(slimshadyOMIMCC$dom_count==0)]<-slimshadyOMIMCC$dom_percent[which(slimshadyOMIMCC$dom_count==1)][1]
+slimshadyOMIMCC$rec_percent[which(slimshadyOMIMCC$rec_percent==0)]<-slimshadyOMIMCC$rec_percent[which(slimshadyOMIMCC$rec_count==6)][1]/6
+slimshadyOMIMCC$dom_count[which(slimshadyOMIMCC$dom_count==0)]<-1
+slimshadyOMIMCC$rec_count[which(slimshadyOMIMCC$rec_count==0)]<-1
+
+slimshadyOMIMCC$domrec_diff <- slimshadyOMIMCC$dom_percent-slimshadyOMIMCC$rec_percent
+
+
+slimshadyOMIMCC$odds_ratio <- unlist(lapply(1:length(slimshadyOMIMCC$go_term),function(x) {
+  fish<-fisher.test(matrix(c(slimshadyOMIMCC$dom_count[x],(slimshadyOMIMCC$dom_count[x]/(slimshadyOMIMCC$dom_percent[x]/100))*(1-slimshadyOMIMCC$dom_percent[x]/100),
+                             slimshadyOMIMCC$rec_count[x],(slimshadyOMIMCC$rec_count[x]/(slimshadyOMIMCC$rec_percent[x]/100))*(1-slimshadyOMIMCC$rec_percent[x]/100)),nrow=2,ncol=2),alternative="two.sided")
+  return(fish$estimate)
+}))
+slimshadyOMIMCC$confint_lower <- unlist(lapply(1:length(slimshadyOMIMCC$go_term),function(x) {
+  fish<-fisher.test(matrix(c(slimshadyOMIMCC$dom_count[x],(slimshadyOMIMCC$dom_count[x]/(slimshadyOMIMCC$dom_percent[x]/100))*(1-slimshadyOMIMCC$dom_percent[x]/100),
+                             slimshadyOMIMCC$rec_count[x],(slimshadyOMIMCC$rec_count[x]/(slimshadyOMIMCC$rec_percent[x]/100))*(1-slimshadyOMIMCC$rec_percent[x]/100)),nrow=2,ncol=2),alternative="two.sided")
+  return(fish$conf.int[1])
+}))
+slimshadyOMIMCC$confint_higher <- unlist(lapply(1:length(slimshadyOMIMCC$go_term),function(x) {
+  fish<-fisher.test(matrix(c(slimshadyOMIMCC$dom_count[x],(slimshadyOMIMCC$dom_count[x]/(slimshadyOMIMCC$dom_percent[x]/100))*(1-slimshadyOMIMCC$dom_percent[x]/100),
+                             slimshadyOMIMCC$rec_count[x],(slimshadyOMIMCC$rec_count[x]/(slimshadyOMIMCC$rec_percent[x]/100))*(1-slimshadyOMIMCC$rec_percent[x]/100)),nrow=2,ncol=2),alternative="two.sided")
+  return(fish$conf.int[2])
+}))
+slimshadyOMIMCC$pval <- unlist(lapply(1:length(slimshadyOMIMCC$go_term),function(x) {
+  fish<-fisher.test(matrix(c(slimshadyOMIMCC$dom_count[x],(slimshadyOMIMCC$dom_count[x]/(slimshadyOMIMCC$dom_percent[x]/100))*(1-slimshadyOMIMCC$dom_percent[x]/100),
+                             slimshadyOMIMCC$rec_count[x],(slimshadyOMIMCC$rec_count[x]/(slimshadyOMIMCC$rec_percent[x]/100))*(1-slimshadyOMIMCC$rec_percent[x]/100)),nrow=2,ncol=2),alternative="two.sided")
+  return(fish$p.value)
+}))
+
+
+slimshadyOMIMCC <- slimshadyOMIMCC[-which(slimshadyOMIMCC$go_term=="cellular_component"),]
+
+slimshadyOMIMCC <- slimshadyOMIMCC[order(slimshadyOMIMCC$odds_ratio),]
+
+slimshadyOMIMCC$gene <- rep("gene",length(slimshadyOMIMCC$go_term))
+
+slimshadyOMIMCC$go_term<-as.character(slimshadyOMIMCC$go_term)
+slimshadyOMIMCC$go_term[which(slimshadyOMIMCC$go_term=="protein-containing complex")]<- "protein containing complex"
+
+
+slimshadyOMIMCC$go_term <- factor(slimshadyOMIMCC$go_term, levels = slimshadyOMIMCC$go_term)
+
+# taking 10 most significantly different terms
+slimshadyOMIMCC <- slimshadyOMIMCC[order(slimshadyOMIMCC$pval),]
+slimshadyOMIMCC <- slimshadyOMIMCC[1:6,]
+slimshadyOMIMCC <- slimshadyOMIMCC[order(slimshadyOMIMCC$odds_ratio),]
+
+
+
+
+
+
+
+
+###########omim genes dominant vs recessive MF################
+#all genes go slim annotations- human lethal DOMINANT
+all <- unlist(universe_df$go_terms[
+  which(universe_df$omim=="Y"&(universe_df$Inheritance_pattern=="AD"|universe_df$Inheritance_pattern=="XLd")&lengths(universe_df$go_terms)>0)])
+myCollection <- GOCollection(all)
+aa<-goSlim(myCollection, slim, "MF")
+
+slimshadyOMIMMF <- data.frame(go_id=rownames(aa),go_term=aa$Term,dom_count = aa$Count,dom_percent=aa$Percent)
+rm(aa,all)
+
+#all genes go slim annotations- human lethal RECESSIVE
+myIds <- unlist(universe_df$go_terms[
+  which(universe_df$human_lethal_B=="Y"&(universe_df$Inheritance_pattern=="AR"|universe_df$Inheritance_pattern=="MT,AR"|universe_df$Inheritance_pattern=="XLr")&lengths(universe_df$go_terms)>0)])
+myCollection <- GOCollection(myIds)
+a<-goSlim(myCollection, slim, "MF")
+
+slimshadyOMIMMF$rec_count <- a$Count
+slimshadyOMIMMF$rec_percent <- a$Percent
+rm(a)
+
+slimshadyOMIMMF<-slimshadyOMIMMF[-c(38,47,69),]
+#making 0 counts 1 to avoid infinity OR
+slimshadyOMIMMF$dom_percent[which(slimshadyOMIMMF$dom_count==0)]<-slimshadyOMIMMF$dom_percent[which(slimshadyOMIMMF$dom_count==1)][1]
+slimshadyOMIMMF$rec_percent[which(slimshadyOMIMMF$rec_percent==0)]<-slimshadyOMIMMF$rec_percent[which(slimshadyOMIMMF$rec_count==1)][1]
+slimshadyOMIMMF$dom_count[which(slimshadyOMIMMF$dom_count==0)]<-1
+slimshadyOMIMMF$rec_count[which(slimshadyOMIMMF$rec_count==0)]<-1
+
+slimshadyOMIMMF$domrec_diff <- slimshadyOMIMMF$dom_percent-slimshadyOMIMMF$rec_percent
+
+
+slimshadyOMIMMF$odds_ratio <- unlist(lapply(1:length(slimshadyOMIMMF$go_term),function(x) {
+  fish<-fisher.test(matrix(c(slimshadyOMIMMF$dom_count[x],(slimshadyOMIMMF$dom_count[x]/(slimshadyOMIMMF$dom_percent[x]/100))*(1-slimshadyOMIMMF$dom_percent[x]/100),
+                             slimshadyOMIMMF$rec_count[x],(slimshadyOMIMMF$rec_count[x]/(slimshadyOMIMMF$rec_percent[x]/100))*(1-slimshadyOMIMMF$rec_percent[x]/100)),nrow=2,ncol=2),alternative="two.sided")
+  return(fish$estimate)
+}))
+slimshadyOMIMMF$confint_lower <- unlist(lapply(1:length(slimshadyOMIMMF$go_term),function(x) {
+  fish<-fisher.test(matrix(c(slimshadyOMIMMF$dom_count[x],(slimshadyOMIMMF$dom_count[x]/(slimshadyOMIMMF$dom_percent[x]/100))*(1-slimshadyOMIMMF$dom_percent[x]/100),
+                             slimshadyOMIMMF$rec_count[x],(slimshadyOMIMMF$rec_count[x]/(slimshadyOMIMMF$rec_percent[x]/100))*(1-slimshadyOMIMMF$rec_percent[x]/100)),nrow=2,ncol=2),alternative="two.sided")
+  return(fish$conf.int[1])
+}))
+slimshadyOMIMMF$confint_higher <- unlist(lapply(1:length(slimshadyOMIMMF$go_term),function(x) {
+  fish<-fisher.test(matrix(c(slimshadyOMIMMF$dom_count[x],(slimshadyOMIMMF$dom_count[x]/(slimshadyOMIMMF$dom_percent[x]/100))*(1-slimshadyOMIMMF$dom_percent[x]/100),
+                             slimshadyOMIMMF$rec_count[x],(slimshadyOMIMMF$rec_count[x]/(slimshadyOMIMMF$rec_percent[x]/100))*(1-slimshadyOMIMMF$rec_percent[x]/100)),nrow=2,ncol=2),alternative="two.sided")
+  return(fish$conf.int[2])
+}))
+slimshadyOMIMMF$pval <- unlist(lapply(1:length(slimshadyOMIMMF$go_term),function(x) {
+  fish<-fisher.test(matrix(c(slimshadyOMIMMF$dom_count[x],(slimshadyOMIMMF$dom_count[x]/(slimshadyOMIMMF$dom_percent[x]/100))*(1-slimshadyOMIMMF$dom_percent[x]/100),
+                             slimshadyOMIMMF$rec_count[x],(slimshadyOMIMMF$rec_count[x]/(slimshadyOMIMMF$rec_percent[x]/100))*(1-slimshadyOMIMMF$rec_percent[x]/100)),nrow=2,ncol=2),alternative="two.sided")
+  return(fish$p.value)
+}))
+
+
+slimshadyOMIMMF <- slimshadyOMIMMF[-which(slimshadyOMIMMF$go_term=="molecular_function"),]
+
+slimshadyOMIMMF <- slimshadyOMIMMF[order(slimshadyOMIMMF$odds_ratio),]
+
+slimshadyOMIMMF$gene <- rep("gene",length(slimshadyOMIMMF$go_term))
+
+
+# taking 10 most significantly different terms
+slimshadyOMIMMF <- slimshadyOMIMMF[order(slimshadyOMIMMF$pval),]
+slimshadyOMIMMF <- slimshadyOMIMMF[1:8,]
+slimshadyOMIMMF <- slimshadyOMIMMF[order(slimshadyOMIMMF$odds_ratio),]
+
+#fixing abbreviated GO names
+slimshadyOMIMMF$go_term<-as.character(slimshadyOMIMMF$go_term)
+slimshadyOMIMMF$go_term[which(slimshadyOMIMMF$go_term=="DNA binding transcription factor ac...")]<-"DNA binding transcription factor"
+slimshadyOMIMMF$go_term[which(slimshadyOMIMMF$go_id=="GO:0016757")]<-"glycosyltransferase activity"
+
+
+
+slimshadyOMIMMF$go_term <- factor(slimshadyOMIMMF$go_term, levels = slimshadyOMIMMF$go_term)
+
+
+
 ############lethal genes dominant vs recessive BP################
 #all genes go slim annotations- human lethal DOMINANT
 all <- unlist(universe_df$go_terms[
@@ -75,13 +292,6 @@ slimshadyBP$go_term <- factor(slimshadyBP$go_term, levels = slimshadyBP$go_term)
 slimshadyBP <- slimshadyBP[order(slimshadyBP$pval),]
 slimshadyBP <- slimshadyBP[1:8,]
 slimshadyBP <- slimshadyBP[order(slimshadyBP$odds_ratio),]
-#plotting heat map
-ap<-ggplot(data = slimshadyBP, aes(x= gene,y = go_term)) +
-  geom_tile(aes(fill = odds_ratio,width=1)) +
-  scale_fill_gradient2(low = "#a020f0",mid="white",high = "#008b45" ,trans="log",
-                       breaks=c(min(slimshadyBP$odds_ratio),1,max(slimshadyBP$odds_ratio)),
-                       labels=c("Enriched in RECESSIVE human lethal genes","","enriched in DOMINANT human lethal genes"))+
-  bar_theme()+theme(axis.text.x=element_blank(),axis.title.y=element_blank(),legend.position = 'none',axis.text.y=element_text(size=12))+scale_y_discrete(expand = c(0, 0),labels = function(x) lapply(strwrap(x, width = 20, simplify = FALSE), paste, collapse="\n"))+scale_x_discrete(expand = c(0, 0))
 
 ############lethal genes dominant vs recessive CC################
 #all genes go slim annotations- human lethal DOMINANT
@@ -147,13 +357,6 @@ slimshadyCC <- slimshadyCC[order(slimshadyCC$pval),]
 slimshadyCC <- slimshadyCC[1:6,]
 slimshadyCC <- slimshadyCC[order(slimshadyCC$odds_ratio),]
 
-#plotting heat map
-b<-ggplot(data = slimshadyCC, aes(x= gene,y = go_term)) +
-  geom_tile(aes(fill = odds_ratio,width=1)) +
-  scale_fill_gradient2(low = "#a020f0",mid="white",high = "#008b45" ,trans="log",
-                       breaks=c(min(slimshadyCC$odds_ratio),1,max(slimshadyCC$odds_ratio)),
-                       labels=c("Enriched in RECESSIVE human lethal genes","","enriched in DOMINANT human lethal genes"))+
-  bar_theme()+theme(axis.text.x=element_blank(),axis.title.y=element_blank(),legend.position = 'none',axis.text.y=element_text(size=12))+scale_y_discrete(expand = c(0, 0),labels = function(x) lapply(strwrap(x, width = 25, simplify = FALSE), paste, collapse="\n"))+scale_x_discrete(expand = c(0, 0))
 
 
 
@@ -234,14 +437,6 @@ slimshadyMF$go_term <- factor(slimshadyMF$go_term, levels = slimshadyMF$go_term)
 slimshadyMF <- slimshadyMF[order(slimshadyMF$pval),]
 slimshadyMF <- slimshadyMF[1:8,]
 slimshadyMF <- slimshadyMF[order(slimshadyMF$odds_ratio),]
-#plotting heat map
-c<-ggplot(data = slimshadyMF, aes(x= gene,y = go_term)) +
-  geom_tile(aes(fill = odds_ratio,width=1)) +
-  scale_fill_gradient2(low = "#a020f0",mid="white",high = "#008b45" ,trans="log",
-                       breaks=c(min(slimshadyMF$odds_ratio),1,max(slimshadyMF$odds_ratio)-0.2),
-                       labels=c("RECESSIVE           ","","DOMINANT        "))+
-  bar_theme()+theme(axis.text.x=element_blank(),axis.title.y=element_blank(),axis.text.y=element_text(size=12))+scale_y_discrete(expand = c(0, 0),labels = function(x) lapply(strwrap(x, width = 3, simplify = FALSE), paste, collapse="\n"))+scale_x_discrete(expand = c(0, 0))
-
 
 
 ############PUTATIVE lethal genes dominant vs recessive BP################
@@ -311,14 +506,6 @@ slimshadyBPput$go_term<-as.character(slimshadyBPput$go_term)
 slimshadyBPput$go_term[which(slimshadyBPput$go_term=="cellular protein modification proce...")]<-"cellular protein modification process"
 slimshadyBPput$go_term[which(slimshadyBPput$go_term=="cellular amino acid metabolic proce...")]<-"cellular amino acid metabolic process"
 slimshadyBPput$go_term <- factor(slimshadyBPput$go_term, levels = slimshadyBPput$go_term)
-#plotting heat map
-d<-ggplot(data = slimshadyBPput, aes(x= gene,y = go_term)) +
-  geom_tile(aes(fill = odds_ratio,width=1)) +
-  scale_fill_gradient2(low = "#a020f0",mid="white",high = "#008b45",trans="log",
-                       breaks=c(min(slimshadyBPput$odds_ratio),1,max(slimshadyBPput$odds_ratio)),
-                       labels=c("Enriched in PUTATIVE RECESSIVE human lethal genes","","enriched in PUTATIVE DOMINANT human lethal genes"))+  
-  bar_theme()+theme(axis.text.x=element_blank(),axis.title.y=element_blank(),legend.position = 'none',axis.text.y=element_text(size=12))+scale_y_discrete(expand = c(0, 0),labels = function(x) lapply(strwrap(x, width = 20, simplify = FALSE), paste, collapse="\n"))+scale_x_discrete(expand = c(0, 0))
-
 
 
 
@@ -386,15 +573,12 @@ slimshadyCCput <- slimshadyCCput[order(slimshadyCCput$odds_ratio),]
 
 
 slimshadyCCput$gene <- rep("gene",length(slimshadyCCput$go_term))
+
+slimshadyCCput$go_term<-as.character(slimshadyCCput$go_term)
+slimshadyCCput$go_term[which(slimshadyCCput$go_term=="protein-containing complex")]<- "protein containing complex"
+
 slimshadyCCput$go_term <- factor(slimshadyCCput$go_term, levels = slimshadyCCput$go_term)
 
-#plotting heat map
-e<-ggplot(data = slimshadyCCput, aes(x= gene,y = go_term)) +
-  geom_tile(aes(fill = odds_ratio,width=1)) +
-  scale_fill_gradient2(low = "#a020f0",mid="white",high = "#008b45",trans="log",
-                       breaks=c(min(slimshadyCCput$odds_ratio),1,max(slimshadyCCput$odds_ratio)),
-                       labels=c("Enriched in RECESSIVE human lethal genes","","enriched in DOMINANT human lethal genes"))+
-  bar_theme()+theme(axis.text.x=element_blank(),axis.title.y=element_blank(),axis.text.y=element_text(size=12),legend.position = 'none')+scale_y_discrete(expand = c(0, 0),labels = function(x) lapply(strwrap(x, width = 25, simplify = FALSE), paste, collapse="\n"))+scale_x_discrete(expand = c(0, 0))
 
 
 
@@ -466,21 +650,108 @@ slimshadyMFput <- slimshadyMFput[1:8,]
 slimshadyMFput <- slimshadyMFput[order(slimshadyMFput$odds_ratio),]
 slimshadyMFput$go_term <- factor(slimshadyMFput$go_term, levels = slimshadyMFput$go_term)
 
+
+
+#plotting ####
+
+#finding scale for legend
+min<-min(c(slimshadyBPput$odds_ratio,slimshadyCCput$odds_ratio,slimshadyMFput$odds_ratio,slimshadyBP$odds_ratio,slimshadyCC$odds_ratio,slimshadyMF$odds_ratio))
+max<-max(c(slimshadyBPput$odds_ratio,slimshadyCCput$odds_ratio,slimshadyMFput$odds_ratio,slimshadyBP$odds_ratio,slimshadyCC$odds_ratio,slimshadyMF$odds_ratio))
+
+slimshadyOMIMBP$odds_ratio_adjusted<- ifelse(slimshadyOMIMBP$odds_ratio<0.1,0.1,ifelse(slimshadyOMIMBP$odds_ratio>3,3,slimshadyOMIMBP$odds_ratio))
+slimshadyOMIMMF$odds_ratio_adjusted<- ifelse(slimshadyOMIMMF$odds_ratio<0.1,0.1,ifelse(slimshadyOMIMMF$odds_ratio>3,3,slimshadyOMIMMF$odds_ratio))
+slimshadyOMIMCC$odds_ratio_adjusted<- ifelse(slimshadyOMIMCC$odds_ratio<0.1,0.1,ifelse(slimshadyOMIMCC$odds_ratio>3,3,slimshadyOMIMCC$odds_ratio))
+
+slimshadyBP$odds_ratio_adjusted<- ifelse(slimshadyBP$odds_ratio<0.1,0.1,ifelse(slimshadyBP$odds_ratio>3,3,slimshadyBP$odds_ratio))
+slimshadyMF$odds_ratio_adjusted<- ifelse(slimshadyMF$odds_ratio<0.1,0.1,ifelse(slimshadyMF$odds_ratio>3,3,slimshadyMF$odds_ratio))
+slimshadyCC$odds_ratio_adjusted<- ifelse(slimshadyCC$odds_ratio<0.1,0.1,ifelse(slimshadyCC$odds_ratio>3,3,slimshadyCC$odds_ratio))
+slimshadyBPput$odds_ratio_adjusted<- ifelse(slimshadyBPput$odds_ratio<0.1,0.1,ifelse(slimshadyBPput$odds_ratio>3,3,slimshadyBPput$odds_ratio))
+slimshadyMFput$odds_ratio_adjusted<- ifelse(slimshadyMFput$odds_ratio<0.1,0.1,ifelse(slimshadyMFput$odds_ratio>3,3,slimshadyMFput$odds_ratio))
+slimshadyCCput$odds_ratio_adjusted<- ifelse(slimshadyCCput$odds_ratio<0.1,0.1,ifelse(slimshadyCCput$odds_ratio>3,3,slimshadyCCput$odds_ratio))
+
 #plotting heat map
-f<-ggplot(data = slimshadyMFput, aes(x= gene,y = go_term)) +
-  geom_tile(aes(fill = odds_ratio,width=1)) +
-  scale_fill_gradient2(low = "#a020f0",mid="white",high = "#008b45",trans="log",
-                       breaks=c(min(slimshadyMFput$odds_ratio),1,max(slimshadyMFput$odds_ratio)),
-                       labels=c("UNCONSTRAINED","","CONSTRAINED"))+
-  bar_theme()+theme(axis.text.x=element_blank(),axis.title.y=element_blank(),axis.text.y=element_text(size=12))+scale_y_discrete(expand = c(0, 0),labels = function(x) lapply(strwrap(x, width = 3, simplify = FALSE), paste, collapse="\n"))+scale_x_discrete(expand = c(0, 0))
+api<-ggplot(data = slimshadyOMIMBP, aes(x= gene,y = go_term)) +
+  geom_tile(aes(fill = odds_ratio_adjusted,width=1)) +
+  scale_fill_gradientn(colours = c("#a020f0","white","#008b45"), 
+                       values = rescale(c(0.1,1,3)),breaks=c(0.1,0.5,1.5,2,3),labels=c(0.1,0.5,1.5,2,3),
+                       guide = "legend", limits=c(0.1,3))+
+  bar_theme()+theme(axis.text.x=element_blank(),axis.title.y=element_blank(),legend.position = 'none',axis.text.y=element_text(size=10))+scale_y_discrete(expand = c(0, 0),labels = function(x) lapply(strwrap(x, width = 30, simplify = FALSE), paste, collapse="\n"))+scale_x_discrete(expand = c(0, 0))
+
+#plotting heat map
+bi<-ggplot(data = slimshadyOMIMMF, aes(x= gene,y = go_term)) +
+  geom_tile(aes(fill = odds_ratio_adjusted,width=1)) +
+  scale_fill_gradientn(colours = c("#a020f0","white","#008b45"), 
+                       values = rescale(c(0.1,1,3)),breaks=c(0.1,0.5,1.5,2,3),labels=c(0.1,0.5,1.5,2,3),
+                       guide = "legend", limits=c(0.1,3))+
+  bar_theme()+theme(axis.text.x=element_blank(),axis.title.y=element_blank(),axis.text.y=element_text(size=10),legend.position = 'none')+scale_y_discrete(expand = c(0, 0),labels = function(x) lapply(strwrap(x, width = 25, simplify = FALSE), paste, collapse="\n"))+scale_x_discrete(expand = c(0, 0))
+
+
+#plotting heat map
+ci<-ggplot(data = slimshadyOMIMCC, aes(x= gene,y = go_term)) +
+  geom_tile(aes(fill = odds_ratio_adjusted,width=1)) +
+  scale_fill_gradientn(colours = c("#a020f0","white","#008b45"), 
+                       values = rescale(c(0.1,1,3)),breaks=c(0.1,0.5,1.5,2,3),labels=c(0.1,0.5,1.5,2,3),
+                       guide = "legend", limits=c(0.1,3))+
+  bar_theme()+theme(axis.text.x=element_blank(),axis.title.y=element_blank(),axis.text.y=element_text(size=10))+scale_y_discrete(expand = c(0, 0),labels = function(x) lapply(strwrap(x, width = 5, simplify = FALSE), paste, collapse="\n"))+scale_x_discrete(expand = c(0, 0))
+
+#plotting heat map
+ap<-ggplot(data = slimshadyBP, aes(x= gene,y = go_term)) +
+  geom_tile(aes(fill = odds_ratio_adjusted,width=1)) +
+  scale_fill_gradientn(colours = c("#a020f0","white","#008b45"), 
+                       values = rescale(c(0.1,1,3)),breaks=c(0.1,0.5,1.5,2,3),labels=c(0.1,0.5,1.5,2,3),
+                       guide = "legend", limits=c(0.1,3))+
+  bar_theme()+theme(axis.text.x=element_blank(),axis.title.y=element_blank(),legend.position = 'none',axis.text.y=element_text(size=10))+scale_y_discrete(expand = c(0, 0),labels = function(x) lapply(strwrap(x, width = 30, simplify = FALSE), paste, collapse="\n"))+scale_x_discrete(expand = c(0, 0))
+
+
+#plotting heat map
+b<-ggplot(data = slimshadyMF, aes(x= gene,y = go_term)) +
+  geom_tile(aes(fill = odds_ratio_adjusted,width=1)) +
+  scale_fill_gradientn(colours = c("#a020f0","white","#008b45"), 
+                       values = rescale(c(0.1,1,3)),breaks=c(0.1,0.5,1.5,2,3),labels=c(0.1,0.5,1.5,2,3),
+                       guide = "legend", limits=c(0.1,3))+
+  bar_theme()+theme(axis.text.x=element_blank(),axis.title.y=element_blank(),axis.text.y=element_text(size=10),legend.position = 'none')+scale_y_discrete(expand = c(0, 0),labels = function(x) lapply(strwrap(x, width = 25, simplify = FALSE), paste, collapse="\n"))+scale_x_discrete(expand = c(0, 0))
+
+
+#plotting heat map
+c<-ggplot(data = slimshadyCC, aes(x= gene,y = go_term)) +
+  geom_tile(aes(fill = odds_ratio_adjusted,width=1)) +
+  scale_fill_gradientn(colours = c("#a020f0","white","#008b45"), 
+                       values = rescale(c(0.1,1,3)),breaks=c(0.1,0.5,1.5,2,3),labels=c(0.1,0.5,1.5,2,3),
+                       guide = "legend", limits=c(0.1,3))+
+  bar_theme()+theme(axis.text.x=element_blank(),axis.title.y=element_blank(),axis.text.y=element_text(size=10))+scale_y_discrete(expand = c(0, 0),labels = function(x) lapply(strwrap(x, width = 5, simplify = FALSE), paste, collapse="\n"))+scale_x_discrete(expand = c(0, 0))
+
+  #plotting heat map
+d<-ggplot(data = slimshadyBPput, aes(x= gene,y = go_term)) +
+  geom_tile(aes(fill = odds_ratio_adjusted,width=1)) +
+  scale_fill_gradientn(colours = c("#a020f0","white","#008b45"), 
+                       values = rescale(c(0.1,1,3)),breaks=c(0.1,0.5,1.5,2,3),labels=c(0.1,0.5,1.5,2,3),
+                       guide = "legend", limits=c(0.1,3))+
+  bar_theme()+theme(axis.text.x=element_blank(),axis.title.y=element_blank(),legend.position = 'none',axis.text.y=element_text(size=10))+scale_y_discrete(expand = c(0, 0),labels = function(x) lapply(strwrap(x, width = 30, simplify = FALSE), paste, collapse="\n"))+scale_x_discrete(expand = c(0, 0))
+
+
+#plotting heat map
+e<-ggplot(data = slimshadyMFput, aes(x= gene,y = go_term)) +
+  geom_tile(aes(fill = odds_ratio_adjusted,width=1)) +
+  scale_fill_gradientn(colours = c("#a020f0","white","#008b45"), 
+                       values = rescale(c(0.1,1,3)),breaks=c(0.1,0.5,1.5,2,3),labels=c(0.1,0.5,1.5,2,3),
+                       guide = "legend", limits=c(0.1,3))+
+  bar_theme()+theme(axis.text.x=element_blank(),axis.title.y=element_blank(),axis.text.y=element_text(size=10),legend.position = 'none')+scale_y_discrete(expand = c(0, 0),labels = function(x) lapply(strwrap(x, width = 25, simplify = FALSE), paste, collapse="\n"))+scale_x_discrete(expand = c(0, 0))
+
+#plotting heat map
+f<-ggplot(data = slimshadyCCput, aes(x= gene,y = go_term)) +
+  geom_tile(aes(fill = odds_ratio_adjusted,width=1)) +
+  scale_fill_gradientn(colours = c("#a020f0","white","#008b45"), 
+                       values = rescale(c(0.1,1,3)),breaks=c(0.1,0.5,1.5,2,3),labels=c(0.1,0.5,1.5,2,3),
+                       guide = "legend", limits=c(0.1,3))+
+  bar_theme()+theme(axis.text.x=element_blank(),axis.title.y=element_blank(),axis.text.y=element_text(size=10))+scale_y_discrete(expand = c(0, 0),labels = function(x) lapply(strwrap(x, width = 1, simplify = FALSE), paste, collapse="\n"))+scale_x_discrete(expand = c(0, 0))
 
 
 
 
 
 #saving plot####
-ggarrange(ap,b,c,d,e,f,widths=c(1,1.1,1.65))
-ggsave("output/Figures/5.pdf",height=30, width=26, units='cm')
+ggarrange(api,bi,ci,ap,b,c,d,e,f,widths=c(1.2,1,1.1))
+ggsave("output/Figures/5.pdf",height=23, width=17, units='cm')
 
 
-rm(ap,b,c,d,e,f,slim,myCollection,slimshadyBP,slimshadyBPput,slimshadyCC,slimshadyCCput,slimshadyMF,slimshadyMFput,fl,myIds)
+#rm(ap,b,c,d,e,f,slim,myCollection,slimshadyBP,slimshadyBPput,slimshadyCC,slimshadyCCput,slimshadyMF,slimshadyMFput,fl,myIds)

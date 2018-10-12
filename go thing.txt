@@ -1,0 +1,2 @@
+"go_id" "go_name" "category" "annotated_genes" "gene_no" "lethal_annotated_genes" "lethal_gene_no"
+"GO:0000003" "GO:0000003" "reproduction" "BP" 
