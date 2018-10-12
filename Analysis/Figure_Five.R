@@ -1,11 +1,3 @@
-source("plot_functions.R")
-
-###Figure 5: Ontology analysis of known prenatal/infantile lethal genes and putative prenatal/ infantile lethal genes#####
-library(GSEABase)
-
-fl <- "http://www.geneontology.org/ontology/subsets/goslim_generic.obo"
-slim <- getOBOCollection(fl)
-
 ############omim genes dominant vs recessive BP################
 #all genes go slim annotations- human lethal DOMINANT
 all <- unlist(universe_df$go_terms[
