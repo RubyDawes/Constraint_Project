@@ -298,7 +298,7 @@ ggarrange(
 ggsave("output/Figures/goslim_V3_putdomlethalvsreclethal.pdf",height=30,width=30,units='cm')
 
 
-
+save(go_fish_V3,file="output/Data/GOSLIM.rda",compress="bzip2")
 
 
 

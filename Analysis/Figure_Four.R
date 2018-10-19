@@ -244,32 +244,32 @@ mouse_lethal_prop <- data.frame(non_OMIM=c(length(which(is.na(universe_df$omim)&
                                        length(which(universe_df$omim=="Y"&universe_df$lethal_mouse=="N"&!grepl("premature death",universe_df$all_MP_phen)))/length(which(universe_df$omim=="Y"&universe_df$mouse_ko=="Y"))),
                                 Human_Lethal_B=c(length(which(universe_df$human_lethal_B=="Y"&universe_df$lethal_mouse=="Y"))/length(which(universe_df$human_lethal_B=="Y"&universe_df$mouse_ko=="Y")),
                                                  length(which(universe_df$human_lethal_B=="Y"&universe_df$lethal_mouse=="N"&grepl("premature death",universe_df$all_MP_phen)))/length(which(universe_df$human_lethal_B=="Y"&universe_df$mouse_ko=="Y")),
-                                                 length(which(universe_df$human_lethal_B=="Y"&universe_df$lethal_mouse=="N"&!grepl("premature death",universe_df$all_MP_phen)))/length(which(universe_df$human_lethal_B=="Y"&universe_df$mouse_ko=="Y"))),
-                                Human_Lethal_A=c(length(which(universe_df$human_lethal_A=="Y"&universe_df$lethal_mouse=="Y"))/length(which(universe_df$human_lethal_A=="Y"&universe_df$mouse_ko=="Y")),
-                                                 length(which(universe_df$human_lethal_A=="Y"&universe_df$lethal_mouse=="N"&grepl("premature death",universe_df$all_MP_phen)))/length(which(universe_df$human_lethal_A=="Y"&universe_df$mouse_ko=="Y")),
-                                                 length(which(universe_df$human_lethal_A=="Y"&universe_df$lethal_mouse=="N"&!grepl("premature death",universe_df$all_MP_phen)))/length(which(universe_df$human_lethal_A=="Y"&universe_df$mouse_ko=="Y"))))
+                                                 length(which(universe_df$human_lethal_B=="Y"&universe_df$lethal_mouse=="N"&!grepl("premature death",universe_df$all_MP_phen)))/length(which(universe_df$human_lethal_B=="Y"&universe_df$mouse_ko=="Y"))))
 
 levels<- c(paste0("non-OMIM \n n = ",length(which(is.na(universe_df$omim)&universe_df$mouse_ko=="Y"))),
            paste0("OMIM \n n = ",length(which(universe_df$omim=="Y"&universe_df$mouse_ko=="Y"))),
-           paste0("Humanl Lethal \n List B \n n = ",length(which(universe_df$human_lethal_B=="Y"&universe_df$mouse_ko=="Y"))),
-           paste0("Human Lethal \n List A \n n = ",length(which(universe_df$human_lethal_A=="Y"&universe_df$mouse_ko=="Y"))))
+           paste0("Human Lethal \n List B \n n = ",length(which(universe_df$human_lethal_B=="Y"&universe_df$mouse_ko=="Y"))))
 
 mouse_lethal_propm <- melt(mouse_lethal_prop)
-mouse_lethal_propm$mis_constraint <- rep(c("Mouse Lethal     ","Premature death     ", "Mouse non-Lethal     "), 4)
+mouse_lethal_propm$mis_constraint <- rep(c("Mouse Lethal     ","Premature death     ", "Mouse non-Lethal     "), 3)
 mouse_lethal_propm$mis_constraint<-factor(mouse_lethal_propm$mis_constraint,levels=c("Mouse Lethal     ","Premature death     ", "Mouse non-Lethal     "))
 mouse_lethal_propm$variable <- rep(levels,each=3)
 mouse_lethal_propm$variable <- factor(mouse_lethal_propm$variable, levels = levels)
 
-labels <- rep("",12)
-labels[c(2,5,8,11)]<-c(paste0(round(length(which(is.na(universe_df$omim)&(universe_df$lethal_mouse=="Y"|grepl("premature death",universe_df$all_MP_phen))))/length(which(is.na(universe_df$omim)&universe_df$mouse_ko=="Y"))*100,0),"%"),
-                       paste0(round(length(which(universe_df$omim=="Y"&(universe_df$lethal_mouse=="Y"|grepl("premature death",universe_df$all_MP_phen))))/length(which(universe_df$omim=="Y"&universe_df$mouse_ko=="Y"))*100,0),"%"),
-                       paste0(round(length(which(universe_df$human_lethal_B=="Y"&(universe_df$lethal_mouse=="Y"|grepl("premature death",universe_df$all_MP_phen))))/length(which(universe_df$human_lethal_B=="Y"&universe_df$mouse_ko=="Y"))*100,0),"%"),
-                       paste0(round(length(which(universe_df$human_lethal_A=="Y"&(universe_df$lethal_mouse=="Y"|grepl("premature death",universe_df$all_MP_phen))))/length(which(universe_df$human_lethal_A=="Y"&universe_df$mouse_ko=="Y"))*100,0),"%"))
+labels <- rep("",9)
+labels[c(1,2,4,5,7,8)]<-c(length(which(is.na(universe_df$omim)&(universe_df$lethal_mouse=="Y"))),
+                                length(which(is.na(universe_df$omim)&(universe_df$lethal_mouse=="Y"|grepl("premature death",universe_df$all_MP_phen)))),
+                                length(which(universe_df$omim=="Y"&(universe_df$lethal_mouse=="Y"))),
+                                length(which(universe_df$omim=="Y"&(universe_df$lethal_mouse=="Y"|grepl("premature death",universe_df$all_MP_phen)))),
+                                length(which(universe_df$human_lethal_B=="Y"&(universe_df$lethal_mouse=="Y"))),
+                                length(which(universe_df$human_lethal_B=="Y"&(universe_df$lethal_mouse=="Y"|grepl("premature death",universe_df$all_MP_phen)))))
+                       
 
+f <- ggplot(dat=mouse_lethal_propm, aes(x=variable, y=value, fill=mis_constraint))+
+  geom_bar(width = 0.8, stat = "identity",color="black",position=position_fill(reverse = TRUE))+
+  scale_y_continuous(expand = c(0, 0),limits=c(0,1)) +bar_theme()+
+  labs(y = "Proportion")+scale_fill_manual(values=c("black","grey","steelblue3"))+
+  theme(legend.position="right")+geom_text(aes(label = labels),colour="white",size=3,position = position_stack(reverse=TRUE,vjust=1))
 
-f <- ggplot(dat=mouse_lethal_propm, aes(x=variable, y=value, fill=mis_constraint))
-f<- f+geom_bar(width = 0.8, stat = "identity",color="black",position=position_fill(reverse = TRUE))+scale_y_continuous(expand = c(0, 0),limits=c(0,1)) +bar_theme()
-f<- f+labs(y = "Proportion")+scale_fill_manual(values=c("black","grey","steelblue3"))+theme(legend.position="right")+geom_text(aes(label = labels),position = position_stack(reverse=TRUE,vjust=2))
-
-ggsave("output/Figures/4C.pdf",height=10, width=17, units='cm')
+ggsave("output/Figures/4C.pdf",height=7, width=10, units='cm')
 rm(mouse_lethal_prop,mouse_lethal_propm,f,levels,labels)

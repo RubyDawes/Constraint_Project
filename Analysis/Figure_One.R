@@ -1,5 +1,57 @@
 source("plot_functions.R")
 
+###Figure 1B: Pies comparing proportion of protein-coding genes found to be essential in Yeast, Human cells, Mice and humans####
+yeast_viable <-read.table("Gene_lists/EG/yeast/viable_annotations.txt",quote="",header=FALSE,comment.char="!",fill=TRUE,sep="\t")
+yeast_inviable <-read.table("Gene_lists/EG/yeast/inviable_annotations.txt",quote="",header=FALSE,comment.char="!",fill=TRUE,sep="\t")
+yeast_inviable<-yeast_inviable[which(yeast_inviable$V6=="null"),]
+yeast_viable<-yeast_viable[which(yeast_viable$V6=="null"),]
+
+yeast_lethal_pie <- data.frame(group=c("lethal", "non-lethal"),
+                               value=c(
+                                 length(unique(yeast_inviable$V1)),
+                                 length(unique(yeast_viable$V1))))
+yeast_lethal_pie$group <- factor(yeast_lethal_pie$group, levels = yeast_lethal_pie$group)
+a <- ggplot(yeast_lethal_pie, aes(x="", y=value, fill=group))+
+  geom_bar(width = 1, stat = "identity")+blank_theme()+coord_polar(theta="y",direction=-1)+
+  scale_fill_manual(values=c("black","steelblue3"))+theme(legend.position="none",plot.title=element_text(size=10,face="plain"))+
+  geom_text(aes(y = value,label = percent(value/sum(value)),colour=group),size=3,position = position_stack(vjust = 0.5),show.legend=FALSE,fontface="bold")+
+  scale_colour_manual(values=c("white","black"))+ggtitle(paste0("Yeast \n n = ",sum(yeast_lethal_pie[,2])))
+cell_lethal_pie <- data.frame(group=c("lethal", "non-lethal"),
+                              value=c(
+                                length(which(universe_df$cell_essential_hits>=2)),
+                                length(which(universe_df$cell_essential_hits<2))))
+cell_lethal_pie$group <- factor(cell_lethal_pie$group, levels = cell_lethal_pie$group)
+b <- ggplot(cell_lethal_pie, aes(x="", y=value, fill=group))+
+  geom_bar(width = 1, stat = "identity")+blank_theme()+coord_polar(theta="y",direction=-1)+
+  scale_fill_manual(values=c("black","steelblue3"))+theme(legend.position="none",plot.title=element_text(size=10,face="plain"))+
+  geom_text(aes(y = value,label = percent(value/sum(value)),colour=group),size=3,position = position_stack(vjust = 0.5),show.legend=FALSE,fontface="bold")+
+  scale_colour_manual(values=c("white","black"))+ggtitle(paste0("Human Cells \n n = ",sum(cell_lethal_pie[,2])))
+mouse_lethal_pie <- data.frame(group=c("lethal", "non-lethal"),
+                              value=c(
+                                length(which(universe_df$lethal_mouse=="Y")),
+                                length(which(universe_df$lethal_mouse=="N"))))
+mouse_lethal_pie$group <- factor(mouse_lethal_pie$group, levels = mouse_lethal_pie$group)
+c <- ggplot(mouse_lethal_pie, aes(x="", y=value, fill=group))+
+  geom_bar(width = 1, stat = "identity")+blank_theme()+coord_polar(theta="y",direction=-1)+
+  scale_fill_manual(values=c("black","steelblue3"))+theme(legend.position="none",plot.title=element_text(size=10,face="plain"))+
+  geom_text(aes(y = value,label = percent(value/sum(value)),colour=group),size=3,position = position_stack(vjust = 0.5),show.legend=FALSE,fontface="bold")+
+  scale_colour_manual(values=c("white","black"))+ggtitle(paste0("Mouse \n n = ",sum(mouse_lethal_pie[,2])))
+human_lethal_pie <- data.frame(group=c("lethal", "non-lethal"),
+                               value=c(
+                                 length(which(universe_df$human_lethal_B=="Y")),
+                                 length(which(universe_df$human_lethal_B=="N"))))
+human_lethal_pie$group <- factor(human_lethal_pie$group, levels = human_lethal_pie$group)
+d <- ggplot(human_lethal_pie, aes(x="", y=value, fill=group))+
+  geom_bar(width = 1, stat = "identity")+blank_theme()+coord_polar(theta="y",direction=-1)+
+  scale_fill_manual(values=c("black","steelblue3"))+theme(legend.position="none",plot.title=element_text(size=10,face="plain"))+
+  geom_text(aes(y = value,label = percent(value/sum(value)),colour=group),size=3,position = position_stack(vjust = 0.5),show.legend=FALSE,fontface="bold")+
+  scale_colour_manual(values=c("white","black"))+ggtitle(paste0("Human \n n = ",sum(human_lethal_pie[,2])))
+
+ggarrange(a,b,c,d,ncol=2,nrow=2)
+ggsave("output/Figures/1B.pdf",height=9, width=9, units='cm')
+rm(a,b,c,d,yeast_inviable,yeast_viable,yeast_lethal_pie,cell_lethal_pie,mouse_lethal_pie,human_lethal_pie)
+
+
 ###Figure 1A: Venn diagram showing overlap between cell ‘essentialomes’ ####
 #get wang, blomen, hart genes and essentialomes
 #read wang genes and which are essential in different cell lines
@@ -67,41 +119,6 @@ draw.pairwise.venn(area1 = length(which(universe_df$lethal_IMPC=="Y")),
 dev.off()
 
 
-
-###Figure 1D: Histograms comparing proportion of protein-coding genes found to be essential in Yeast, Human cells, Mice and humans####
-yeast_viable <-read.table("Gene_lists/EG/yeast/viable_annotations.txt",quote="",header=FALSE,comment.char="!",fill=TRUE,sep="\t")
-yeast_inviable <-read.table("Gene_lists/EG/yeast/inviable_annotations.txt",quote="",header=FALSE,comment.char="!",fill=TRUE,sep="\t")
-yeast_inviable<-yeast_inviable[which(yeast_inviable$V6=="null"),]
-yeast_viable<-yeast_viable[which(yeast_viable$V6=="null"),]
-
-lethal_prop <- data.frame(Yeast=c(length(unique(yeast_inviable$V1))/(length(unique(yeast_inviable$V1))+length(unique(yeast_viable$V1))),
-                                  length(unique(yeast_viable$V1))/(length(unique(yeast_inviable$V1))+length(unique(yeast_viable$V1)))),
-                          Cells=c(length(which(universe_df$cell_essential_hits>=2))/length(which(!is.na(universe_df$cell_ko))),
-                                  length(which(universe_df$cell_essential_hits<2))/length(which(!is.na(universe_df$cell_ko)))),
-                          Mouse=c(length(which(universe_df$lethal_mouse=="Y"))/length(which(universe_df$mouse_ko=="Y")),
-                                  length(which(universe_df$lethal_mouse=="N"))/length(which(universe_df$mouse_ko=="Y"))),
-                          Human=c(length(which(universe_df$human_lethal_B=="Y"))/length(universe_df$gene),
-                                  length(which(universe_df$human_lethal_B=="N"))/length(universe_df$gene)))
-lethal_propm <- melt(lethal_prop)
-lethal_propm$mis_constraint <- rep(c("Lethal     ","Non-lethal     "), 4)
-levels <- c(paste0("Yeast \n n = ",(length(unique(yeast_inviable$V1))+length(unique(yeast_viable$V1)))),
-            paste0("Human Cells \n n = ",length(which(!is.na(universe_df$cell_ko)))),
-            paste0("Mouse \n n = ",length(which(universe_df$mouse_ko=="Y"))),
-            paste0("Human \n n = ",length(universe_df$gene)))
-lethal_propm$variable <- rep(levels,each=2)
-lethal_propm$variable <- factor(lethal_propm$variable, levels = levels)
-
-
-labels <- rep("",8)
-labels[c(1,3,5,7)]<-c(paste0(round(lethal_propm$value[1]*100,0),"%"),
-                      paste0(round(lethal_propm$value[3]*100,0),"%"),
-                      paste0(round(lethal_propm$value[5]*100,0),"%"),
-                      paste0(round(lethal_propm$value[7]*100,0),"%"))
-f <- ggplot(dat=lethal_propm, aes(x=variable, y=value, fill=mis_constraint))
-f<- f+geom_bar(width = 0.8, stat = "identity",color="black",position=position_fill(reverse = TRUE))+scale_y_continuous(expand = c(0, 0)) +bar_theme()
-f<- f+labs(y = "Proportion")+scale_fill_manual(values=c("black","steelblue3"))+theme(legend.position="right")+geom_text(aes(label = labels),position = "identity",vjust=-1)
-ggsave("output/Figures/1D.pdf",height=9, width=20.5, units='cm')
-rm(yeast_inviable,yeast_viable,lethal_prop,lethal_propm,f,labels)
 
 
 

@@ -77,30 +77,43 @@ levels<- c(paste0("MT \n n = ",length(which(grepl(pattern="MT",universe_df$Inher
            paste0("AD \n n = ",length(which(universe_df$Inheritance_pattern=="AR,AD"&!is.na(universe_df$exac)))),
            paste0("XL \n n = ",length(which(grepl("XL",universe_df$Inheritance_pattern)&!grepl("MT",universe_df$Inheritance_pattern)&!is.na(universe_df$exac)))))
 
-inh_mis <- data.frame(MT=c(length(which(grepl(pattern="MT",universe_df$Inheritance_pattern)&universe_df$mis_z>=3.09))/length(which(grepl(pattern="MT",universe_df$Inheritance_pattern)&!is.na(universe_df$exac))),
-                           length(which(grepl(pattern="MT",universe_df$Inheritance_pattern)&universe_df$mis_z<3.09))/length(which(grepl(pattern="MT",universe_df$Inheritance_pattern)&!is.na(universe_df$exac)))),
-                      AR=c(length(which(universe_df$Inheritance_pattern=="AR"&universe_df$mis_z>=3.09))/length(which(universe_df$Inheritance_pattern=="AR"&!is.na(universe_df$exac))),
-                           length(which(universe_df$Inheritance_pattern=="AR"&universe_df$mis_z<3.09))/length(which(universe_df$Inheritance_pattern=="AR"&!is.na(universe_df$exac)))),
-                      "ARAD"=c(length(which(universe_df$Inheritance_pattern=="AR,AD"&universe_df$mis_z>=3.09))/length(which(universe_df$Inheritance_pattern=="AR,AD"&!is.na(universe_df$exac))),
-                               length(which(universe_df$Inheritance_pattern=="AR,AD"&universe_df$mis_z<3.09))/length(which(universe_df$Inheritance_pattern=="AR,AD"&!is.na(universe_df$exac)))),
-                      AD=c(length(which(universe_df$Inheritance_pattern=="AD"&universe_df$mis_z>=3.09))/length(which(universe_df$Inheritance_pattern=="AD"&!is.na(universe_df$exac))),
-                           length(which(universe_df$Inheritance_pattern=="AD"&universe_df$mis_z<3.09))/length(which(universe_df$Inheritance_pattern=="AD"&!is.na(universe_df$exac)))),
-                      XL=c(length(which(grepl("XL",universe_df$Inheritance_pattern)&!grepl("MT",universe_df$Inheritance_pattern)&universe_df$mis_z>=3.09))/length(which(grepl("XL",universe_df$Inheritance_pattern)&!grepl("MT",universe_df$Inheritance_pattern)&!is.na(universe_df$exac))),
-                           length(which(grepl("XL",universe_df$Inheritance_pattern)&!grepl("MT",universe_df$Inheritance_pattern)&universe_df$mis_z<3.09))/length(which(grepl("XL",universe_df$Inheritance_pattern)&!grepl("MT",universe_df$Inheritance_pattern)&!is.na(universe_df$exac)))))
-
+inh_mis <- data.frame(MT=c(length(which(grepl(pattern="MT",universe_df$Inheritance_pattern)&(universe_df$mis_z>=3.09)))/length(which(grepl(pattern="MT",universe_df$Inheritance_pattern)&!is.na(universe_df$exac))),
+                           length(which(grepl(pattern="MT",universe_df$Inheritance_pattern)&universe_df$mis_z<3.09&universe_df$any_reg_constraint=="Y"))/length(which(grepl(pattern="MT",universe_df$Inheritance_pattern)&!is.na(universe_df$exac))),
+                           length(which(grepl(pattern="MT",universe_df$Inheritance_pattern)&!(universe_df$mis_z>=3.09|universe_df$any_reg_constraint=="Y")))/length(which(grepl(pattern="MT",universe_df$Inheritance_pattern)&!is.na(universe_df$exac)))),
+                      AR=c(length(which(universe_df$Inheritance_pattern=="AR"&(universe_df$mis_z>=3.09)))/length(which(universe_df$Inheritance_pattern=="AR"&!is.na(universe_df$exac))),
+                           length(which(universe_df$Inheritance_pattern=="AR"&(universe_df$mis_z<3.09&universe_df$any_reg_constraint=="Y")))/length(which(universe_df$Inheritance_pattern=="AR"&!is.na(universe_df$exac))),
+                           length(which(universe_df$Inheritance_pattern=="AR"&!(universe_df$mis_z>=3.09|universe_df$any_reg_constraint=="Y")))/length(which(universe_df$Inheritance_pattern=="AR"&!is.na(universe_df$exac)))),
+                      "ARAD"=c(length(which(universe_df$Inheritance_pattern=="AR,AD"&(universe_df$mis_z>=3.09)))/length(which(universe_df$Inheritance_pattern=="AR,AD"&!is.na(universe_df$exac))),
+                               length(which(universe_df$Inheritance_pattern=="AR,AD"&(universe_df$mis_z<3.09&universe_df$any_reg_constraint=="Y")))/length(which(universe_df$Inheritance_pattern=="AR,AD"&!is.na(universe_df$exac))),
+                               length(which(universe_df$Inheritance_pattern=="AR,AD"&!(universe_df$mis_z>=3.09|universe_df$any_reg_constraint=="Y")))/length(which(universe_df$Inheritance_pattern=="AR,AD"&!is.na(universe_df$exac)))),
+                      AD=c(length(which(universe_df$Inheritance_pattern=="AD"&(universe_df$mis_z>=3.09)))/length(which(universe_df$Inheritance_pattern=="AD"&!is.na(universe_df$exac))),
+                           length(which(universe_df$Inheritance_pattern=="AD"&(universe_df$mis_z<3.09&universe_df$any_reg_constraint=="Y")))/length(which(universe_df$Inheritance_pattern=="AD"&!is.na(universe_df$exac))),
+                           length(which(universe_df$Inheritance_pattern=="AD"&!(universe_df$mis_z>=3.09|universe_df$any_reg_constraint=="Y")))/length(which(universe_df$Inheritance_pattern=="AD"&!is.na(universe_df$exac)))),
+                      XL=c(length(which(grepl("XL",universe_df$Inheritance_pattern)&!grepl("MT",universe_df$Inheritance_pattern)&(universe_df$mis_z>=3.09)))/length(which(grepl("XL",universe_df$Inheritance_pattern)&!grepl("MT",universe_df$Inheritance_pattern)&!is.na(universe_df$exac))),
+                           length(which(grepl("XL",universe_df$Inheritance_pattern)&!grepl("MT",universe_df$Inheritance_pattern)&(universe_df$mis_z<3.09&universe_df$any_reg_constraint=="Y")))/length(which(grepl("XL",universe_df$Inheritance_pattern)&!grepl("MT",universe_df$Inheritance_pattern)&!is.na(universe_df$exac))),
+                           length(which(grepl("XL",universe_df$Inheritance_pattern)&!grepl("MT",universe_df$Inheritance_pattern)&!(universe_df$mis_z>=3.09|universe_df$any_reg_constraint=="Y")))/length(which(grepl("XL",universe_df$Inheritance_pattern)&!grepl("MT",universe_df$Inheritance_pattern)&!is.na(universe_df$exac)))))
 inh_mism <- melt(inh_mis)
-inh_mism$mis_constraint <- rep(c("Missense constraint     ", "No missense constraint     "), 5)
+inh_mism$mis_constraint <- rep(c("Whole-gene missense constraint     ","Regional missense constraint     ", "No missense constraint     "), 5)
+inh_mism$mis_constraint <-factor(inh_mism$mis_constraint,levels=c("Whole-gene missense constraint     ","Regional missense constraint     ", "No missense constraint     "))
 
-inh_mism$variable <- rep(levels,each=2)
+inh_mism$variable <- rep(levels,each=3)
 inh_mism$variable <- factor(inh_mism$variable, levels = levels)
-labelsf <- rep("",10)
-labelsf[c(1,3,5,7,9)]<-c(length(which(grepl(pattern="MT",universe_df$Inheritance_pattern)&universe_df$mis_z>=3.09)),length(which(universe_df$Inheritance_pattern=="AR"&universe_df$mis_z>=3.09)),
-                        length(which(universe_df$Inheritance_pattern=="AR,AD"&universe_df$mis_z>=3.09)),length(which(universe_df$Inheritance_pattern=="AD"&universe_df$mis_z>=3.09)),
-                        length(which(grepl("XL",universe_df$Inheritance_pattern)&!grepl("MT",universe_df$Inheritance_pattern)&universe_df$mis_z>=3.09)))
 
-f <- ggplot(dat=inh_mism, aes(x=variable, y=value, fill=mis_constraint))
-f<- f+geom_bar(width = 0.8, stat = "identity",color="black",position=position_fill(reverse = TRUE))+scale_y_continuous(expand = c(0, 0)) +bar_theme()
-f<- f+labs(y = "Proportion")+scale_fill_manual(values=c("lightsalmon2","steelblue3"))+theme(legend.position="bottom")+geom_text(aes(label = labelsf),position = "identity",vjust=-1)
+labelsmis <- rep("",15)
+labelsmis[c(2,4,5,7,8,10,11,13,14)]<-c(length(which(grepl(pattern="MT",universe_df$Inheritance_pattern)&(universe_df$mis_z>=3.09|universe_df$any_reg_constraint=="Y"))),
+                                      length(which(universe_df$Inheritance_pattern=="AR"&(universe_df$mis_z>=3.09))),
+                                      length(which(universe_df$Inheritance_pattern=="AR"&(universe_df$mis_z>=3.09|universe_df$any_reg_constraint=="Y"))),
+                                      length(which(universe_df$Inheritance_pattern=="AR,AD"&(universe_df$mis_z>=3.09))),
+                                      length(which(universe_df$Inheritance_pattern=="AR,AD"&(universe_df$mis_z>=3.09|universe_df$any_reg_constraint=="Y"))),
+                                      length(which(universe_df$Inheritance_pattern=="AD"&(universe_df$mis_z>=3.09))),
+                                      length(which(universe_df$Inheritance_pattern=="AD"&(universe_df$mis_z>=3.09|universe_df$any_reg_constraint=="Y"))),
+                                      length(which(grepl("XL",universe_df$Inheritance_pattern)&!grepl("MT",universe_df$Inheritance_pattern)&(universe_df$mis_z>=3.09))),
+                                      length(which(grepl("XL",universe_df$Inheritance_pattern)&!grepl("MT",universe_df$Inheritance_pattern)&(universe_df$mis_z>=3.09|universe_df$any_reg_constraint=="Y"))))
+
+f <- ggplot(dat=inh_mism, aes(x=variable, y=value, fill=mis_constraint))+
+  geom_bar(width = 0.8, stat = "identity",color="black",position=position_fill(reverse=TRUE))+scale_y_continuous(expand = c(0, 0)) +bar_theme()+
+  labs(y = "Proportion")+scale_fill_manual(values=c("lightsalmon2","#f9b8a0","steelblue3"))+theme(legend.position="bottom")+
+  geom_text(aes(label = labelsmis),size=3,position=position_fill(reverse=TRUE,vjust=0.5))
 
 
 inh_lof <- data.frame(MT=c(length(which(grepl(pattern="MT",universe_df$Inheritance_pattern)&universe_df$pLI>=0.9))/length(which(grepl(pattern="MT",universe_df$Inheritance_pattern)&!is.na(universe_df$exac))),
@@ -125,51 +138,99 @@ labels[c(1,3,5,7,9)]<-c(length(which(grepl(pattern="MT",universe_df$Inheritance_
 
 e <- ggplot(dat=inh_lofm, aes(x=variable, y=value, fill=lof_constraint))
 e<- e+geom_bar(width = 0.8, stat = "identity",color="black",position=position_fill(reverse = TRUE))+scale_y_continuous(expand = c(0, 0)) +bar_theme()
-e<- e+labs(y = "Proportion")+scale_fill_manual(values=c("indianred3","steelblue3"))+theme(legend.position="bottom")+geom_text(aes(label = labels),position = "identity",vjust=-1)
+e<- e+labs(y = "Proportion")+scale_fill_manual(values=c("indianred3","steelblue3"))+theme(legend.position="bottom")+geom_text(aes(label = labels),size=3,position = "identity",vjust=-1)
 
 
 ggarrange(f,e)
-ggsave("output/Figures/2C.pdf",height=10, width=17.8, units='cm')
-rm(inh_lof,inh_lofm,e,inh_mis,inh_mism,f,labelsf,labels)
+ggsave("output/Figures/2C.pdf",height=7, width=14, units='cm')
 
 
-#2D: 62.8% of OMIM genes show neither whole-gene nor regional missense constraint ####
+#2D: human lethal genes constraint ####
 
-regconst <- data.frame(MT=c(length(which(grepl(pattern="MT",universe_df$Inheritance_pattern)&(universe_df$mis_z>=3.09)))/length(which(grepl(pattern="MT",universe_df$Inheritance_pattern)&!is.na(universe_df$exac))),
-                            length(which(grepl(pattern="MT",universe_df$Inheritance_pattern)&universe_df$mis_z<3.09&universe_df$any_reg_constraint=="Y"))/length(which(grepl(pattern="MT",universe_df$Inheritance_pattern)&!is.na(universe_df$exac))),
-                            length(which(grepl(pattern="MT",universe_df$Inheritance_pattern)&!(universe_df$mis_z>=3.09|universe_df$any_reg_constraint=="Y")))/length(which(grepl(pattern="MT",universe_df$Inheritance_pattern)&!is.na(universe_df$exac)))),
-                       AR=c(length(which(universe_df$Inheritance_pattern=="AR"&(universe_df$mis_z>=3.09)))/length(which(universe_df$Inheritance_pattern=="AR"&!is.na(universe_df$exac))),
-                            length(which(universe_df$Inheritance_pattern=="AR"&(universe_df$mis_z<3.09&universe_df$any_reg_constraint=="Y")))/length(which(universe_df$Inheritance_pattern=="AR"&!is.na(universe_df$exac))),
-                            length(which(universe_df$Inheritance_pattern=="AR"&!(universe_df$mis_z>=3.09|universe_df$any_reg_constraint=="Y")))/length(which(universe_df$Inheritance_pattern=="AR"&!is.na(universe_df$exac)))),
-                       "ARAD"=c(length(which(universe_df$Inheritance_pattern=="AR,AD"&(universe_df$mis_z>=3.09)))/length(which(universe_df$Inheritance_pattern=="AR,AD"&!is.na(universe_df$exac))),
-                                length(which(universe_df$Inheritance_pattern=="AR,AD"&(universe_df$mis_z<3.09&universe_df$any_reg_constraint=="Y")))/length(which(universe_df$Inheritance_pattern=="AR,AD"&!is.na(universe_df$exac))),
-                                length(which(universe_df$Inheritance_pattern=="AR,AD"&!(universe_df$mis_z>=3.09|universe_df$any_reg_constraint=="Y")))/length(which(universe_df$Inheritance_pattern=="AR,AD"&!is.na(universe_df$exac)))),
-                       AD=c(length(which(universe_df$Inheritance_pattern=="AD"&(universe_df$mis_z>=3.09)))/length(which(universe_df$Inheritance_pattern=="AD"&!is.na(universe_df$exac))),
-                            length(which(universe_df$Inheritance_pattern=="AD"&(universe_df$mis_z<3.09&universe_df$any_reg_constraint=="Y")))/length(which(universe_df$Inheritance_pattern=="AD"&!is.na(universe_df$exac))),
-                            length(which(universe_df$Inheritance_pattern=="AD"&!(universe_df$mis_z>=3.09|universe_df$any_reg_constraint=="Y")))/length(which(universe_df$Inheritance_pattern=="AD"&!is.na(universe_df$exac)))),
-                       XL=c(length(which(grepl("XL",universe_df$Inheritance_pattern)&!grepl("MT",universe_df$Inheritance_pattern)&(universe_df$mis_z>=3.09)))/length(which(grepl("XL",universe_df$Inheritance_pattern)&!grepl("MT",universe_df$Inheritance_pattern)&!is.na(universe_df$exac))),
-                            length(which(grepl("XL",universe_df$Inheritance_pattern)&!grepl("MT",universe_df$Inheritance_pattern)&(universe_df$mis_z<3.09&universe_df$any_reg_constraint=="Y")))/length(which(grepl("XL",universe_df$Inheritance_pattern)&!grepl("MT",universe_df$Inheritance_pattern)&!is.na(universe_df$exac))),
-                            length(which(grepl("XL",universe_df$Inheritance_pattern)&!grepl("MT",universe_df$Inheritance_pattern)&!(universe_df$mis_z>=3.09|universe_df$any_reg_constraint=="Y")))/length(which(grepl("XL",universe_df$Inheritance_pattern)&!grepl("MT",universe_df$Inheritance_pattern)&!is.na(universe_df$exac)))))
+levels<- c(paste0("MT \n n = ",length(which((universe_df$lethal_inheritance=="MT,AR"|universe_df$lethal_inheritance=="MT,XLd")&universe_df$human_lethal_B=="Y"&!is.na(universe_df$exac)))),
+           paste0("AR \n n = ",length(which((universe_df$lethal_inheritance=="AR")&universe_df$human_lethal_B=="Y"&!is.na(universe_df$exac)))),
+           paste0("AR/AD \n n = ",length(which((universe_df$lethal_inheritance=="AR,AD")&universe_df$human_lethal_B=="Y"&!is.na(universe_df$exac)))),
+           paste0("AD \n n = ",length(which((universe_df$lethal_inheritance=="AD")&universe_df$human_lethal_B=="Y"&!is.na(universe_df$exac)))),
+           paste0("XL \n n = ",length(which((grepl("XL",universe_df$lethal_inheritance)&!grepl("MT",universe_df$lethal_inheritance))&universe_df$human_lethal_B=="Y"&!is.na(universe_df$exac)))))
 
 
-regconstm <- melt(regconst)
-regconstm$regconstraint <- rep(c("Whole-gene missenseconstraint     ","Regional missense constraint     ", "No missense constraint     "), 5)
+inh_mis_human_lethal_B <- data.frame(MT=c(length(which(universe_df$human_lethal_B=="Y"&(universe_df$lethal_inheritance=="MT,AR"|universe_df$lethal_inheritance=="MT,XLd")&universe_df$mis_z>=3.09))/length(which((universe_df$lethal_inheritance=="MT,AR"|universe_df$lethal_inheritance=="MT,XLd")&universe_df$human_lethal_B=="Y"&!is.na(universe_df$exac))),
+                                          length(which(universe_df$human_lethal_B=="Y"&(universe_df$lethal_inheritance=="MT,AR"|universe_df$lethal_inheritance=="MT,XLd")&universe_df$mis_z<3.09&universe_df$any_reg_constraint=="Y"))/length(which((universe_df$lethal_inheritance=="MT,AR"|universe_df$lethal_inheritance=="MT,XLd")&universe_df$human_lethal_B=="Y"&!is.na(universe_df$exac))),
+                                          length(which(universe_df$human_lethal_B=="Y"&(universe_df$lethal_inheritance=="MT,AR"|universe_df$lethal_inheritance=="MT,XLd")&universe_df$mis_z<3.09&universe_df$any_reg_constraint=="N"))/length(which((universe_df$lethal_inheritance=="MT,AR"|universe_df$lethal_inheritance=="MT,XLd")&universe_df$human_lethal_B=="Y"&!is.na(universe_df$exac)))),
+                                     AR=c(length(which(universe_df$human_lethal_B=="Y"&(universe_df$lethal_inheritance=="AR")&universe_df$mis_z>=3.09))/length(which((universe_df$lethal_inheritance=="AR")&universe_df$human_lethal_B=="Y"&!is.na(universe_df$exac))),
+                                          length(which(universe_df$human_lethal_B=="Y"&(universe_df$lethal_inheritance=="AR")&universe_df$mis_z<3.09&universe_df$any_reg_constraint=="Y"))/length(which((universe_df$lethal_inheritance=="AR")&universe_df$human_lethal_B=="Y"&!is.na(universe_df$exac))),
+                                          length(which(universe_df$human_lethal_B=="Y"&(universe_df$lethal_inheritance=="AR")&universe_df$mis_z<3.09&universe_df$any_reg_constraint=="N"))/length(which((universe_df$lethal_inheritance=="AR")&universe_df$human_lethal_B=="Y"&!is.na(universe_df$exac)))),
+                                     "AR,AD"=c(length(which(universe_df$human_lethal_B=="Y"&(universe_df$lethal_inheritance=="AR,AD")&universe_df$mis_z>=3.09))/length(which((universe_df$lethal_inheritance=="AR,AD")&universe_df$human_lethal_B=="Y"&!is.na(universe_df$exac))),
+                                              length(which(universe_df$human_lethal_B=="Y"&(universe_df$lethal_inheritance=="AR,AD")&universe_df$mis_z<3.09&universe_df$any_reg_constraint=="Y"))/length(which((universe_df$lethal_inheritance=="AR,AD")&universe_df$human_lethal_B=="Y"&!is.na(universe_df$exac))),
+                                              length(which(universe_df$human_lethal_B=="Y"&(universe_df$lethal_inheritance=="AR,AD")&universe_df$mis_z<3.09&universe_df$any_reg_constraint=="N"))/length(which((universe_df$lethal_inheritance=="AR,AD")&universe_df$human_lethal_B=="Y"&!is.na(universe_df$exac)))),
+                                     AD=c(length(which(universe_df$human_lethal_B=="Y"&(universe_df$lethal_inheritance=="AD")&universe_df$mis_z>=3.09))/length(which((universe_df$lethal_inheritance=="AD")&universe_df$human_lethal_B=="Y"&!is.na(universe_df$exac))),
+                                          length(which(universe_df$human_lethal_B=="Y"&(universe_df$lethal_inheritance=="AD")&universe_df$mis_z<3.09&universe_df$any_reg_constraint=="Y"))/length(which((universe_df$lethal_inheritance=="AD")&universe_df$human_lethal_B=="Y"&!is.na(universe_df$exac))),
+                                          length(which(universe_df$human_lethal_B=="Y"&(universe_df$lethal_inheritance=="AD")&universe_df$mis_z<3.09&universe_df$any_reg_constraint=="N"))/length(which((universe_df$lethal_inheritance=="AD")&universe_df$human_lethal_B=="Y"&!is.na(universe_df$exac)))),
+                                     XL=c(length(which(universe_df$human_lethal_B=="Y"&(grepl("XL",universe_df$lethal_inheritance)&!grepl("MT",universe_df$lethal_inheritance))&universe_df$mis_z>=3.09))/length(which((grepl("XL",universe_df$lethal_inheritance)&!grepl("MT",universe_df$lethal_inheritance))&universe_df$human_lethal_B=="Y"&!is.na(universe_df$exac))),
+                                          length(which(universe_df$human_lethal_B=="Y"&(grepl("XL",universe_df$lethal_inheritance)&!grepl("MT",universe_df$lethal_inheritance))&universe_df$mis_z<3.09&universe_df$any_reg_constraint=="Y"))/length(which((grepl("XL",universe_df$lethal_inheritance)&!grepl("MT",universe_df$lethal_inheritance))&universe_df$human_lethal_B=="Y"&!is.na(universe_df$exac))),
+                                          length(which(universe_df$human_lethal_B=="Y"&(grepl("XL",universe_df$lethal_inheritance)&!grepl("MT",universe_df$lethal_inheritance))&universe_df$mis_z<3.09&universe_df$any_reg_constraint=="N"))/length(which((grepl("XL",universe_df$lethal_inheritance)&!grepl("MT",universe_df$lethal_inheritance))&universe_df$human_lethal_B=="Y"&!is.na(universe_df$exac)))))
+                                       
+                                       
+inh_mis_human_lethal_Bm <- melt(inh_mis_human_lethal_B)
+inh_mis_human_lethal_Bm$mis_constraint <- rep(c("Missense constraint     ","Regional missense constraint", "No missense constraint     "), 5)
 
-regconstm$variable <- rep(levels,each=3)
-regconstm$variable <- factor(regconstm$variable, levels = levels)
+inh_mis_human_lethal_Bm$variable<- rep(levels,each=3)
+inh_mis_human_lethal_Bm$variable <- factor(inh_mis_human_lethal_Bm$variable, levels = levels)
 
-labels <- rep("",15)
-labels[c(2,5,8,11,14)]<-c(length(which(grepl(pattern="MT",universe_df$Inheritance_pattern)&(universe_df$mis_z>=3.09|universe_df$any_reg_constraint=="Y"))),
-                          length(which(universe_df$Inheritance_pattern=="AR"&(universe_df$mis_z>=3.09|universe_df$any_reg_constraint=="Y"))),
-                          length(which(universe_df$Inheritance_pattern=="AR,AD"&(universe_df$mis_z>=3.09|universe_df$any_reg_constraint=="Y"))),
-                          length(which(universe_df$Inheritance_pattern=="AD"&(universe_df$mis_z>=3.09|universe_df$any_reg_constraint=="Y"))),
-                          length(which(grepl("XL",universe_df$Inheritance_pattern)&!grepl("MT",universe_df$Inheritance_pattern)&(universe_df$mis_z>=3.09|universe_df$any_reg_constraint=="Y"))))
+labelsf <- rep("",15)
+labelsf[c(2,4,5,7,8,10,11,13,14)]<-c(length(which(universe_df$human_lethal_B=="Y"&(universe_df$lethal_inheritance=="MT,AR"|universe_df$lethal_inheritance=="MT,XLd")&(universe_df$mis_z>=3.09|universe_df$any_reg_constraint=="Y"))),
+                                       length(which(universe_df$human_lethal_B=="Y"&(universe_df$lethal_inheritance=="AR")&universe_df$mis_z>=3.09)),
+                                       length(which(universe_df$human_lethal_B=="Y"&(universe_df$lethal_inheritance=="AR")&(universe_df$mis_z>=3.09|universe_df$any_reg_constraint=="Y"))),
+                                       length(which(universe_df$human_lethal_B=="Y"&(universe_df$lethal_inheritance=="AR,AD")&universe_df$mis_z>=3.09)),
+                                       length(which(universe_df$human_lethal_B=="Y"&(universe_df$lethal_inheritance=="AR,AD")&(universe_df$mis_z>=3.09|universe_df$any_reg_constraint=="Y"))),
+                                       length(which(universe_df$human_lethal_B=="Y"&(universe_df$lethal_inheritance=="AD")&universe_df$mis_z>=3.09)),
+                                       length(which(universe_df$human_lethal_B=="Y"&(universe_df$lethal_inheritance=="AD")&(universe_df$mis_z>=3.09|universe_df$any_reg_constraint=="Y"))),
+                                       length(which(universe_df$human_lethal_B=="Y"&(grepl("XL",universe_df$lethal_inheritance)&!grepl("MT",universe_df$lethal_inheritance))&universe_df$mis_z>=3.09)),
+                                       length(which(universe_df$human_lethal_B=="Y"&(grepl("XL",universe_df$lethal_inheritance)&!grepl("MT",universe_df$lethal_inheritance))&(universe_df$mis_z>=3.09|universe_df$any_reg_constraint=="Y"))))
 
 
-e <- ggplot(dat=regconstm, aes(x=variable, y=value, fill=regconstraint))
-e<- e+geom_bar(width = 0.8, stat = "identity",color="black")+scale_y_continuous(expand = c(0, 0),limits=c(0,1)) +bar_theme()
-e<- e+labs(y = "Proportion")+scale_fill_manual(values=c("steelblue3","#f9b8a0","lightsalmon2"))+theme(legend.position="right")+geom_text(aes(label = labels),position = position_stack(vjust=1.4))
+inh_mis_human_lethal_Bm$mis_constraint <-factor(inh_mis_human_lethal_Bm$mis_constraint,levels=c("Missense constraint     ","Regional missense constraint", "No missense constraint     "))
+
+m <- ggplot(dat=inh_mis_human_lethal_Bm, aes(x=variable, y=value, fill=mis_constraint))+
+  geom_bar(width = 0.8, stat = "identity",color="black",position=position_fill(reverse = TRUE))+
+  scale_y_continuous(expand = c(0, 0)) +bar_theme()+
+  labs(y = "Proportion")+scale_fill_manual(values=c("lightsalmon2","#f9b8a0","steelblue3"))+
+  theme(legend.position="bottom")+geom_text(aes(label = labelsf),size=3,position = position_fill(reverse=TRUE,vjust=0.5))
 
 
-ggsave("output/Figures/2D.pdf",height=7, width=16, units='cm')
-rm(regconst,regconstm,e,labels,levels)
+
+inh_lof_human_lethal_B <- data.frame(MT=c(length(which(grepl(pattern="MT",universe_df$lethal_inheritance)&universe_df$human_lethal_B=="Y"&universe_df$pLI>=0.9))/length(which(grepl(pattern="MT",universe_df$lethal_inheritance)&universe_df$human_lethal_B=="Y"&!is.na(universe_df$exac))),
+                                          length(which(grepl(pattern="MT",universe_df$lethal_inheritance)&universe_df$human_lethal_B=="Y"&universe_df$pLI<0.9))/length(which(grepl(pattern="MT",universe_df$lethal_inheritance)&universe_df$human_lethal_B=="Y"&!is.na(universe_df$exac)))),
+                                     AR=c(length(which(universe_df$lethal_inheritance=="AR"&universe_df$human_lethal_B=="Y"&universe_df$pLI>=0.9))/length(which(universe_df$lethal_inheritance=="AR"&universe_df$human_lethal_B=="Y"&!is.na(universe_df$exac))),
+                                          length(which(universe_df$lethal_inheritance=="AR"&universe_df$human_lethal_B=="Y"&universe_df$pLI<0.9))/length(which(universe_df$lethal_inheritance=="AR"&universe_df$human_lethal_B=="Y"&!is.na(universe_df$exac)))),
+                                     "ARAD"=c(length(which(universe_df$lethal_inheritance=="AR,AD"&universe_df$human_lethal_B=="Y"&universe_df$pLI>=0.9))/length(which(universe_df$lethal_inheritance=="AR,AD"&universe_df$human_lethal_B=="Y"&!is.na(universe_df$exac))),
+                                              length(which(universe_df$lethal_inheritance=="AR,AD"&universe_df$human_lethal_B=="Y"&universe_df$pLI<0.9))/length(which(universe_df$lethal_inheritance=="AR,AD"&universe_df$human_lethal_B=="Y"&!is.na(universe_df$exac)))),
+                                     AD=c(length(which(universe_df$lethal_inheritance=="AD"&universe_df$human_lethal_B=="Y"&universe_df$pLI>=0.9))/length(which(universe_df$lethal_inheritance=="AD"&universe_df$human_lethal_B=="Y"&!is.na(universe_df$exac))),
+                                          length(which(universe_df$lethal_inheritance=="AD"&universe_df$human_lethal_B=="Y"&universe_df$pLI<0.9))/length(which(universe_df$lethal_inheritance=="AD"&universe_df$human_lethal_B=="Y"&!is.na(universe_df$exac)))),
+                                     XL=c(length(which(grepl("XL",universe_df$lethal_inheritance)&!grepl("MT",universe_df$lethal_inheritance)&universe_df$human_lethal_B=="Y"&universe_df$pLI>=0.9))/length(which(grepl("XL",universe_df$lethal_inheritance)&!grepl("MT",universe_df$lethal_inheritance)&universe_df$human_lethal_B=="Y"&!is.na(universe_df$exac))),
+                                          length(which(grepl("XL",universe_df$lethal_inheritance)&!grepl("MT",universe_df$lethal_inheritance)&universe_df$human_lethal_B=="Y"&universe_df$pLI<0.9))/length(which(grepl("XL",universe_df$lethal_inheritance)&!grepl("MT",universe_df$lethal_inheritance)&universe_df$human_lethal_B=="Y"&!is.na(universe_df$exac)))))
+
+inh_lof_human_lethal_Bm <- melt(inh_lof_human_lethal_B)
+inh_lof_human_lethal_Bm$mis_constraint <- rep(c("LoF constraint     ", "No LoF constraint     "), 5)
+
+inh_lof_human_lethal_Bm$variable<- rep(levels,each=2)
+inh_lof_human_lethal_Bm$variable <- factor(inh_lof_human_lethal_Bm$variable, levels = levels)
+
+labels <- rep("",10)
+labels[c(1,3,5,7,9)]<-c(length(which(grepl(pattern="MT",universe_df$lethal_inheritance)&universe_df$pLI>=0.9)),
+                        length(which(universe_df$lethal_inheritance=="AR"&universe_df$pLI>=0.9)),
+                        length(which(universe_df$lethal_inheritance=="AR,AD"&universe_df$pLI>=0.9)),
+                        length(which(universe_df$lethal_inheritance=="AD"&universe_df$pLI>=0.9)),
+                        length(which(grepl("XL",universe_df$lethal_inheritance)&!grepl("MT",universe_df$lethal_inheritance)&universe_df$pLI>=0.9)))
+
+l <- ggplot(dat=inh_lof_human_lethal_Bm, aes(x=variable, y=value, fill=mis_constraint))+
+  geom_bar(width = 0.8, stat = "identity",color="black",position=position_fill(reverse = TRUE))+
+  scale_y_continuous(expand = c(0, 0)) +bar_theme()+
+  labs(y = "Proportion")+scale_fill_manual(values=c("indianred3","steelblue3"))+theme(legend.position="bottom")+
+  geom_text(aes(label = labels),size=3,position = position_fill(reverse=TRUE,vjust=0.5))
+
+
+ggarrange(m,l)
+ggsave("output/Figures/2D.pdf",height=7, width=14, units='cm')
+
+
