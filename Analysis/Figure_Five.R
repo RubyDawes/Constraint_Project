@@ -130,7 +130,7 @@ a<-ggplot(lethal_metrics_OR) +
 lethal_constraint_ADXLD_OR<- OR_test(length(which(universe_df$human_lethal_B=="Y"&(universe_df$lethal_inheritance=="AD"|universe_df$lethal_inheritance=="XLd"|universe_df$lethal_inheritance=="MT,XLd")&universe_df$constrained=="Y")),
                                    length(which(is.na(universe_df$omim)&universe_df$constrained=="Y")),
                                    length(which(universe_df$human_lethal_B=="Y"&(universe_df$lethal_inheritance=="AD"|universe_df$lethal_inheritance=="XLd"|universe_df$lethal_inheritance=="MT,XLd")&universe_df$constrained=="N")),
-                             ''      length(which(is.na(universe_df$omim)&universe_df$constrained=="N")))
+                                   length(which(is.na(universe_df$omim)&universe_df$constrained=="N")))
 
 lethal_mouseleth_ADXLD_OR<- OR_test(length(which(universe_df$human_lethal_B=="Y"&(universe_df$lethal_inheritance=="AD"|universe_df$lethal_inheritance=="XLd"|universe_df$lethal_inheritance=="MT,XLd")&universe_df$lethal_mouse=="Y")),
                                   length(which(is.na(universe_df$omim)&universe_df$lethal_mouse=="Y")),

@@ -109,7 +109,7 @@ a<-ggplot(data = go_fish_CC, aes(x= gene,y = go_name)) +
   scale_fill_gradient2(low="#a020f0",mid="white",high="#008b45", 
                        breaks=c(round(min,1),0.6,1.0,3.0,round(max,1)),labels=c(round(min,1),0.6,1.0,3.0,round(max,1)),limits=c(min,max),
                        guide = "colourbar",trans="log")+
-  bar_theme()+theme(axis.text.x=element_blank(),axis.title.y=element_blank(),legend.position = 'none',axis.text.y=element_text(size=9))+
+  bar_theme()+theme(axis.text.x=element_blank(),axis.title.y=element_blank(),axis.text.y=element_text(size=9))+
   scale_y_discrete(expand = c(0, 0),labels = function(x) lapply(strwrap(x, width = 1, simplify = FALSE), paste, collapse="\n"))+scale_x_discrete(expand = c(0, 0))
 
 
@@ -118,9 +118,9 @@ go_fish_MF$go_name <- factor(go_fish_MF$go_name,levels=go_fish_MF$go_name)
 b<-ggplot(data = go_fish_MF, aes(x= gene,y = go_name)) +
   geom_tile(aes(fill = domvsrecomim_odds_ratio,width=1)) +
   scale_fill_gradient2(low="#a020f0",mid="white",high="#008b45", 
-                       breaks=c(round(min,1),0.6,1.0,3.0,round(max,1)),labels=c(round(min,1),0.6,1.0,3.0,round(max,1)),limits=c(min,max),
+                       limits=c(min,max),
                        guide = "colourbar",trans="log")+
-  bar_theme()+theme(axis.text.x=element_blank(),axis.title.y=element_blank(),legend.position = 'none',axis.text.y=element_text(size=9))+
+  bar_theme()+theme(axis.text.x=element_blank(),axis.title.y=element_blank(),axis.text.y=element_text(size=9))+
   scale_y_discrete(expand = c(0, 0),labels = function(x) lapply(strwrap(x, width = 1, simplify = FALSE), paste, collapse="\n"))+scale_x_discrete(expand = c(0, 0))
 
 go_fish_BP <- go_fish_V3[order(go_fish_V3$domvsrecomim_odds_ratio[21:30])+20,]
@@ -139,11 +139,11 @@ go_fish_lethal_CC$go_name <- factor(go_fish_lethal_CC$go_name,levels=go_fish_let
 d<-ggplot(data = go_fish_lethal_CC, aes(x= gene,y = go_name)) +
   geom_tile(aes(fill = domvsreclethal_odds_ratio,width=1)) +
   scale_fill_gradient2(low="#a020f0",mid="white",high="#008b45", 
-                       breaks=c(round(min,1),0.6,1.0,3.0,round(max,1)),labels=c(round(min,1),0.6,1.0,3.0,round(max,1)),limits=c(min,max),
+                       limits=c(0.1,10),
                        guide = "colourbar",trans="log")+
-  bar_theme()+theme(axis.text.x=element_blank(),legend.position = 'none',axis.title.y=element_blank(),axis.text.y=element_text(size=9))+
+  bar_theme()+theme(axis.text.x=element_blank(),axis.title.y=element_blank(),axis.text.y=element_text(size=9))+
   scale_y_discrete(expand = c(0, 0),labels = function(x) lapply(strwrap(x, width = 1, simplify = FALSE), paste, collapse="\n"))+scale_x_discrete(expand = c(0, 0))
-
+ggsave("legend.pdf")
 go_fish_lethal_MF <- go_fish_V3[order(go_fish_V3$domvsreclethal_odds_ratio[11:20])+10,]
 go_fish_lethal_MF$go_name <- factor(go_fish_lethal_MF$go_name,levels=go_fish_lethal_MF$go_name)
 e<-ggplot(data = go_fish_lethal_MF, aes(x= gene,y = go_name)) +
@@ -151,7 +151,7 @@ e<-ggplot(data = go_fish_lethal_MF, aes(x= gene,y = go_name)) +
   scale_fill_gradient2(low="#a020f0",mid="white",high="#008b45", 
                        breaks=c(round(min,1),0.6,1.0,3.0,round(max,1)),labels=c(round(min,1),0.6,1.0,3.0,round(max,1)),limits=c(min,max),
                        guide = "colourbar",trans="log")+
-  bar_theme()+theme(axis.text.x=element_blank(),axis.title.y=element_blank(),legend.position = 'none',axis.text.y=element_text(size=9))+
+  bar_theme()+theme(axis.text.x=element_blank(),axis.title.y=element_blank(),axis.text.y=element_text(size=9))+
   scale_y_discrete(expand = c(0, 0),labels = function(x) lapply(strwrap(x, width = 1, simplify = FALSE), paste, collapse="\n"))+scale_x_discrete(expand = c(0, 0))
 
 go_fish_lethal_BP <- go_fish_V3[order(go_fish_V3$domvsreclethal_odds_ratio[21:30])+20,]
@@ -173,7 +173,7 @@ g<-ggplot(data = go_fish_putlethal_CC, aes(x= gene,y = go_name)) +
   scale_fill_gradient2(low="#a020f0",mid="white",high="#008b45", 
                        breaks=c(round(min,1),0.6,1.0,round(max,1)),labels=c(round(min,1),0.6,1.0,round(max,1)),limits=c(min,max),
                        guide = "colourbar",trans="log")+
-  bar_theme()+theme(axis.text.x=element_blank(),legend.position = 'none',axis.title.y=element_blank(),axis.text.y=element_text(size=9))+scale_y_discrete(expand = c(0, 0),labels = function(x) lapply(strwrap(x, width = 1, simplify = FALSE), paste, collapse="\n"))+scale_x_discrete(expand = c(0, 0))
+  bar_theme()+theme(axis.text.x=element_blank(),axis.title.y=element_blank(),axis.text.y=element_text(size=9))+scale_y_discrete(expand = c(0, 0),labels = function(x) lapply(strwrap(x, width = 1, simplify = FALSE), paste, collapse="\n"))+scale_x_discrete(expand = c(0, 0))
 
 go_fish_putlethal_MF <- go_fish_V3[order(go_fish_V3$putdomvsreclethal_odds_ratio[11:20])+10,]
 go_fish_putlethal_MF$go_name <- factor(go_fish_putlethal_MF$go_name,levels=go_fish_putlethal_MF$go_name)
@@ -182,7 +182,7 @@ h<-ggplot(data = go_fish_putlethal_MF[which(go_fish_putlethal_MF$putdomvsrecleth
   scale_fill_gradient2(low="#a020f0",mid="white",high="#008b45", 
                        breaks=c(round(min,1),0.6,1.0,round(max,1)),labels=c(round(min,1),0.6,1.0,round(max,1)),limits=c(min,max),
                        guide = "colourbar",trans="log")+
-  bar_theme()+theme(axis.text.x=element_blank(),legend.position = 'none',axis.title.y=element_blank(),axis.text.y=element_text(size=9))+scale_y_discrete(expand = c(0, 0),labels = function(x) lapply(strwrap(x, width = 1, simplify = FALSE), paste, collapse="\n"))+scale_x_discrete(expand = c(0, 0))
+  bar_theme()+theme(axis.text.x=element_blank(),axis.title.y=element_blank(),axis.text.y=element_text(size=9))+scale_y_discrete(expand = c(0, 0),labels = function(x) lapply(strwrap(x, width = 1, simplify = FALSE), paste, collapse="\n"))+scale_x_discrete(expand = c(0, 0))
 
 go_fish_putlethal_BP <- go_fish_V3[order(go_fish_V3$putdomvsreclethal_odds_ratio[21:30])+20,]
 go_fish_putlethal_BP$go_name <- factor(go_fish_putlethal_BP$go_name,levels=go_fish_putlethal_BP$go_name)
@@ -192,6 +192,7 @@ i<-ggplot(data = go_fish_putlethal_BP, aes(x= gene,y = go_name)) +
                        breaks=c(round(min,1)+0.01,0.6,1.0,round(max,0)),labels=c(round(min,1),0.6,1.0,round(max,0)),limits=c(min,max),
                        guide = "colourbar",trans="log")+
   bar_theme()+theme(axis.text.x=element_blank(),axis.title.y=element_blank(),axis.text.y=element_text(size=9))+scale_y_discrete(expand = c(0, 0),labels = function(x) lapply(strwrap(x, width = 1, simplify = FALSE), paste, collapse="\n"))+scale_x_discrete(expand = c(0, 0))
+
 
 
 
