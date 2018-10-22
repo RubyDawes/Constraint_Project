@@ -1,6 +1,5 @@
 #a script to parse MGI_PhenoGenoMP to extract all genes with lethal phenotypes, write to xlsx
 #load in all genes and phenotypes
-
 mgi_df <- read.xlsx("Gene_lists/MGI_MPs/MGI_PhenoGenoMP.xlsx")
 mgi_df <- mgi_df[,c(1,2,6,4)]
 mgi_df<- mgi_df[which(!grepl(pattern = "\\,", x = mgi_df$MGI_ID, ignore.case = FALSE)),]

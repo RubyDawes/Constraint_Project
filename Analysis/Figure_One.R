@@ -1,30 +1,5 @@
 source("plot_functions.R")
 
-###Figure 1E: Number of genes classified as cell-essential among eleven cell lines  ####
-cell_line_cutoff_levels <- seq(1, 11, by=1)
-cell_line_cutoff_numbers <- lapply(cell_line_cutoff_levels,function(x) length(which(universe_df$cell_essential_hits >= x)))
-cutoffs <- data.frame(cell_line_cutoff_levels,unlist(cell_line_cutoff_numbers))
-names(cutoffs)<-c("levels","numbers")
-
-cell_cutoff_plot <- ggplot(cutoffs,aes(x=levels,y=numbers))+
-  geom_point(size=3,color="sandybrown")+scatter_theme()+
-  labs(x="Number of cell lines",y="Number of essential genes")+
-  scale_y_continuous(breaks = pretty(cutoffs$numbers, n = 12),limits=c(0,5000),expand = c(0,0))+
-  scale_x_continuous(breaks = c(0,1,2,3,4,5,6,7,8,9,10,11),limits=c(0,11.5),expand = c(0,0))
-cell_cutoff_plot
-ggsave("output/Figures/1E.png",height=6.5, width=6.5, units='cm')
-dev.off()
-rm(cell_line_cutoff_numbers,cell_line_cutoff_levels,cutoffs,cell_cutoff_plot)
-
-
-
-
-
-
-
-
-
-
 ###Figure 1B: Pies comparing proportion of protein-coding genes found to be essential in Yeast, Human cells, Mice and humans####
 yeast_viable <-read.table("Gene_lists/EG/yeast/viable_annotations.txt",quote="",header=FALSE,comment.char="!",fill=TRUE,sep="\t")
 yeast_inviable <-read.table("Gene_lists/EG/yeast/inviable_annotations.txt",quote="",header=FALSE,comment.char="!",fill=TRUE,sep="\t")
@@ -125,6 +100,25 @@ draw.triple.venn(area1 = length(which(common_genes$wang_essentialome=="essential
 
 dev.off()
 rm(wang,hart,blomen,common_genes,overrideTriple,a)
+
+
+
+###Figure 1E: Number of genes classified as cell-essential among eleven cell lines  ####
+cell_line_cutoff_levels <- seq(1, 11, by=1)
+cell_line_cutoff_numbers <- lapply(cell_line_cutoff_levels,function(x) length(which(universe_df$cell_essential_hits >= x)))
+cutoffs <- data.frame(cell_line_cutoff_levels,unlist(cell_line_cutoff_numbers))
+names(cutoffs)<-c("levels","numbers")
+
+cell_cutoff_plot <- ggplot(cutoffs,aes(x=levels,y=numbers))+
+  geom_point(size=3,color="sandybrown")+scatter_theme()+
+  labs(x="Number of cell lines",y="Number of essential genes")+
+  scale_y_continuous(breaks = pretty(cutoffs$numbers, n = 12),limits=c(0,5000),expand = c(0,0))+
+  scale_x_continuous(breaks = c(0,1,2,3,4,5,6,7,8,9,10,11),limits=c(0,11.5),expand = c(0,0))
+cell_cutoff_plot
+ggsave("output/Figures/1E.png",height=6.5, width=6.5, units='cm')
+dev.off()
+rm(cell_line_cutoff_numbers,cell_line_cutoff_levels,cutoffs,cell_cutoff_plot)
+
 
 
 
