@@ -17,7 +17,7 @@ omim <- ggplot(universe_df[which(universe_df$omim=="Y"&!is.na(universe_df$exac))
   scale_y_continuous(expand = c(0, 0), limits = c(0, 1.01)) +
   scale_x_continuous(expand = c(0, 0), limits = c(-9, 14)) 
 
-ggarrange(nonomim,omim)
+ggarrange(omim,nonomim)
 ggsave("output/Figures/2A.pdf",height=8.9, width=17.8, units='cm')
 
 rm(nonomim,omim)
@@ -74,7 +74,7 @@ rm(a,b,c,d,omim_mis,nonomim_mis,omim_lof,nonomim_lof)
 levels<- c(paste0("MT \n n = ",length(which(grepl(pattern="MT",universe_df$Inheritance_pattern)&!is.na(universe_df$exac)))),
            paste0("AR \n n = ",length(which(universe_df$Inheritance_pattern=="AR"&!is.na(universe_df$exac)))),
            paste0("AR/AD \n n = ",length(which(universe_df$Inheritance_pattern=="AR,AD"&!is.na(universe_df$exac)))),
-           paste0("AD \n n = ",length(which(universe_df$Inheritance_pattern=="AR,AD"&!is.na(universe_df$exac)))),
+           paste0("AD \n n = ",length(which(universe_df$Inheritance_pattern=="AD"&!is.na(universe_df$exac)))),
            paste0("XL \n n = ",length(which(grepl("XL",universe_df$Inheritance_pattern)&!grepl("MT",universe_df$Inheritance_pattern)&!is.na(universe_df$exac)))))
 
 inh_mis <- data.frame(MT=c(length(which(grepl(pattern="MT",universe_df$Inheritance_pattern)&(universe_df$mis_z>=3.09)))/length(which(grepl(pattern="MT",universe_df$Inheritance_pattern)&!is.na(universe_df$exac))),
@@ -112,7 +112,7 @@ labelsmis[c(2,4,5,7,8,10,11,13,14)]<-c(length(which(grepl(pattern="MT",universe_
 
 f <- ggplot(dat=inh_mism, aes(x=variable, y=value, fill=mis_constraint))+
   geom_bar(width = 0.8, stat = "identity",color="black",position=position_fill(reverse=TRUE))+scale_y_continuous(expand = c(0, 0)) +bar_theme()+
-  labs(y = "Proportion")+scale_fill_manual(values=c("lightsalmon2","#f9b8a0","steelblue3"))+theme(legend.position="bottom")+
+  labs(y = "Proportion")+scale_fill_manual(values=c("lightsalmon2","#f9b8a0","steelblue3"))+theme(legend.position="none")+
   geom_text(aes(label = labelsmis),size=3,position=position_fill(reverse=TRUE,vjust=0.5))
 
 
@@ -138,7 +138,7 @@ labels[c(1,3,5,7,9)]<-c(length(which(grepl(pattern="MT",universe_df$Inheritance_
 
 e <- ggplot(dat=inh_lofm, aes(x=variable, y=value, fill=lof_constraint))
 e<- e+geom_bar(width = 0.8, stat = "identity",color="black",position=position_fill(reverse = TRUE))+scale_y_continuous(expand = c(0, 0)) +bar_theme()
-e<- e+labs(y = "Proportion")+scale_fill_manual(values=c("indianred3","steelblue3"))+theme(legend.position="bottom")+geom_text(aes(label = labels),size=3,position = "identity",vjust=-1)
+e<- e+labs(y = "Proportion")+scale_fill_manual(values=c("indianred3","steelblue3"))+theme(legend.position="none")+geom_text(aes(label = labels),size=3,position = "identity",vjust=-1)
 
 
 ggarrange(f,e)
@@ -195,7 +195,7 @@ m <- ggplot(dat=inh_mis_human_lethal_Bm, aes(x=variable, y=value, fill=mis_const
   geom_bar(width = 0.8, stat = "identity",color="black",position=position_fill(reverse = TRUE))+
   scale_y_continuous(expand = c(0, 0)) +bar_theme()+
   labs(y = "Proportion")+scale_fill_manual(values=c("lightsalmon2","#f9b8a0","steelblue3"))+
-  theme(legend.position="bottom")+geom_text(aes(label = labelsf),size=3,position = position_fill(reverse=TRUE,vjust=0.5))
+  theme(legend.position="none")+geom_text(aes(label = labelsf),size=3,position = position_fill(reverse=TRUE,vjust=0.5))
 
 
 
@@ -226,11 +226,11 @@ labels[c(1,3,5,7,9)]<-c(length(which(grepl(pattern="MT",universe_df$lethal_inher
 l <- ggplot(dat=inh_lof_human_lethal_Bm, aes(x=variable, y=value, fill=mis_constraint))+
   geom_bar(width = 0.8, stat = "identity",color="black",position=position_fill(reverse = TRUE))+
   scale_y_continuous(expand = c(0, 0)) +bar_theme()+
-  labs(y = "Proportion")+scale_fill_manual(values=c("indianred3","steelblue3"))+theme(legend.position="bottom")+
+  labs(y = "Proportion")+scale_fill_manual(values=c("indianred3","steelblue3"))+theme(legend.position="none")+
   geom_text(aes(label = labels),size=3,position = position_fill(reverse=TRUE,vjust=0.5))
 
 
 ggarrange(m,l)
 ggsave("output/Figures/2D.pdf",height=7, width=14, units='cm')
-
+rm(e,inh_lof,inh_lof_human_lethal_B,inh_lof_human_lethal_Bm,inh_lofm,inh_mis,inh_mis_human_lethal_B,inh_mis_human_lethal_Bm,inh_mism,l,m,labelsf,labelsmis)
 

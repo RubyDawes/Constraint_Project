@@ -35,9 +35,9 @@ omim<- omim[-which(is.na(omim$Gene)),]
 
 #updating gene names
 omim$Gene <- checkGeneSymbols(omim$Gene,unmapped.as.na=TRUE)[[3]]
+omim$Gene[which(omim$Approved.Symbol=="Sep-12")]<- "SEPT12"
+omim$Gene[which(omim$Approved.Symbol=="Sep-09")]<- "SEPT9"
 omim <- omim[-which(is.na(omim$Gene)),]
-omim$Gene[which(omim$Gene=="Sep-12")]<- "SEPT12"
-omim$Gene[which(omim$Gene=="Sep-09")]<- "SEPT9"
 
 
 #checking for duplicate genes, concatenating rows with duplicates, deleting duplicates
@@ -56,7 +56,7 @@ if (length(dups)>0){
 }
 
 #removing non protein-coding genes (noncoding RNAs, complex loci, immunoglobulins etc)
-omim <- omim[-which(!omim$Gene%in%universe&!grepl(pattern="///",omim$Gene)),]
+omim <- omim[-which(!omim$Gene%in%universe_df$gene&!grepl(pattern="///",omim$Gene)),]
 
 #getting inheritances
 # Extend OMIM data

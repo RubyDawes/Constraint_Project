@@ -1,13 +1,20 @@
-rm(universe)
+
 #disease status, phenotype, inheritance pattern
 universe_df$omim <- ifelse(universe_df$gene%in%omim$Gene,"Y",NA)
 universe_df$mim_number <- vlookup(universe_df$gene,omim,result_column="Mim.Number",lookup_column="Gene")
 universe_df$phenotype <- vlookup(universe_df$gene,omim,result_column="Phenotypes",lookup_column="Gene")
 universe_df$Inheritance_pattern <- vlookup(universe_df$gene,omim,result_column="Inheritance_pattern",lookup_column="Gene")
 
-universe_df$nmd <- ifelse(universe_df$gene%in%nmd$gene,"Y",NA)
+rm(omim)
 
-rm(omim,nmd)
+#human lethal genes- are the genes in my OMIM API search for genes causing lethality in humans
+
+universe_df$human_lethal_B <- ifelse(is.na(vlookup(universe_df$gene,lethal_genes[which(lethal_genes$listB=="yes"),],lookup_column = "gene")),"N","Y")
+universe_df$human_lethal_A <- ifelse(is.na(vlookup(universe_df$gene,lethal_genes[which(lethal_genes$listA=="yes"),],lookup_column = "gene")),"N","Y")
+universe_df$lethal_phen <- lapply(universe_df$gene,function(x) vlookup(x,lethal_genes[which(lethal_genes$listB=="yes"),],lookup_column = "gene",result_column = "lethal_phenotype_mim"))
+universe_df$lethal_inheritance <- lapply(universe_df$gene,function(x) vlookup(x,lethal_genes[which(lethal_genes$listB=="yes"),],lookup_column = "gene",result_column = "lethal_inheritance_pattern"))
+rm(lethal_genes)
+
 #exac scores
 universe_df$exac <- ifelse(universe_df$gene%in%exac$gene,"Y",NA)
 universe_df$mis_z <- vlookup(universe_df$gene,exac,result_column="mis_z",lookup_column="gene")
@@ -69,23 +76,7 @@ universe_df$cell_essential_hits <- vlookup(universe_df$gene,cell_KOs,result_colu
 universe_df$cell_essential <- ifelse(universe_df$cell_essential_hits>=3,"Y","N")
 rm(cell_KOs)
 
-#GO terms
-##slow- don't recommend running
-#source("5.GO/gene_ontology_annotations.R)
-load("output/Data/GO_annotations.rda")
-universe_df$go_terms <- go_annotations$universe_df.go_terms
-universe_df$go_names <- go_annotations$universe_df.go_names
-rm(go_annotations)
-
-#human lethal genes- are the genes in my OMIM API search for genes causing lethality in humans
-load("output/Data/human_lethal_genes.rda")
-universe_df$human_lethal_B <- ifelse(is.na(vlookup(universe_df$gene,lethal_genes[which(lethal_genes$listB=="yes"),],lookup_column = "gene")),"N","Y")
-universe_df$human_lethal_A <- ifelse(is.na(vlookup(universe_df$gene,lethal_genes[which(lethal_genes$listA=="yes"),],lookup_column = "gene")),"N","Y")
-universe_df$lethal_phen <- lapply(universe_df$gene,function(x) vlookup(x,lethal_genes[which(lethal_genes$listB=="yes"),],lookup_column = "gene",result_column = "lethal_phenotype_mim"))
-universe_df$lethal_inheritance <- lapply(universe_df$gene,function(x) vlookup(x,lethal_genes[which(lethal_genes$listB=="yes"),],lookup_column = "gene",result_column = "lethal_inheritance_pattern"))
-rm(lethal_genes)
-
 save(universe_df, file="output/Data/universe_df.rda", compress="bzip2")
-write.xlsx(universe_df[,c(1:45,48:51)],"output/spreadsheets/universe_all_info.xlsx",append=TRUE)
+write.xlsx(universe_df,"output/spreadsheets/universe_all_info.xlsx",append=TRUE)
 
 
