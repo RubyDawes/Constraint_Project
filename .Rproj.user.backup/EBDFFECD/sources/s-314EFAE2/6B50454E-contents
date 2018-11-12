@@ -1,0 +1,52 @@
+library(ontologyIndex)
+goslim <- get_ontology("Gene_lists/GOSLIM/goslim_generic.obo", propagate_relationships = "is_a",extract_tags = "minimal")
+
+category <- unlist(lapply(goslim$ancestors[1:149],function(x) ifelse("GO:0003674"%in%x,"MF",
+                                                         ifelse("GO:0008150"%in%x,"BP",
+                                                                ifelse("GO:0005575"%in%x,"CC",NA)))))
+
+go_fish <- data.frame(go_id = goslim$id[1:149],go_name = goslim$name[1:149],category = category)
+rownames(go_fish) <- c()
+
+
+goslim_anno <- read.table("Gene_lists/GOSLIM/annotations.mapped.gaf",header=FALSE,sep="\t",comment.char="!",fill=TRUE)
+goslim_anno <- goslim_anno[-which(grepl("NOT",goslim_anno$V4)),]
+
+go_fish$annotated_genes <- lapply(go_fish$go_id,function(x) 
+  unique(goslim_anno$V3[which(as.character(goslim_anno$V3)%in%universe_df$gene&as.character(goslim_anno$V5)==x)]))
+go_fish$gene_no <- lengths(go_fish$annotated_genes)
+
+
+go_fish$lethal_annotated_genes <-lapply(go_fish$go_id,function(x) 
+  unique(goslim_anno$V3[which(as.character(goslim_anno$V3)%in%universe_df$gene[which(universe_df$human_lethal_B=="Y")]&as.character(goslim_anno$V5)==x)]))
+go_fish$lethal_gene_no<-lengths(go_fish$lethal_annotated_genes)
+  
+
+
+goslim_anno_V1 <- read.table("Gene_lists/GOSLIM/annotations.mapped.V1.gaf",header=FALSE,sep="\t",comment.char="!",fill=TRUE)
+goslim_anno <- goslim_anno_V1[-which(grepl("NOT",goslim_anno_V1$V4)),]
+go_fish_V1 <- read.table("Gene_lists/GOSLIM/Custom_GOSLIM_V1.txt",header=TRUE,fill=TRUE,sep="\t")
+go_fish_V1$annotated_genes <- lapply(go_fish_V1$go_id,function(x) 
+  unique(goslim_anno_V1$V3[which(as.character(goslim_anno_V1$V3)%in%universe_df$gene&as.character(goslim_anno_V1$V5)==x)]))
+go_fish_V1$gene_no <- lengths(go_fish_V1$annotated_genes)
+go_fish_V1$omim_annotated_genes <- lapply(go_fish_V1$go_id,function(x) 
+  unique(goslim_anno_V1$V3[which(as.character(goslim_anno_V1$V3)%in%universe_df$gene[which(universe_df$omim=="Y")]&as.character(goslim_anno_V1$V5)==x)]))
+go_fish_V1$omim_gene_no <- lengths(go_fish_V1$omim_annotated_genes)
+
+go_fish_V1$omimdom_annotated_genes <- lapply(go_fish_V1$go_id,function(x) 
+  unique(goslim_anno_V1$V3[which(as.character(goslim_anno_V1$V3)%in%universe_df$gene[which(universe_df$omim=="Y"&(universe_df$Inheritance_pattern=="AD"|universe_df$Inheritance_pattern=="XLd"))]&as.character(goslim_anno_V1$V5)==x)]))
+go_fish_V1$omimdom_gene_no <- lengths(go_fish_V1$omimdom_annotated_genes)
+
+go_fish_V1$omimrec_annotated_genes <- lapply(go_fish_V1$go_id,function(x) 
+  unique(goslim_anno_V1$V3[which(as.character(goslim_anno_V1$V3)%in%universe_df$gene[which(universe_df$omim=="Y"&(universe_df$Inheritance_pattern=="AR"|universe_df$Inheritance_pattern=="XLr"|universe_df$Inheritance_pattern=="MT,AR"))]&as.character(goslim_anno_V1$V5)==x)]))
+go_fish_V1$omimrec_gene_no <- lengths(go_fish_V1$omimrec_annotated_genes)
+
+go_fish_V1$diff <- 
+
+goslim_anno_V2 <- read.table("Gene_lists/GOSLIM/annotations.mapped.V2.gaf",header=FALSE,sep="\t",comment.char="!",quote="",fill=TRUE)
+go_fish_V2 <- read.table("Gene_lists/GOSLIM/Custom_GOSLIM_V2.txt",header=TRUE,fill=TRUE,sep="\t")
+go_fish_V2$annotated_genes <- lapply(go_fish_V2$go_id,function(x) 
+  unique(goslim_anno_V2$V3[which(as.character(goslim_anno_V2$V3)%in%universe_df$gene&as.character(goslim_anno_V2$V5)==x)]))
+go_fish_V2$gene_no <- lengths(go_fish_V2$annotated_genes)
+
+

@@ -11,6 +11,7 @@ mouse_lethal_prop <- data.frame(non_OMIM=c(length(which(is.na(universe_df$omim)&
                                                  length(which(universe_df$human_lethal_B=="Y"&universe_df$lethal_mouse=="N"&grepl("premature death",universe_df$all_MP_phen)))/length(which(universe_df$human_lethal_B=="Y"&universe_df$mouse_ko=="Y")),
                                                  length(which(universe_df$human_lethal_B=="Y"&universe_df$lethal_mouse=="N"&!grepl("premature death",universe_df$all_MP_phen)))/length(which(universe_df$human_lethal_B=="Y"&universe_df$mouse_ko=="Y"))))
 
+
 levels<- c(paste0("non-OMIM \n n = ",length(which(is.na(universe_df$omim)&universe_df$mouse_ko=="Y"))),
            paste0("OMIM \n n = ",length(which(universe_df$omim=="Y"&universe_df$mouse_ko=="Y"))),
            paste0("Human Lethal \n List B \n n = ",length(which(universe_df$human_lethal_B=="Y"&universe_df$mouse_ko=="Y"))))

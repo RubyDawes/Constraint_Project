@@ -1,0 +1,12 @@
+{
+    "dialog-state" : {
+        "caseSensitive" : true,
+        "filePatterns" : [
+            "*.r",
+            "*.R"
+        ],
+        "path" : "~/Documents/GitHub/Constraint_Project",
+        "query" : "table",
+        "regex" : false
+    }
+}

@@ -1,0 +1,4 @@
+"0","#coban-akdemir NMD- constraint"
+"0","nmd_min <-read.xlsx(""Gene_lists/Regional_Constraint/1-s2.0-S0002929718302039-mmc5.xlsx"",startRow=2)"
+"0","nmd_min<-nmd_min[,c(1,2)]"
+"0","nmd_min$gene<-checkGeneSymbols(nmd_min$gene,unmapped.as.na=FALSE,map=hgnc.table)[[3]]"

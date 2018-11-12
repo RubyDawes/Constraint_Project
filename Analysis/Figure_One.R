@@ -18,8 +18,8 @@ a <- ggplot(yeast_lethal_pie, aes(x="", y=value, fill=group))+
   scale_colour_manual(values=c("white","black"))+ggtitle(paste0("Yeast \n n = ",sum(yeast_lethal_pie[,2])))
 cell_lethal_pie <- data.frame(group=c("lethal", "non-lethal"),
                               value=c(
-                                length(which(universe_df$cell_essential_hits>=2)),
-                                length(which(universe_df$cell_essential_hits<2))))
+                                length(which(universe_df$cell_essential=="Y")),
+                                length(which(universe_df$cell_essential=="N"))))
 cell_lethal_pie$group <- factor(cell_lethal_pie$group, levels = cell_lethal_pie$group)
 b <- ggplot(cell_lethal_pie, aes(x="", y=value, fill=group))+
   geom_bar(width = 1, stat = "identity")+blank_theme()+coord_polar(theta="y",direction=-1)+

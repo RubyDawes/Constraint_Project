@@ -1,0 +1,23 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1539162523047.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "379227785",
+    "id" : "6B50454E",
+    "lastKnownWriteTime" : 1539236203,
+    "last_content_update" : 1539236203959,
+    "path" : "~/Documents/GitHub/Constraint_Project/Analysis/GO_enrichment.R",
+    "project_path" : "Analysis/GO_enrichment.R",
+    "properties" : {
+        "cursorPosition" : "45,30",
+        "scrollLine" : "26",
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 5,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
