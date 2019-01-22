@@ -2,8 +2,12 @@
 #load in all genes and phenotypes
 mgi_df <- read.xlsx("Gene_lists/MGI_MPs/MGI_PhenoGenoMP.xlsx")
 mgi_df <- mgi_df[,c(1,2,6,4)]
+
+#removing any rows with a comma in the MGI ID column - indicates a multi-gene knockout (we are only interested in single gene knockouts)
 mgi_df<- mgi_df[which(!grepl(pattern = "\\,", x = mgi_df$MGI_ID, ignore.case = FALSE)),]
 
+#reading in allele data so we can filter to only include null/knockout and hypomorph alleles. 
+## In addition, this filters out heterozygotes
 allele <- read.xlsx("Gene_lists/MGI_MPs/MGI_PhenotypicAllele.xlsx")
 mgi_df$allele_info <- vlookup(mgi_df$`Allele.Symbol(s)`,allele,result_column="Allele.Attribute",lookup_column="Allele.Symbol")
 mgi_df <- mgi_df[which(grepl(pattern="Null/knockout",x=mgi_df$allele_info,ignore.case=FALSE)|grepl(pattern="Hypomorph",x=mgi_df$allele_info,ignore.case=TRUE)),]
