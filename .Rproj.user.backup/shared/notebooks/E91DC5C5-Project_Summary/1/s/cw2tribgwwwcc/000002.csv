@@ -1,3 +1,0 @@
-"0","allele <- read.xlsx(""Gene_lists/MGI_MPs/MGI_PhenotypicAllele.xlsx"")"
-"0","mgi_df$allele_info <- vlookup(mgi_df$`Allele.Symbol(s)`,allele,result_column=""Allele.Attribute"",lookup_column=""Allele.Symbol"")"
-"0","mgi_df <- mgi_df[which(grepl(pattern=""Null/knockout"",x=mgi_df$allele_info,ignore.case=FALSE)|grepl(pattern=""Hypomorph"",x=mgi_df$allele_info,ignore.case=TRUE)),]"

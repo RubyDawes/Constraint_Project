@@ -1,8 +1,0 @@
-"0","#we can load directly from website:"
-"0","#hgnc<- fread(""ftp://ftp.ebi.ac.uk/pub/databases/genenames/new/tsv/locus_types/gene_with_protein_product.txt"")"
-"0","# or used version I downloaded (quicker)"
-"0","hgnc<- read.csv(""Gene_lists/Universe/gene_with_protein_product.txt"",sep = ""\t"", comment.char = ""#"",stringsAsFactors = FALSE)"
-"0","hgnc$symbol<- checkGeneSymbols(hgnc$symbol)[[3]]"
-"0","universe_df <- data.frame(hgnc$hgnc_id,hgnc$symbol,hgnc$name,hgnc$gene_family,hgnc$location,hgnc$mgd_id)"
-"0","names(universe_df) <- c(""hgnc_id"",""gene"",""gene_name"",""gene_family"",""location"",""mgd_id"")"
-"0","rm(hgnc)"

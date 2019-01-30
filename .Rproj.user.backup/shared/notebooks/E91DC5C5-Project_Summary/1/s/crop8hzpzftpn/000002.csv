@@ -1,6 +1,0 @@
-"0","#samocha regional missense constraint"
-"0","samocha<-read.xlsx(""Gene_lists/Regional_Constraint/148353-3.xlsx"",sheet=2)"
-"0","genes_w_var <- data.frame(gene=unique(samocha$gene))"
-"0","genes_w_var$lowest_gamma <- unlist(lapply(genes_w_var$gene,function(x) min(samocha$obs_exp[which(samocha$gene==x)])))"
-"0","genes_w_var$gene<-checkGeneSymbols(genes_w_var$gene,unmapped.as.na=FALSE,map=hgnc.table)[[3]]"
-"0","rm(samocha)"
