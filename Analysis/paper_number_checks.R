@@ -15,15 +15,14 @@ round(length(which(universe_df$omim=="Y"&universe_df$lethal_mouse=="Y"))/length(
 round(length(which(universe_df$human_lethal_B=="Y"&universe_df$lethal_mouse=="Y"))/length(which(universe_df$human_lethal_B=="Y"&universe_df$mouse_ko=="Y"))*100,0)
 round(length(which(is.na(universe_df$omim)&universe_df$lethal_mouse=="Y"))/length(which(is.na(universe_df$omim)&universe_df$mouse_ko=="Y"))*100,0)
 
-#72.6% of OMIM genes are not constrained
-round(length(which(universe_df$omim=="Y"&universe_df$constrained=="N"))/length(which(universe_df$omim=="Y"&!is.na(universe_df$exac)))*100,0)
-
-#recessive disorders (only 8% constrained). 
+#Importantly, > 90% of recessive genes show neither missense nor loss-of-function constraint, even for human-lethal genes. 
 round(length(which(universe_df$omim=="Y"&universe_df$Inheritance_pattern=="AR"&universe_df$constrained=="Y"))/
   length(which(universe_df$omim=="Y"&universe_df$Inheritance_pattern=="AR"&!is.na(universe_df$exac)))*100,0)
+round(length(which(universe_df$human_lethal_B=="Y"&universe_df$Inheritance_pattern=="AR"&universe_df$constrained=="Y"))/
+        length(which(universe_df$human_lethal_B=="Y"&universe_df$Inheritance_pattern=="AR"&!is.na(universe_df$exac)))*100,0)
 
 #We further curate 3423 ‘candidate developmental lethal’ human genes: essential for murine development or cellular viability, not yet linked to human disorders
-length(which(is.na(universe_df$omim)&(universe_df$lethal_mouse=="Y"|universe_df$cell_essential=="Y")))
+length(which(is.na(universe_df$omim)&(universe_df$lethal_mouse=="Y"|universe_df$lethal_het_mouse=="Y"|universe_df$cell_essential=="Y")))
 
 ##Introduction####
 #Mouse Genome informatics (MGI) provides curated phenotype data for murine models with targeted knock-out of 6,991 protein-coding genes 
@@ -55,15 +54,15 @@ round(length(which(universe_df$cell_essential_hits>=2))/length(which(universe_df
 length(which(universe_df$cell_essential=="Y"&universe_df$omim=="Y"))/length(which(universe_df$cell_essential=="Y"))
 
 ##Genetic constraint is a poor predictor of being a ‘disease gene’ - especially for recessive genes. ####
-#Importantly, 72.6% of OMIM genes do not exhibit whole-gene genetic constraint
+#Importantly, 75.7% of OMIM genes do not exhibit whole-gene genetic constraint
 round(length(which(universe_df$omim=="Y"&universe_df$constrained=="N"))/length(which(universe_df$omim=="Y"&!is.na(universe_df$exac)))*100,1)
 
-#54% of known clinically relevant OMIM genes are classified as tolerant to genetic variation 
+#57% of known clinically relevant OMIM genes are classified as tolerant to genetic variation 
 round(length(which(universe_df$omim=="Y"&universe_df$any_constraint=="N"))/length(which(universe_df$omim=="Y"&!is.na(universe_df$exac)))*100,0)
 
 #Levels of genetic constraint correlate with inheritance pattern, with human lethal genes showing highest levels of genetic constraint ####
 
-#Autosomal recessive (AR) genes rarely demonstrate missense constraint (4.3%) or intolerance to LoF variation (8.4%). 
+#Autosomal recessive (AR) genes rarely demonstrate missense constraint (6.1%) or intolerance to LoF variation (8.4%). 
 round(length(which(universe_df$Inheritance_pattern=="AR"&universe_df$mis_z>=3.09))/length(which(universe_df$Inheritance_pattern=="AR"&!is.na(universe_df$exac)))*100,1)
 round(length(which(universe_df$Inheritance_pattern=="AR"&universe_df$pLI>=0.9))/length(which(universe_df$Inheritance_pattern=="AR"&!is.na(universe_df$exac)))*100,1)
 
@@ -77,26 +76,19 @@ round(length(which(universe_df$Inheritance_pattern=="AD"&universe_df$pLI>=0.9))/
 round(length(which((grepl("XL",universe_df$Inheritance_pattern)&!grepl("MT",universe_df$Inheritance_pattern))&universe_df$mis_z>=3.09))/length(which((grepl("XL",universe_df$Inheritance_pattern)&!grepl("MT",universe_df$Inheritance_pattern))&!is.na(universe_df$exac)))*100,1)
 round(length(which((grepl("XL",universe_df$Inheritance_pattern)&!grepl("MT",universe_df$Inheritance_pattern))&universe_df$pLI>=0.9))/length(which((grepl("XL",universe_df$Inheritance_pattern)&!grepl("MT",universe_df$Inheritance_pattern))&!is.na(universe_df$exac)))*100,1)
 
-#36 MT genes
+#37 MT genes
 length(which(grepl(pattern="MT",universe_df$Inheritance_pattern)&!is.na(universe_df$exac)))
 
+#none show missense constraint, with only NDUFS2 showing LoF constraint (34/36 MI genes autosomal recessive; NDUFA1 and NDUFB11 are X-linked).  
+length(which(grepl(pattern="MT",universe_df$Inheritance_pattern)&universe_df$mis_z>=3.09))
+universe_df$gene[which(grepl(pattern="MT",universe_df$Inheritance_pattern)&universe_df$pLI>=0.9)]
 
 #Manifestation of a severe-lethal animal phenotype correlates most strongly with being a disease gene####
-#59% of OMIM genes linked to early lethality (developmental or neonatal) in knockout mice, compared to 37% non-disease genes
-#among our curated list of 624 genes associated with human prenatal, perinatal or infantile lethality – 81% were also associated with a developmental (or neonatal) lethal murine phenotype
+#54% of OMIM genes linked to early lethality (developmental or neonatal) in knockout mice, compared to 34% non-disease genes
+#among our curated list of 624 genes associated with human prenatal, perinatal or infantile lethality – 75% were also associated with a developmental (or neonatal) lethal murine phenotype
 round(length(which(universe_df$omim=="Y"&universe_df$lethal_mouse=="Y"))/length(which(universe_df$omim=="Y"&universe_df$mouse_ko=="Y"))*100,0)
 round(length(which(is.na(universe_df$omim)&universe_df$lethal_mouse=="Y"))/length(which(is.na(universe_df$omim)&universe_df$mouse_ko=="Y"))*100,0)
 round(length(which(universe_df$human_lethal_B=="Y"&universe_df$lethal_mouse=="Y"))/length(which(universe_df$human_lethal_B=="Y"&universe_df$mouse_ko=="Y"))*100,0)
-
-data.frame(non_OMIM=c(length(which(is.na(universe_df$omim)&universe_df$lethal_mouse=="Y"))/length(which(is.na(universe_df$omim)&universe_df$mouse_ko=="Y")),
-                      length(which(is.na(universe_df$omim)&universe_df$lethal_mouse=="N"&grepl("premature death",universe_df$all_MP_phen)))/length(which(is.na(universe_df$omim)&universe_df$mouse_ko=="Y")),
-                      length(which(is.na(universe_df$omim)&universe_df$lethal_mouse=="N"&!grepl("premature death",universe_df$all_MP_phen)))/length(which(is.na(universe_df$omim)&universe_df$mouse_ko=="Y"))),
-           OMIM=c(length(which(universe_df$omim=="Y"&universe_df$lethal_mouse=="Y"))/length(which(universe_df$omim=="Y"&universe_df$mouse_ko=="Y")),
-                  length(which(universe_df$omim=="Y"&universe_df$lethal_mouse=="N"&grepl("premature death",universe_df$all_MP_phen)))/length(which(universe_df$omim=="Y"&universe_df$mouse_ko=="Y")),
-                  length(which(universe_df$omim=="Y"&universe_df$lethal_mouse=="N"&!grepl("premature death",universe_df$all_MP_phen)))/length(which(universe_df$omim=="Y"&universe_df$mouse_ko=="Y"))),
-           Human_Lethal_B=c(length(which(universe_df$human_lethal_B=="Y"&universe_df$lethal_mouse=="Y"))/length(which(universe_df$human_lethal_B=="Y"&universe_df$mouse_ko=="Y")),
-                            length(which(universe_df$human_lethal_B=="Y"&universe_df$lethal_mouse=="N"&grepl("premature death",universe_df$all_MP_phen)))/length(which(universe_df$human_lethal_B=="Y"&universe_df$mouse_ko=="Y")),
-                            length(which(universe_df$human_lethal_B=="Y"&universe_df$lethal_mouse=="N"&!grepl("premature death",universe_df$all_MP_phen)))/length(which(universe_df$human_lethal_B=="Y"&universe_df$mouse_ko=="Y"))))
 
 #our attention focusses intently on 2377 genes known essential for murine development, not yet linked to human disease
 length(which(is.na(universe_df$omim)&(universe_df$lethal_mouse=="Y")))
@@ -105,8 +97,8 @@ length(which(is.na(universe_df$omim)&(universe_df$lethal_mouse=="Y")))
 #we noted 709 cell essential genes not known to be associated with human disorders, though linked to embryological lethality in mice 
 length(which(is.na(universe_df$omim)&universe_df$cell_essential=="Y"&universe_df$lethal_mouse=="Y"))
 
-#Unexpectedly, 54 genes classified as cell-essential were not linked to murine lethal phenotypes 
-#X/54 genes were associated with sub-viable murine phenotypes and Y/54 with phenotypic abnormality of a certain cell type or organ 
+#Unexpectedly, 76 genes classified as cell-essential were not linked to murine lethal phenotypes 
+#5/76 genes were associated with sub-viable murine phenotypes and 39/76 with phenotypic abnormality of a certain cell type or organ 
 length(which(universe_df$cell_essential=="Y"&universe_df$lethal_mouse=="N"))
 length(which(universe_df$cell_essential=="Y"&universe_df$lethal_mouse=="N"&grepl("cellular phenotype",universe_df$high_MP_phen)))
 length(which(universe_df$cell_essential=="Y"&universe_df$lethal_mouse=="N"&grepl("premature death",universe_df$all_MP_phen)))
@@ -117,16 +109,29 @@ length(which(universe_df$cell_essential=="Y"&universe_df$lethal_mouse=="N"&grepl
 
 ne<-read.table("Gene_lists/BINGO/candidates_0.025.bgo",fill=TRUE,comment.char = "!",header=TRUE,sep="\t")
 
+
+#profound enrichment of genes linked to DNA and RNA binding and transcriptional regulation (Figure 5ii, 1540/3423); 
 a<-ne$Genes.in.test.set[which(ne$Description%in%c("RNA binding","transcription regulator activity",
                                                   "transcription","transcription factor activity",
                                                   "DNA binding","nucleotide binding","translation",
-                                                  "translation factor activity","nucleus"))]
+                                                  "translation factor activity"))]
 dom<-unique(unlist(lapply(a, function(x) strsplit(as.character(x),"\\|"))))
+length(dom)
 
 length(which(universe_df$constrained[which(universe_df$gene%in%dom)]=="Y"))
+length(which(!is.na(universe_df$exac[which(universe_df$gene%in%dom)])))
 
 
 b<-ne$Genes.in.test.set[which(ne$Description%in%c("mitochondrion"))]
 rec<-unique(unlist(lapply(b, function(x) strsplit(as.character(x),"\\|"))))
 length(which(universe_df$constrained[which(universe_df$gene%in%rec)]=="Y"))
+length(which(!is.na(universe_df$exac[which(universe_df$gene%in%rec)])))
+
+#odds ratio analysis
+#Compared to non-disease genes, OMIM genes are 2.29 fold more likely to be associated with developmental murine lethality in a recessive knock-out mouse model
+
+#with human-lethal genes 5.9 fold more likely
+
+#Whereas compared to non-disease genes, OMIM genes are only 1.51 times more likely to show whole-gene constraint 
+
 

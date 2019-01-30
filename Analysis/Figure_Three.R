@@ -1,15 +1,24 @@
 source("plot_functions.R")
 #3A:OMIM prenatal/infantile lethality genes are strongly associated with lethal murine phenotypes####
 
-mouse_lethal_prop <- data.frame(non_OMIM=c(length(which(is.na(universe_df$omim)&universe_df$lethal_mouse=="Y"))/length(which(is.na(universe_df$omim)&universe_df$mouse_ko=="Y")),
-                                           length(which(is.na(universe_df$omim)&universe_df$lethal_mouse=="N"&grepl("premature death",universe_df$all_MP_phen)))/length(which(is.na(universe_df$omim)&universe_df$mouse_ko=="Y")),
-                                           length(which(is.na(universe_df$omim)&universe_df$lethal_mouse=="N"&!grepl("premature death",universe_df$all_MP_phen)))/length(which(is.na(universe_df$omim)&universe_df$mouse_ko=="Y"))),
-                                OMIM=c(length(which(universe_df$omim=="Y"&universe_df$lethal_mouse=="Y"))/length(which(universe_df$omim=="Y"&universe_df$mouse_ko=="Y")),
-                                       length(which(universe_df$omim=="Y"&universe_df$lethal_mouse=="N"&grepl("premature death",universe_df$all_MP_phen)))/length(which(universe_df$omim=="Y"&universe_df$mouse_ko=="Y")),
-                                       length(which(universe_df$omim=="Y"&universe_df$lethal_mouse=="N"&!grepl("premature death",universe_df$all_MP_phen)))/length(which(universe_df$omim=="Y"&universe_df$mouse_ko=="Y"))),
-                                Human_Lethal_B=c(length(which(universe_df$human_lethal_B=="Y"&universe_df$lethal_mouse=="Y"))/length(which(universe_df$human_lethal_B=="Y"&universe_df$mouse_ko=="Y")),
-                                                 length(which(universe_df$human_lethal_B=="Y"&universe_df$lethal_mouse=="N"&grepl("premature death",universe_df$all_MP_phen)))/length(which(universe_df$human_lethal_B=="Y"&universe_df$mouse_ko=="Y")),
-                                                 length(which(universe_df$human_lethal_B=="Y"&universe_df$lethal_mouse=="N"&!grepl("premature death",universe_df$all_MP_phen)))/length(which(universe_df$human_lethal_B=="Y"&universe_df$mouse_ko=="Y"))))
+mouse_lethal_prop <- data.frame(non_OMIM=c(length(which(is.na(universe_df$omim)&(universe_df$lethal_mouse=="Y"|universe_df$lethal_het_mouse=="Y")&universe_df$mouse_ko=="Y"))/
+                                             length(which(is.na(universe_df$omim)&universe_df$mouse_ko=="Y")),
+                                           length(which(is.na(universe_df$omim)&universe_df$lethal_mouse=="N"&(universe_df$lethal_het_mouse=="N"|is.na(universe_df$lethal_het_mouse))&grepl("premature death",universe_df$all_MP_phen)))/
+                                                    length(which(is.na(universe_df$omim)&universe_df$mouse_ko=="Y")),
+                                           length(which(is.na(universe_df$omim)&universe_df$lethal_mouse=="N"&(universe_df$lethal_het_mouse=="N"|is.na(universe_df$lethal_het_mouse))&!grepl("premature death",universe_df$all_MP_phen)))/
+                                             length(which(is.na(universe_df$omim)&universe_df$mouse_ko=="Y"))),
+                                OMIM=c(length(which(universe_df$omim=="Y"&(universe_df$lethal_mouse=="Y"|universe_df$lethal_het_mouse=="Y")&universe_df$mouse_ko=="Y"))/
+                                         length(which(universe_df$omim=="Y"&universe_df$mouse_ko=="Y")),
+                                       length(which(universe_df$omim=="Y"&universe_df$lethal_mouse=="N"&(universe_df$lethal_het_mouse=="N"|is.na(universe_df$lethal_het_mouse))&grepl("premature death",universe_df$all_MP_phen)))/
+                                         length(which(universe_df$omim=="Y"&universe_df$mouse_ko=="Y")),
+                                       length(which(universe_df$omim=="Y"&universe_df$lethal_mouse=="N"&(universe_df$lethal_het_mouse=="N"|is.na(universe_df$lethal_het_mouse))&!grepl("premature death",universe_df$all_MP_phen)))/
+                                         length(which(universe_df$omim=="Y"&universe_df$mouse_ko=="Y"))),
+                                Human_Lethal_B=c(length(which(universe_df$human_lethal_B=="Y"&(universe_df$lethal_mouse=="Y"|universe_df$lethal_het_mouse=="Y")&universe_df$mouse_ko=="Y"))/
+                                                   length(which(universe_df$human_lethal_B=="Y"&universe_df$mouse_ko=="Y")),
+                                                 length(which(universe_df$human_lethal_B=="Y"&universe_df$lethal_mouse=="N"&(universe_df$lethal_het_mouse=="N"|is.na(universe_df$lethal_het_mouse))&grepl("premature death",universe_df$all_MP_phen)))/
+                                                   length(which(universe_df$human_lethal_B=="Y"&universe_df$mouse_ko=="Y")),
+                                                 length(which(universe_df$human_lethal_B=="Y"&universe_df$lethal_mouse=="N"&(universe_df$lethal_het_mouse=="N"|is.na(universe_df$lethal_het_mouse))&!grepl("premature death",universe_df$all_MP_phen)))/
+                                                   length(which(universe_df$human_lethal_B=="Y"&universe_df$mouse_ko=="Y"))))
 
 
 levels<- c(paste0("non-OMIM \n n = ",length(which(is.na(universe_df$omim)&universe_df$mouse_ko=="Y"))),
@@ -23,12 +32,12 @@ mouse_lethal_propm$variable <- rep(levels,each=3)
 mouse_lethal_propm$variable <- factor(mouse_lethal_propm$variable, levels = levels)
 
 labels <- rep("",9)
-labels[c(1,2,4,5,7,8)]<-c(length(which(is.na(universe_df$omim)&(universe_df$lethal_mouse=="Y"))),
-                          length(which(is.na(universe_df$omim)&(universe_df$lethal_mouse=="Y"|grepl("premature death",universe_df$all_MP_phen)))),
-                          length(which(universe_df$omim=="Y"&(universe_df$lethal_mouse=="Y"))),
-                          length(which(universe_df$omim=="Y"&(universe_df$lethal_mouse=="Y"|grepl("premature death",universe_df$all_MP_phen)))),
-                          length(which(universe_df$human_lethal_B=="Y"&(universe_df$lethal_mouse=="Y"))),
-                          length(which(universe_df$human_lethal_B=="Y"&(universe_df$lethal_mouse=="Y"|grepl("premature death",universe_df$all_MP_phen)))))
+labels[c(1,2,4,5,7,8)]<-c(paste0(round(mouse_lethal_propm[1,2]*100,0),"%"),
+                          paste0(round(mouse_lethal_propm[2,2]*100,0),"%"),
+                                       paste0(round(mouse_lethal_propm[4,2]*100,0),"%"),
+                                                    paste0(round(mouse_lethal_propm[5,2]*100,0),"%"),
+                                                                 paste0(round(mouse_lethal_propm[7,2]*100,0),"%"),
+                                                                              paste0(round(mouse_lethal_propm[8,2]*100,0),"%"))
 
 
 f <- ggplot(dat=mouse_lethal_propm, aes(x=variable, y=value, fill=mis_constraint))+
@@ -53,17 +62,17 @@ flowchart <- data.frame(OMIM = c("Y","","","","","","","N","","","","","",""),
                                        length(which(is.na(universe_df$omim)&is.na(universe_df$exac)))),
                         "mouse lethal" = c("Y","N","no data","Y","N","no data","","Y","N","no data",
                                 "Y","N","no data",""),
-                        number = c(length(which(universe_df$omim=="Y"&universe_df$constrained=="Y"&universe_df$lethal_mouse=="Y")),
-                                           length(which(universe_df$omim=="Y"&universe_df$constrained=="Y"&universe_df$lethal_mouse=="N")),
+                        number = c(length(which(universe_df$omim=="Y"&universe_df$constrained=="Y"&(universe_df$lethal_mouse=="Y"|universe_df$lethal_het_mouse=="Y")&universe_df$mouse_ko=="Y")),
+                                           length(which(universe_df$omim=="Y"&universe_df$constrained=="Y"&universe_df$lethal_mouse=="N"&(universe_df$lethal_het_mouse=="N"|is.na(universe_df$lethal_het_mouse)))),
                                            length(which(universe_df$omim=="Y"&universe_df$constrained=="Y"&is.na(universe_df$lethal_mouse))),
-                                           length(which(universe_df$omim=="Y"&universe_df$constrained=="N"&universe_df$lethal_mouse=="Y")),
-                                           length(which(universe_df$omim=="Y"&universe_df$constrained=="N"&universe_df$lethal_mouse=="N")),
+                                           length(which(universe_df$omim=="Y"&universe_df$constrained=="N"&(universe_df$lethal_mouse=="Y"|universe_df$lethal_het_mouse=="Y")&universe_df$mouse_ko=="Y")),
+                                           length(which(universe_df$omim=="Y"&universe_df$constrained=="N"&universe_df$lethal_mouse=="N"&(universe_df$lethal_het_mouse=="N"|is.na(universe_df$lethal_het_mouse)))),
                                            length(which(universe_df$omim=="Y"&universe_df$constrained=="N"&is.na(universe_df$lethal_mouse))),"",
-                                           length(which(is.na(universe_df$omim)&universe_df$constrained=="Y"&universe_df$lethal_mouse=="Y")),
-                                           length(which(is.na(universe_df$omim)&universe_df$constrained=="Y"&universe_df$lethal_mouse=="N")),
+                                           length(which(is.na(universe_df$omim)&universe_df$constrained=="Y"&(universe_df$lethal_mouse=="Y"|universe_df$lethal_het_mouse=="Y")&universe_df$mouse_ko=="Y")),
+                                           length(which(is.na(universe_df$omim)&universe_df$constrained=="Y"&universe_df$lethal_mouse=="N"&(universe_df$lethal_het_mouse=="N"|is.na(universe_df$lethal_het_mouse)))),
                                            length(which(is.na(universe_df$omim)&universe_df$constrained=="Y"&is.na(universe_df$lethal_mouse))),
-                                           length(which(is.na(universe_df$omim)&universe_df$constrained=="N"&universe_df$lethal_mouse=="Y")),
-                                           length(which(is.na(universe_df$omim)&universe_df$constrained=="N"&universe_df$lethal_mouse=="N")),
+                                           length(which(is.na(universe_df$omim)&universe_df$constrained=="N"&(universe_df$lethal_mouse=="Y"|universe_df$lethal_het_mouse=="Y")&universe_df$mouse_ko=="Y")),
+                                           length(which(is.na(universe_df$omim)&universe_df$constrained=="N"&universe_df$lethal_mouse=="N"&(universe_df$lethal_het_mouse=="N"|is.na(universe_df$lethal_het_mouse)))),
                                            length(which(is.na(universe_df$omim)&universe_df$constrained=="N"&is.na(universe_df$lethal_mouse))),""))
 
 g <- tableGrob(flowchart)

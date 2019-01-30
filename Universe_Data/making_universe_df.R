@@ -15,13 +15,22 @@ universe_df$lethal_phen <- lapply(universe_df$gene,function(x) vlookup(x,lethal_
 universe_df$lethal_inheritance <- lapply(universe_df$gene,function(x) vlookup(x,lethal_genes[which(lethal_genes$listB=="yes"),],lookup_column = "gene",result_column = "lethal_inheritance_pattern"))
 rm(lethal_genes)
 
-#exac scores
+#old exac scores
+universe_df$exac_old <- ifelse(universe_df$gene%in%exac_old$gene,"Y",NA)
+universe_df$mis_z_old <- vlookup(universe_df$gene,exac_old,result_column="mis_z",lookup_column="gene")
+universe_df$syn_z_old <- vlookup(universe_df$gene,exac_old,result_column="syn_z",lookup_column="gene")
+universe_df$pLI_old <- vlookup(universe_df$gene,exac_old,result_column="pLI",lookup_column="gene")
+universe_df$constrained_old <- ifelse(universe_df$mis_z>=3.09|universe_df$pLI>=0.9,"Y","N")
+rm(exac_old)
+
+# gnomad v2.1 constraint scores
 universe_df$exac <- ifelse(universe_df$gene%in%exac$gene,"Y",NA)
 universe_df$mis_z <- vlookup(universe_df$gene,exac,result_column="mis_z",lookup_column="gene")
 universe_df$syn_z <- vlookup(universe_df$gene,exac,result_column="syn_z",lookup_column="gene")
 universe_df$pLI <- vlookup(universe_df$gene,exac,result_column="pLI",lookup_column="gene")
 universe_df$constrained <- ifelse(universe_df$mis_z>=3.09|universe_df$pLI>=0.9,"Y","N")
 rm(exac)
+
 
 #regional constraint
 universe_df$highest_ccr<-vlookup(universe_df$gene,highest_ccr,lookup_column = "gene",result_column = "ccr")
@@ -69,6 +78,33 @@ universe_df$lethal_mouse[which(universe_df$mouse_ko=="Y")] <- "N"
 universe_df$lethal_mouse[which(universe_df$lethal_MGI=="Y"|universe_df$lethal_IMPC=="Y")] <- "Y"
 
 rm(mgi,impc)
+
+#appending heterozygous phenotypes from MGI and IMPC to universe_df
+#MGI mouse knockouts- lethal or non-lethal in a heterozygous KO mouse
+universe_df$lethal_het_MGI <- vlookup(universe_df$gene,mgi_het,result_column="is_lethal",lookup_column="human_symbol")
+universe_df$lethal_het_MP_ID <- vlookup(universe_df$gene,mgi_het,result_column="lethal_MP_ID",lookup_column="human_symbol")
+universe_df$lethal_het_MP_phen <- vlookup(universe_df$gene,mgi_het,result_column="lethal_MP_phen",lookup_column="human_symbol")
+universe_df$all_het_MP_ID <- vlookup(universe_df$gene,mgi_het,result_column="all_MP_ID",lookup_column="human_symbol")
+universe_df$all_het_MP_phen <- vlookup(universe_df$gene,mgi_het,result_column="all_MP_phen",lookup_column="human_symbol")
+universe_df$het_allele_info <- vlookup(universe_df$gene,mgi_het,result_column="allele_info",lookup_column="human_symbol")
+
+#IMPC heterozygous phenotype data
+universe_df$lethal_het_IMPC <- vlookup(universe_df$gene,impc_het,result_column="is_lethal",lookup_column="human_symbol")
+universe_df$IMPC_het_all_MP_ID <- vlookup(universe_df$gene,impc_het,result_column="all_MP_ID",lookup_column="human_symbol")
+universe_df$IMPC_het_all_MP_phen <- vlookup(universe_df$gene,impc_het,result_column="all_MP_phen",lookup_column="human_symbol")
+universe_df$IMPC_het_lethal_MP_ID <- vlookup(universe_df$gene,impc_het,result_column="lethal_MP_ID",lookup_column="human_symbol")
+universe_df$IMPC_het_lethal_MP_phen <- vlookup(universe_df$gene,impc_het,result_column="lethal_MP_phen",lookup_column="human_symbol")
+
+universe_df$IMPC_het_ko <- rep(NA,length(universe_df$gene))
+universe_df$IMPC_het_ko[which(lengths(universe_df$IMPC_all_MP_ID)>0)] <-  "Y"
+
+universe_df$mouse_het_ko <- ifelse(!is.na(universe_df$lethal_het_MGI),"Y",ifelse(!is.na(universe_df$lethal_het_IMPC),"Y",NA))
+universe_df$lethal_het_mouse <- rep(NA,length(universe_df$gene))
+universe_df$lethal_het_mouse[which(universe_df$mouse_het_ko=="Y")] <- "N"
+universe_df$lethal_het_mouse[which(universe_df$lethal_het_MGI=="Y"|universe_df$lethal_het_IMPC=="Y")] <- "Y"
+
+rm(mgi_het,impc_het)
+
 
 #cell knockouts
 universe_df$cell_ko <- ifelse(universe_df$gene%in%cell_KOs$Gene,"Y",NA)

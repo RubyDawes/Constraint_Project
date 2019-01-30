@@ -32,7 +32,7 @@ a<-ggplot(omim_metrics_OR) +
   geom_errorbar( aes(x=categories, ymin=confint_lower, ymax=confint_upper), width=0.2, colour="grey40", alpha=0.9, size=1)+
   bar_theme()+geom_hline(yintercept=1)+xlab("")+
   scale_y_continuous(trans="log10", limits=c(1,2.6),breaks = trans_breaks('log10', function(x) 10^x),labels = scaleFUN)+
-  ylab("Odds Ratio \n (OMIM vs non-OMIM)")+theme(axis.text.x = element_blank(),axis.line.x=element_blank(),plot.title = element_text(hjust = 0.5))+ggtitle(paste0("All OMIM genes \n n = ",length(which(universe_df$omim=="Y"))))
+  ylab("Odds Ratio \n (OMIM vs non-OMIM)")+theme(axis.text.x = element_text(angle=60, hjust=1,size=10),axis.line.x=element_blank(),plot.title = element_text(hjust = 0.5,size=10))+ggtitle(paste0("All OMIM genes \n n = ",length(which(universe_df$omim=="Y"))))
 
 
 #comparing OR, grouped into: AR/MT/XLr AND AD/XLd
@@ -41,10 +41,14 @@ omim_constraint_ADXLD_OR<- OR_test(length(which(universe_df$omim=="Y"&(universe_
                                    length(which(universe_df$omim=="Y"&(universe_df$Inheritance_pattern=="AD"|universe_df$Inheritance_pattern=="XLd")&universe_df$constrained=="N")),
                                    length(which(is.na(universe_df$omim)&universe_df$constrained=="N")))
 
-omim_mouseleth_ADXLD_OR<- OR_test(length(which(universe_df$omim=="Y"&(universe_df$Inheritance_pattern=="AD"|universe_df$Inheritance_pattern=="XLd")&universe_df$lethal_mouse=="Y")),
-                                  length(which(is.na(universe_df$omim)&universe_df$lethal_mouse=="Y")),
-                                  length(which(universe_df$omim=="Y"&(universe_df$Inheritance_pattern=="AD"|universe_df$Inheritance_pattern=="XLd")&universe_df$lethal_mouse=="N")),
-                                  length(which(is.na(universe_df$omim)&universe_df$lethal_mouse=="N")))
+omim_mouseleth_ADXLD_OR<- OR_test(length(which(universe_df$omim=="Y"&(universe_df$Inheritance_pattern=="AD"|universe_df$Inheritance_pattern=="XLd")&
+                                                 (universe_df$lethal_mouse=="Y"|universe_df$lethal_het_mouse=="Y")&universe_df$mouse_ko=="Y")),
+                                  length(which(is.na(universe_df$omim)&
+                                                 (universe_df$lethal_mouse=="Y"|universe_df$lethal_het_mouse=="Y")&universe_df$mouse_ko=="Y")),
+                                  length(which(universe_df$omim=="Y"&(universe_df$Inheritance_pattern=="AD"|universe_df$Inheritance_pattern=="XLd")&
+                                                 universe_df$lethal_mouse=="N"&(universe_df$lethal_het_mouse=="N"|is.na(universe_df$lethal_het_mouse)))),
+                                  length(which(is.na(universe_df$omim)&
+                                                 universe_df$lethal_mouse=="N"&(universe_df$lethal_het_mouse=="N"|is.na(universe_df$lethal_het_mouse)))))
 omim_celless_ADXLD_OR<- OR_test(length(which(universe_df$omim=="Y"&(universe_df$Inheritance_pattern=="AD"|universe_df$Inheritance_pattern=="XLd")&universe_df$cell_essential=="Y")),
                                 length(which(is.na(universe_df$omim)&universe_df$cell_essential=="Y")),
                                 length(which(universe_df$omim=="Y"&(universe_df$Inheritance_pattern=="AD"|universe_df$Inheritance_pattern=="XLd")&universe_df$cell_essential=="N")),
@@ -60,7 +64,7 @@ b<-ggplot(omim_metrics_ADXLD_OR) +
   geom_errorbar( aes(x=categories, ymin=confint_lower, ymax=confint_upper), width=0.2, colour="grey40", alpha=0.9, size=1)+
   bar_theme()+geom_hline(yintercept=1)+xlab("")+
   scale_y_continuous(trans="log10", limits=c(1,5.5),breaks = trans_breaks('log10', function(x) 10^x),labels = scaleFUN)+
-  ylab("Odds Ratio \n (AD/XLd OMIM vs non-OMIM)")+theme(axis.text.x = element_blank(),axis.line.x=element_blank(),plot.title = element_text(hjust = 0.5))+ggtitle(paste0("Dominant OMIM genes \n n = ",length(which(universe_df$omim=="Y"&(universe_df$Inheritance_pattern=="AD"|universe_df$Inheritance_pattern=="XLd")))))
+  ylab("Odds Ratio \n (AD/XLd OMIM vs non-OMIM)")+theme(axis.text.x = element_text(angle=60, hjust=1,size=10),axis.line.x=element_blank(),plot.title = element_text(hjust = 0.5,size=10))+ggtitle(paste0("Dominant OMIM genes \n n = ",length(which(universe_df$omim=="Y"&(universe_df$Inheritance_pattern=="AD"|universe_df$Inheritance_pattern=="XLd")))))
 
 
 
@@ -68,13 +72,21 @@ omim_constraint_ARMTXLR_OR<- OR_test(length(which(universe_df$omim=="Y"&(univers
                                      length(which(is.na(universe_df$omim)&universe_df$constrained=="Y")),
                                      length(which(universe_df$omim=="Y"&(universe_df$Inheritance_pattern=="AR"|universe_df$Inheritance_pattern=="XLr"|universe_df$Inheritance_pattern=="MT,AR")&universe_df$constrained=="N")),
                                      length(which(is.na(universe_df$omim)&universe_df$constrained=="N")))
-omim_mouseleth_ARMTXLR_OR<- OR_test(length(which(universe_df$omim=="Y"&(universe_df$Inheritance_pattern=="AR"|universe_df$Inheritance_pattern=="XLr"|universe_df$Inheritance_pattern=="MT,AR")&universe_df$lethal_mouse=="Y")),
-                                    length(which(is.na(universe_df$omim)&universe_df$lethal_mouse=="Y")),
-                                    length(which(universe_df$omim=="Y"&(universe_df$Inheritance_pattern=="AR"|universe_df$Inheritance_pattern=="XLr"|universe_df$Inheritance_pattern=="MT,AR")&universe_df$lethal_mouse=="N")),
-                                    length(which(is.na(universe_df$omim)&universe_df$lethal_mouse=="N")))
-omim_celless_ARMTXLR_OR<- OR_test(length(which(universe_df$omim=="Y"&(universe_df$Inheritance_pattern=="AR"|universe_df$Inheritance_pattern=="XLr"|universe_df$Inheritance_pattern=="MT,AR")&universe_df$cell_essential=="Y")),
+
+
+omim_mouseleth_ARMTXLR_OR<- OR_test(length(which(universe_df$omim=="Y"&(universe_df$Inheritance_pattern=="AR"|universe_df$Inheritance_pattern=="XLr"|universe_df$Inheritance_pattern=="MT,AR")&
+                                                   (universe_df$lethal_mouse=="Y"|universe_df$lethal_het_mouse=="Y")&universe_df$mouse_ko=="Y")),
+                                    length(which(is.na(universe_df$omim)&
+                                                   (universe_df$lethal_mouse=="Y"|universe_df$lethal_het_mouse=="Y")&universe_df$mouse_ko=="Y")),
+                                    length(which(universe_df$omim=="Y"&(universe_df$Inheritance_pattern=="AR"|universe_df$Inheritance_pattern=="XLr"|universe_df$Inheritance_pattern=="MT,AR")&
+                                                   universe_df$lethal_mouse=="N"&(universe_df$lethal_het_mouse=="N"|is.na(universe_df$lethal_het_mouse)))),
+                                    length(which(is.na(universe_df$omim)&
+                                                   universe_df$lethal_mouse=="N"&(universe_df$lethal_het_mouse=="N"|is.na(universe_df$lethal_het_mouse)))))
+omim_celless_ARMTXLR_OR<- OR_test(length(which(universe_df$omim=="Y"&(universe_df$Inheritance_pattern=="AR"|universe_df$Inheritance_pattern=="XLr"|universe_df$Inheritance_pattern=="MT,AR")&
+                                                 universe_df$cell_essential=="Y")),
                                   length(which(is.na(universe_df$omim)&universe_df$cell_essential=="Y")),
-                                  length(which(universe_df$omim=="Y"&(universe_df$Inheritance_pattern=="AR"|universe_df$Inheritance_pattern=="XLr"|universe_df$Inheritance_pattern=="MT,AR")&universe_df$cell_essential=="N")),
+                                  length(which(universe_df$omim=="Y"&(universe_df$Inheritance_pattern=="AR"|universe_df$Inheritance_pattern=="XLr"|universe_df$Inheritance_pattern=="MT,AR")&
+                                                 universe_df$cell_essential=="N")),
                                   length(which(is.na(universe_df$omim)&universe_df$cell_essential=="N")))
 omim_metrics_ARMTXLR_OR<-data.frame(categories = c("Constraint","Murine Lethality", "Cell Essentiality"),
                                     OR = c(omim_constraint_ARMTXLR_OR$estimate,omim_mouseleth_ARMTXLR_OR$estimate,omim_celless_ARMTXLR_OR$estimate),
@@ -87,8 +99,8 @@ c<-ggplot(omim_metrics_ARMTXLR_OR) +
   geom_bar( aes(x=categories, y=OR), stat="identity", fill=c("indianred3","black","sandybrown")) +
   geom_errorbar( aes(x=categories, ymin=confint_lower, ymax=confint_upper), width=0.2, colour="grey40", alpha=0.9, size=1)+
   bar_theme()+geom_hline(yintercept=1)+xlab("")+
-  scale_y_continuous(trans="log10", limits=c(0.55,2.5),breaks = trans_breaks('log10', function(x) 10^x),labels = scaleFUN)+
-  ylab("Odds Ratio \n (AR/XLr OMIM vs non-OMIM)")+theme(axis.text.x = element_blank(),axis.line.x=element_blank(),plot.title = element_text(hjust = 0.5))+
+  scale_y_continuous(trans="log10", limits=c(0.5,2.5),breaks = trans_breaks('log10', function(x) 10^x),labels = scaleFUN)+
+  ylab("Odds Ratio \n (AR/XLr OMIM vs non-OMIM)")+theme(axis.text.x = element_text(angle=60, hjust=1,size=10),axis.line.x=element_blank(),plot.title = element_text(hjust = 0.5,size=10))+
   ggtitle(paste0("Recessive OMIM genes \n n = ",length(which(universe_df$omim=="Y"&(universe_df$Inheritance_pattern=="AR"|universe_df$Inheritance_pattern=="XLr"|universe_df$Inheritance_pattern=="MT,AR")))))
 
 
@@ -119,8 +131,8 @@ d<-ggplot(lethal_metrics_OR) +
   geom_bar( aes(x=categories, y=OR), stat="identity", fill=c("indianred3","black","sandybrown")) +
   geom_errorbar( aes(x=categories, ymin=confint_lower, ymax=confint_upper), width=0.2, colour="grey40", alpha=0.9, size=1)+
   bar_theme()+geom_hline(yintercept=1)+xlab("")+
-  scale_y_continuous(trans="log10", limits=c(1,7.5),breaks = trans_breaks('log10', function(x) 10^x),labels = scaleFUN)+
-  ylab("Odds Ratio \n (Lethal vs non-OMIM)")+  theme(axis.text.x = element_text(angle=60, hjust=1,size=10),axis.text.y = element_text(size=10),axis.title.x=element_text(size=10),axis.line.x=element_blank(),plot.title = element_text(hjust = 0.5))+
+  scale_y_continuous(trans="log10", limits=c(0.9,7.5),breaks = trans_breaks('log10', function(x) 10^x),labels = scaleFUN)+
+  ylab("Odds Ratio \n (Lethal vs non-OMIM)")+  theme(axis.text.x = element_text(angle=60, hjust=1,size=10),axis.title.x=element_text(size=10),axis.line.x=element_blank(),plot.title = element_text(hjust = 0.5,size=10))+
   ggtitle(paste0("All Lethal genes \n n = ",length(which(universe_df$human_lethal_B=="Y"))))
 
 
@@ -149,7 +161,7 @@ e<-ggplot(lethal_metrics_ADXLD_OR) +
   geom_errorbar( aes(x=categories, ymin=confint_lower, ymax=confint_upper), width=0.2, colour="grey40", alpha=0.9, size=1)+
   bar_theme()+geom_hline(yintercept=1)+xlab("")+
   scale_y_continuous(trans="log10", limits=c(0.4,15.5),breaks = trans_breaks('log10', function(x) 10^x),labels = scaleFUN)+
-  ylab("Odds Ratio \n (AD/XLd Lethal vs non-OMIM)")+  theme(axis.text.x = element_text(angle=60, hjust=1,size=10),axis.text.y = element_text(size=10),axis.title.x=element_text(size=10),axis.line.x=element_blank(),plot.title = element_text(hjust = 0.5))+
+  ylab("Odds Ratio \n (AD/XLd Lethal vs non-OMIM)")+  theme(axis.text.x = element_text(angle=60, hjust=1,size=10),axis.title.x=element_text(size=10),axis.line.x=element_blank(),plot.title = element_text(hjust = 0.5,size=10))+
   ggtitle(paste0("Dominant Lethal genes \n n = ",length(which(universe_df$human_lethal_B=="Y"&(universe_df$lethal_inheritance=="AD"|universe_df$lethal_inheritance=="XLd"|universe_df$lethal_inheritance=="MT,XLd")))))
 
 
@@ -178,13 +190,13 @@ f<-ggplot(lethal_metrics_ARMTXLR_OR) +
   geom_bar( aes(x=categories, y=OR), stat="identity", fill=c("indianred3","black","sandybrown")) +
   geom_errorbar( aes(x=categories, ymin=confint_lower, ymax=confint_upper), width=0.2, colour="grey40", alpha=0.9, size=1)+
   bar_theme()+geom_hline(yintercept=1)+xlab("")+
-  scale_y_continuous(trans="log10", limits=c(0.5,7.1),breaks = trans_breaks('log10', function(x) 10^x),labels = scaleFUN)+
+  scale_y_continuous(trans="log10", limits=c(0.4,7.1),breaks = trans_breaks('log10', function(x) 10^x),labels = scaleFUN)+
   ylab("Odds Ratio \n (AR/XLr Lethal vs non-OMIM)")+
-  theme(axis.text.x = element_text(angle=60, hjust=1,size=10),axis.text.y = element_text(size=10),axis.title.x=element_text(size=10),axis.line.x=element_blank(),plot.title = element_text(hjust = 0.5))+
+  theme(axis.text.x = element_text(angle=60, hjust=1,size=10),axis.title.x=element_text(size=10),axis.line.x=element_blank(),plot.title = element_text(hjust = 0.5,size=10))+
   ggtitle(paste0("Recessive Lethal genes \n n = ",length(which(universe_df$human_lethal_B=="Y"&(universe_df$lethal_inheritance=="AR"|universe_df$lethal_inheritance=="XLr"|universe_df$lethal_inheritance=="MT,AR")))))
 
 
 
-ggarrange(a,b,c,d,e,f,ncol=3,nrow=2,heights=c(1,1.5))
-ggsave("output/Figures/6.pdf",height=14, width=18, units='cm')
-rm(list=setdiff(ls(),"universe_df"))
+ggarrange(a,b,c,d,e,f,ncol=3,nrow=2)
+ggsave("output/Figures/6.pdf",height=17, width=17, units='cm')
+#rm(list=setdiff(ls(),"universe_df"))

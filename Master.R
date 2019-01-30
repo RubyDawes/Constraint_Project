@@ -29,6 +29,10 @@ load("output/Data/mgi.rda")
 #source("Universe_Data/3.Mouse_phenotypes/IMPC_phenotypes.R")
 load("output/Data/impc.rda")
 
+#Heterozygous phenotypes
+load("output/Data/mgi_het.rda")
+load("output/Data/impc_het.rda")
+
 #df of genes tested in wang, blomen and hart CRISPR knockout papers and whether they were lethal or not in each of the 11 cell lines
 ##tested throughout the three papers
 #source("Universe_Data/4.Cell_Knockouts/cell_essential_genes.R")

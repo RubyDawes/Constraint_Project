@@ -9,8 +9,8 @@ cellnotmouse$prem_death <- ifelse(grepl("premature death",cellnotmouse$all_MP_ph
 cellnotmouse$cellular_phenotype <- ifelse(grepl("cellular phenotype",cellnotmouse$high_MP_phen),"Y","N")
 write.xlsx(cellnotmouse,"output/spreadsheets/Table_OneS2.xlsx", sheetName = "S2_cell_ess_mouse_nonlethal", append=TRUE)
 
-#sheet three- 3,424 candidate lethal genes
-candidates <- universe_df$gene[which(is.na(universe_df$omim)&(universe_df$lethal_mouse=="Y"|universe_df$cell_essential=="Y"))]
+#sheet three- 3,435 candidate lethal genes
+candidates <- universe_df$gene[which(is.na(universe_df$omim)&(universe_df$lethal_mouse=="Y"|universe_df$lethal_het_mouse=="Y"|universe_df$cell_essential=="Y"))]
 write.xlsx(candidates,"output/spreadsheets/Table_OneS3.xlsx", sheetName = "S3_candidate_lethal_genes", append=TRUE)
 
 
