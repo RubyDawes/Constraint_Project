@@ -51,7 +51,8 @@ universe_df$any_constraint <- ifelse(universe_df$mis_z>=3.09|universe_df$pLI>=0.
 universe_df$any_reg_constraint <- ifelse(universe_df$ccr99=="Y"|universe_df$regional_missense_constraint=="Y"|universe_df$nmd_min=="Y","Y","N")
 
 #MGI mouse knockouts- lethal or non-lethal in a mouse
-universe_df$MGI_ID <- vlookup(universe_df$gene,mgi,result_column="MGI_ID",lookup_column="human_symbol")
+universe_df$MGI_ID <- universe_df$mgd_id
+universe_df$mgd_id<-NULL
 universe_df$lethal_MGI <- vlookup(universe_df$gene,mgi,result_column="is_lethal",lookup_column="human_symbol")
 universe_df$lethal_MP_ID <- vlookup(universe_df$gene,mgi,result_column="lethal_MP_ID",lookup_column="human_symbol")
 universe_df$lethal_MP_phen <- vlookup(universe_df$gene,mgi,result_column="lethal_MP_phen",lookup_column="human_symbol")

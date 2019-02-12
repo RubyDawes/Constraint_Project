@@ -1,0 +1,34 @@
+S1 - list of search terms used to query the OMIM database for human lethal genes	 	 
+S2- details on the hits from our search for lethal phenotypes in OMIM		
+Column Name	Description	
+mim_numbers	number of the OMIM entry which our search returned	
+preferred_titles	Title of the OMIM entry with our search returned	
+matches	Details on which search terms were found in the OMIM entry	
+search_field	OMIM field which contained the search terms	
+omim_field_text	Text of the OMIM field which contained the search terms	
+mim_entry_type	"OMIM entry type (gene, phenotype, etc.)"	
+prefix	OMIM entry prefix	
+gene_mim_number	OMIM numbers of genes associated with OMIM entry	
+phenotype_mapping_keys	Phenotype mapping key of OMIM entry	
+inheritance	Inheritance pattern of OMIM entry	
+gene_symbol	Gene symboslk of genes associated with OMIM entry	
+"S3- cell KO essentiality tallies from Blomen, Hart and Wang"		
+Column Name	Description	Source
+Gene	gene symbol	
+blomen_hap1	"1 if classed as essential in this cell line, 0 if classed as unessential in this cell line"	"Blomen, V.A., et al., Gene essentiality and synthetic lethality in haploid human cells. Science, 2015. 350(6264): p. 1092-1096."
+blomen_kbm7	"1 if classed as essential in this cell line, 0 if classed as unessential in this cell line"	"Blomen, V.A., et al., Gene essentiality and synthetic lethality in haploid human cells. Science, 2015. 350(6264): p. 1092-1096."
+wang_kbm7	"1 if classed as essential in this cell line, 0 if classed as unessential in this cell line"	"Wang, T., et al., Identification and characterization of essential genes in the human genome. Science, 2015. 350(6264): p. 1096"
+wang_k562	"1 if classed as essential in this cell line, 0 if classed as unessential in this cell line"	"Wang, T., et al., Identification and characterization of essential genes in the human genome. Science, 2015. 350(6264): p. 1096"
+wang_jiyoye	"1 if classed as essential in this cell line, 0 if classed as unessential in this cell line"	"Wang, T., et al., Identification and characterization of essential genes in the human genome. Science, 2015. 350(6264): p. 1096"
+wang_raji	"1 if classed as essential in this cell line, 0 if classed as unessential in this cell line"	"Wang, T., et al., Identification and characterization of essential genes in the human genome. Science, 2015. 350(6264): p. 1096"
+hart_hct	"1 if classed as essential in this cell line, 0 if classed as unessential in this cell line"	"Hart, T., et al., High-Resolution CRISPR Screens Reveal Fitness Genes and Genotype-Specific Cancer Liabilities. Cell, 2015. 163(6): p. 1515-1526"
+hart_hela	"1 if classed as essential in this cell line, 0 if classed as unessential in this cell line"	"Hart, T., et al., High-Resolution CRISPR Screens Reveal Fitness Genes and Genotype-Specific Cancer Liabilities. Cell, 2015. 163(6): p. 1515-1526"
+hart_gbm	"1 if classed as essential in this cell line, 0 if classed as unessential in this cell line"	"Hart, T., et al., High-Resolution CRISPR Screens Reveal Fitness Genes and Genotype-Specific Cancer Liabilities. Cell, 2015. 163(6): p. 1515-1526"
+hart_rpe1	"1 if classed as essential in this cell line, 0 if classed as unessential in this cell line"	"Hart, T., et al., High-Resolution CRISPR Screens Reveal Fitness Genes and Genotype-Specific Cancer Liabilities. Cell, 2015. 163(6): p. 1515-1526"
+hart_dld1	"1 if classed as essential in this cell line, 0 if classed as unessential in this cell line"	"Hart, T., et al., High-Resolution CRISPR Screens Reveal Fitness Genes and Genotype-Specific Cancer Liabilities. Cell, 2015. 163(6): p. 1515-1526"
+no_hits	"Tally of cell lines this gene is classed as essential in, throughout the three studies"	
+S4- Mammalian phenotypes classed as 'lethal' in the GD informatics toolkit		
+Column Name	Description	
+MP.id	Mammalian Phenotype ID	
+phenotype	Description of phenotype associated with MP ID	
+definition	Definition of phenotype associated with MP ID	
