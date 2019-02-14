@@ -73,7 +73,8 @@ universe_df$IMPC_lethal_MP_phen <- vlookup(universe_df$gene,impc,result_column="
 universe_df$IMPC_ko <- rep(NA,length(universe_df$gene))
 universe_df$IMPC_ko[which(lengths(universe_df$IMPC_all_MP_ID)>0)] <-  "Y"
 
-universe_df$mouse_ko <- ifelse(!is.na(universe_df$MGI_ID),"Y",ifelse(universe_df$IMPC_ko=="Y","Y",NA))
+universe_df$mouse_ko <- ifelse(!unlist(lapply(universe_df$all_MP_ID,is.null)),"Y",ifelse(universe_df$IMPC_ko=="Y","Y",NA))
+
 universe_df$lethal_mouse <- rep(NA,length(universe_df$gene))
 universe_df$lethal_mouse[which(universe_df$mouse_ko=="Y")] <- "N"
 universe_df$lethal_mouse[which(universe_df$lethal_MGI=="Y"|universe_df$lethal_IMPC=="Y")] <- "Y"
