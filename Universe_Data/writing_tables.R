@@ -6,14 +6,15 @@ addWorksheet(OUT,"LEGEND")
 addWorksheet(OUT,"S1_GD_informatics_toolkit")
 addWorksheet(OUT,"S2_cell_ess_mouse_nonlethal")
 addWorksheet(OUT,"S3_candidate_lethal_genes")
+addWorksheet(OUT,"S4_extra_mouselethalgenes")
 
 legend1<-read.table("output/spreadsheets/Table_One_Legend.txt",sep = "\t",fill = TRUE,quote = "")
 colnames(legend1) <- legend1[1,1]
 legend1 <- legend1[-1,]
 legendstyle <- createStyle(fgFill = "#FFFF00", border = "TopBottom", textDecoration = "bold")
 legendstyle1 <- createStyle(textDecoration = "bold")
-addStyle(OUT,sheet = "LEGEND",style = legendstyle, rows = c(1,64,71),cols = c(1,2,3),gridExpand = TRUE)
-addStyle(OUT,sheet = "LEGEND",style = legendstyle1, rows = c(2,65),cols = c(1,2,3),gridExpand = TRUE)
+addStyle(OUT,sheet = "LEGEND",style = legendstyle, rows = c(1,64,72,73),cols = c(1,2,3),gridExpand = TRUE)
+addStyle(OUT,sheet = "LEGEND",style = legendstyle1, rows = c(2,65,74),cols = c(1,2,3),gridExpand = TRUE)
 
 writeData(OUT,sheet = "LEGEND", x = legend1)
           
@@ -52,6 +53,10 @@ writeData(OUT,sheet = "S2_cell_ess_mouse_nonlethal", x = cellnotmouse)
 #sheet three- 3,435 candidate lethal genes
 candidates <- universe_df$gene[which(is.na(universe_df$omim)&(universe_df$lethal_mouse=="Y"|universe_df$lethal_het_mouse=="Y"|universe_df$cell_essential=="Y"))]
 writeData(OUT,sheet = "S3_candidate_lethal_genes", x = candidates)
+
+#sheet four - additional 385 mouse lethal genes not meeting our criteria of recessive null allele in MGI
+load("output/Data/MGI_lethalgenes_non_recessivenull.rda")
+writeData(OUT,sheet = "S4_extra_mouselethalgenes", x = mgi_wl)
 
 #saving table one
 saveWorkbook(OUT,"output/spreadsheets/Table_One.xlsx")

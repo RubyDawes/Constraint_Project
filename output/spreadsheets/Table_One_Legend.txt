@@ -62,10 +62,20 @@ cell_ko	"""Y"" if the gene was assessed for cell essentiality by Blomen, Hart or
 cell_essential_hits	"Number of cell lines in which the gene was classed as essential throughout Blomen, Hart and Wang"	"Blomen, V.A., et al., Gene essentiality and synthetic lethality in haploid human cells. Science, 2015. 350(6264): p. 1092-1096.,Hart, T., et al., High-Resolution CRISPR Screens Reveal Fitness Genes and Genotype-Specific Cancer Liabilities. Cell, 2015. 163(6): p. 1515-1526.,Wang, T., et al., Identification and characterization of essential genes in the human genome. Science, 2015. 350(6264): p. 1096."
 cell_essential	"""Y"" if the gene hits our cutoff for cell essentiality of being essential in 3 or more cell lines"	"Blomen, V.A., et al., Gene essentiality and synthetic lethality in haploid human cells. Science, 2015. 350(6264): p. 1092-1096.,Hart, T., et al., High-Resolution CRISPR Screens Reveal Fitness Genes and Genotype-Specific Cancer Liabilities. Cell, 2015. 163(6): p. 1515-1526.,Wang, T., et al., Identification and characterization of essential genes in the human genome. Science, 2015. 350(6264): p. 1096."
 S2- Information on genes which are essential in a cell but non-lethal in a homozygous KO mouse		
+Column Name	Description	Source
 gene	Gene symbols	
-mgd_id	ID of gene in the mouse genome informatics database	
-all_MP_phen	descriptions of all the MP terms annotated to the gene	
-high_MP_phen	descriptions of the high-level broadly descriptive MP terms annotated to the gene	
-prem_death	"""Y"" if the gene is associated with the phenotype term ""premature death"" in homozygous KO mice"	
-cellular_phenotype	"""Y"" if the gene is associated with the phenotype term ""cellular phenotype"" in homozygous KO mice"	
+mgd_id	ID of gene in the mouse genome informatics database	Mouse Genome Informatics
+all_MP_phen	descriptions of all the MP terms annotated to the gene	Mouse Genome Informatics
+high_MP_phen	descriptions of the high-level broadly descriptive MP terms annotated to the gene	Mouse Genome Informatics
+prem_death	"""Y"" if the gene is associated with the phenotype term ""premature death"" in homozygous KO mice"	Mouse Genome Informatics
+cellular_phenotype	"""Y"" if the gene is associated with the phenotype term ""cellular phenotype"" in homozygous KO mice"	Mouse Genome Informatics
 "S3- list of 'candidate lethal' genes, which are essential in cells or mice but have no known phenotype in a human"		
+"S4- list of 385 additional mouse lethal genes, not meeting our recessive null allele criteria. "		
+Column Name	Description	Source
+gene	Gene symbols	
+MGI_ID	ID of gene in the mouse genome informatics database	Mouse Genome Informatics
+lethal_mgi_info	"comma-delimited, Parsed information on the allelic composition causing lethality"	Mouse Genome Informatics
+allelic_composition	comma-delimited allelic compositions causing lethality in mice	Mouse Genome Informatics
+allele_ID	MGI id of allele causing lethality 	Mouse Genome Informatics
+allele_info	Information on the class of genetic allele causing lethality	Mouse Genome Informatics
+MP_ID	Lethal phenotypes associated with the allele/ allelic compositions listed	Mouse Genome Informatics
