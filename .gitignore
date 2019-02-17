@@ -2,6 +2,7 @@
 .Rhistory
 .RData
 .Ruserdata
+Analysis/reviewer_comments/*
 
 .Rproj.user.backup
 GD_Informatics_Toolkit.Rproj
